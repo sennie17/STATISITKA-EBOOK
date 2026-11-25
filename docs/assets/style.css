@@ -435,3 +435,28 @@ body:has(.hero-buku) #title-block-header { display: none; }
 }
 #quarto-sidebar .sidebar-link.active::before { background: #F2B84B; }
 #quarto-sidebar .chapter-number { color: #8FA3B7; }
+
+/* ---- Cover kecil di kanan Kata Pengantar ---- */
+.cover-kata {
+  float: right;
+  width: clamp(150px, 22vw, 230px);
+  margin: 0 0 1rem 1.5rem;
+}
+.cover-kata figure { margin: 0; }
+.cover-kata img {
+  width: 100%;
+  border: none;
+  padding: 0;
+  background: none;
+  border-radius: 6px;
+  box-shadow: 0 12px 26px rgba(15, 42, 67, 0.28);
+}
+#penulis { clear: both; }     /* bagian Penulis mulai di bawah cover */
+
+@media (max-width: 575.98px) {
+  .cover-kata {
+    float: none;
+    width: min(55%, 220px);
+    margin: 0 auto 1.5rem;
+  }
+}

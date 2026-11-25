@@ -5,7 +5,7 @@
 .DS_Store
 ._*
 *_cache/
-*_files/
+# *_files/
 .quarto/
 _site/
 _book/

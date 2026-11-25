@@ -71,6 +71,6 @@ Saya berharap eBook ini dapat bermanfaat bagi siapa pun yang sedang mempelajari 
 
 Buku ini disusun oleh seorang mahasiswa yang masih terus belajar, sehingga kritik, koreksi, dan saran dari pembaca sangat berarti untuk perbaikan ke depan. Jika Anda menemukan kekeliruan atau memiliki usulan, silakan sampaikan melalui kontak berikut:
 
-**Email:** [jesentriago08@gmail.com](mailto:jesentriago08@gmail.com)
-**LinkedIn:** [Jesen](https://www.linkedin.com/in/jesenn)
+**Email:** [jesentriago08@gmail.com](mailto:jesentriago08@gmail.com)\
+**LinkedIn:** [Jesen](https://www.linkedin.com/in/jesenn)\
 **GitHub:** [Laporkan masalah atau usulan](https://github.com/sennie17/STATISITKA-EBOOK/issues)

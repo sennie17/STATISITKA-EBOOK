@@ -1,0 +1,729 @@
+
+# Bab 9: Sampling Distribution dan Estimasi
+
+```{r}
+#| label: setup
+#| include: false
+# Untuk grafiknya agar keliatan lebih rapih dan enak di lihat
+knitr::opts_chunk$set(
+  fig.width  = 9,
+  fig.height = 5.5,
+  fig.align  = "center",
+  out.width  = "100%",
+  dpi        = 150
+)
+library(knitr)
+```
+
+## Tiga Distribusi yang Harus Dibedakan
+
+| Distribusi | Isinya | Jumlah nilai | Contoh |
+|---|---|---|---|
+| Distribusi populasi | Nilai setiap unit populasi | $N$ | Pengeluaran 20.000 mahasiswa |
+| Distribusi sampel | Nilai unit dalam satu sampel | $n$ | Pengeluaran 40 mahasiswa yang disurvei |
+| **Distribusi sampling** | Nilai **statistik** (misalnya $\bar{x}$) dari banyak sampel (dibayangkan) | Sebanyak sampel yang diambil | $\bar{x}$ dari 10.000 sampel berukuran 40 |
+
+Distribusi sampling adalah konsep **teoretis**: dalam praktik kita hanya memiliki satu sampel. Namun dengan simulasi kita dapat "melihatnya".
+
+### Populasi Simulasi
+
+Kita memakai populasi 20.000 mahasiswa dengan variabel waktu layar harian (jam) yang **menjulur kanan** – bentuk yang sengaja dipilih jauh dari lonceng.
+
+```{r}
+set.seed(909)
+N <- 20000
+populasi <- round(rgamma(N, shape = 2, rate = 0.4), 2)   # jam per hari
+mu    <- mean(populasi)
+sigma <- sqrt(mean((populasi - mu)^2))                   # SD populasi (pembagi N)
+
+c(N = N, mu = round(mu, 3), sigma = round(sigma, 3))
+```
+
+```{r}
+#| fig-height: 4.5
+set.seed(1)
+satu_sampel <- sample(populasi, 40)
+banyak_rata <- replicate(10000, mean(sample(populasi, 40)))
+
+par(mfrow = c(1, 3))
+hist(populasi, breaks = 40, col = "#9ecae1", border = "white", main = "Populasi (N = 20.000)",
+     xlab = "Jam per hari", xlim = c(0, 20))
+hist(satu_sampel, breaks = 12, col = "#fdae6b", border = "white", main = "Satu sampel (n = 40)",
+     xlab = "Jam per hari", xlim = c(0, 20))
+hist(banyak_rata, breaks = 40, col = "#a1d99b", border = "white",
+     main = "Sampling distribution x-bar", xlab = "Rata-rata sampel (n = 40)")
+par(mfrow = c(1, 1))
+```
+
+Populasi dan satu sampel sama-sama menjulur kanan, tetapi **distribusi rata-rata sampel** jauh lebih sempit dan hampir berbentuk lonceng. Inilah inti pertemuan ini.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Distribusi Sampling Rata-rata Sampel
+
+Untuk sampel acak berukuran $n$ dari populasi dengan mean $\mu$ dan simpangan baku $\sigma$:
+
+| Sifat | Rumus | Arti |
+|---|---|---|
+| **Mean** | $\mu_{\bar{x}} = \mu$ | $\bar{x}$ adalah penaksir **tak bias**: rata-ratanya tepat di parameter |
+| **Standard error** | $\sigma_{\bar{x}} = \dfrac{\sigma}{\sqrt{n}}$ | Sebaran $\bar{x}$ mengecil seiring bertambahnya $n$ |
+| **Bentuk** | Normal jika populasi normal; mendekati normal untuk $n$ cukup besar (CLT) | Memungkinkan perhitungan peluang |
+
+```{r}
+kable(data.frame(
+  Besaran = c("Mean distribusi sampling", "SD distribusi sampling (SE)"),
+  Teori   = round(c(mu, sigma / sqrt(40)), 4),
+  Simulasi_10000_sampel = round(c(mean(banyak_rata), sd(banyak_rata)), 4)
+), caption = "Teori vs simulasi untuk n = 40")
+```
+
+Hasil simulasi hampir persis sama dengan teori.
+
+<div style="width: 85%; margin: 0 auto;">
+
+**Koreksi populasi terhingga.** Rumus $\sigma/\sqrt{n}$ mengasumsikan populasi sangat besar dibanding sampel. Jika sampel mencapai lebih dari sekitar 5% populasi (tanpa pengembalian), SE dikalikan faktor $\sqrt{\dfrac{N-n}{N-1}}$. Pada contoh ini $n/N = 0{,}2\%$, sehingga koreksi dapat diabaikan.
+
+</div>
+
+### Pengaruh Ukuran Sampel
+
+```{r}
+#| fig-height: 4.5
+set.seed(2)
+n_list <- c(5, 20, 80)
+par(mfrow = c(1, 3))
+for (nn in n_list) {
+  rata <- replicate(5000, mean(sample(populasi, nn)))
+  hist(rata, breaks = 40, col = "#a1d99b", border = "white", xlim = c(1, 10), freq = FALSE,
+       main = paste0("n = ", nn, "  (SE = ", round(sigma / sqrt(nn), 2), ")"),
+       xlab = "Rata-rata sampel")
+  curve(dnorm(x, mu, sigma / sqrt(nn)), add = TRUE, col = "firebrick", lwd = 2)
+  abline(v = mu, lty = 2)
+}
+par(mfrow = c(1, 1))
+```
+
+Kurva merah adalah distribusi normal dengan mean $\mu$ dan SD $\sigma/\sqrt{n}$. Semakin besar $n$: (1) distribusi semakin **sempit**, dan (2) bentuknya semakin **mendekati normal** meskipun populasinya menjulur kanan.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Central Limit Theorem (CLT)
+
+<div style="width: 85%; margin: 0 auto;">
+
+**Central Limit Theorem.** Jika sampel acak berukuran $n$ diambil dari populasi **sembarang bentuk** dengan mean $\mu$ dan simpangan baku $\sigma$ (terhingga), maka untuk $n$ yang cukup besar, distribusi sampling $\bar{x}$ mendekati normal:
+
+$$\bar{x} \approx N\left(\mu,\ \frac{\sigma}{\sqrt{n}}\right)$$
+
+</div>
+
+CLT adalah alasan mengapa distribusi normal muncul di mana-mana dalam statistika inferensial – bukan karena data selalu normal, tetapi karena **rata-rata** dari data cenderung normal.
+
+### Demonstrasi pada Tiga Bentuk Populasi
+
+```{r}
+#| fig-height: 10
+set.seed(3)
+pop_bentuk <- list(
+  "Seragam"        = runif(20000, 0, 10),
+  "Menjulur kanan" = rexp(20000, rate = 0.5),
+  "Bimodal"        = c(rnorm(10000, 2, 0.8), rnorm(10000, 8, 0.8))
+)
+ukuran <- c(2, 5, 30)
+
+par(mfrow = c(4, 3), mar = c(3, 3, 2.5, 1))
+for (nama in names(pop_bentuk)) {
+  hist(pop_bentuk[[nama]], breaks = 40, col = "#9ecae1", border = "white",
+       main = paste("Populasi:", nama), xlab = "", ylab = "")
+}
+for (nn in ukuran) {
+  for (nama in names(pop_bentuk)) {
+    rata <- replicate(3000, mean(sample(pop_bentuk[[nama]], nn)))
+    hist(rata, breaks = 35, col = "#a1d99b", border = "white",
+         main = paste0(nama, ", n = ", nn), xlab = "", ylab = "")
+  }
+}
+par(mfrow = c(1, 1), mar = c(5, 4, 4, 2) + 0.1)
+```
+
+Baris pertama adalah populasi; baris berikutnya adalah distribusi sampling $\bar{x}$ untuk $n = 2$, 5, dan 30. Populasi **seragam** sudah tampak lonceng pada $n = 5$; populasi **bimodal** masih bergelombang pada $n = 2$ tetapi lonceng pada $n = 30$; populasi **menjulur kanan** membutuhkan $n$ terbesar untuk menghilangkan kemencengannya.
+
+### Seberapa Besar "Cukup Besar"?
+
+| Bentuk populasi | Ukuran sampel yang biasanya cukup |
+|---|---|
+| Normal | Berapa pun (distribusi $\bar{x}$ tepat normal) |
+| Simetris, tidak normal | Sekitar 10–15 |
+| Menceng sedang | Sekitar 30 (aturan praktis yang populer) |
+| Sangat menceng atau banyak outlier | Bisa jauh lebih dari 30 |
+
+```{r}
+skew <- function(x) { d <- x - mean(x); mean(d^3) / mean(d^2)^1.5 }
+set.seed(4)
+data.frame(n = c(2, 5, 10, 30, 100),
+           Kemencengan_xbar = sapply(c(2, 5, 10, 30, 100), function(nn)
+             round(skew(replicate(5000, mean(sample(populasi, nn)))), 3)))
+```
+
+Kemencengan distribusi $\bar{x}$ menyusut kira-kira sebanding dengan $1/\sqrt{n}$.
+
+### Menghitung Peluang dengan CLT
+
+Contoh: Jika diambil sampel acak 40 mahasiswa, berapa peluang rata-rata waktu layarnya melebihi 5,5 jam?
+
+$$z = \frac{\bar{x} - \mu}{\sigma / \sqrt{n}} \qquad\qquad P(\bar{x} > 5{,}5) = P(Z > z)$$
+
+```{r}
+se40  <- sigma / sqrt(40)
+z_55  <- (5.5 - mu) / se40
+
+c(SE = round(se40, 4), z = round(z_55, 3),
+  Peluang_CLT      = round(1 - pnorm(z_55), 4),
+  Peluang_simulasi = round(mean(banyak_rata > 5.5), 4))
+```
+
+Perbandingan: peluang **seorang** mahasiswa (bukan rata-rata 40 orang) memiliki waktu layar di atas 5,5 jam jauh lebih besar:
+
+```{r}
+mean(populasi > 5.5)
+```
+
+Individu sangat bervariasi, tetapi rata-rata dari banyak individu jauh lebih stabil.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Distribusi Sampling Proporsi Sampel
+
+Untuk variabel kategorik biner (Ya/Tidak), statistik yang dipakai adalah proporsi sampel $\hat{p} = x/n$.
+
+| Sifat | Rumus |
+|---|---|
+| Mean | $\mu_{\hat{p}} = p$ |
+| Standard error | $\sigma_{\hat{p}} = \sqrt{\dfrac{p(1-p)}{n}}$ |
+| Bentuk | Mendekati normal jika $np \geq 10$ **dan** $n(1-p) \geq 10$ |
+
+```{r}
+#| fig-height: 4.5
+p_benar <- 0.08    # misalnya 8% mahasiswa pernah terlambat membayar UKT
+set.seed(5)
+par(mfrow = c(1, 3))
+for (nn in c(20, 60, 300)) {
+  p_hat <- rbinom(5000, size = nn, prob = p_benar) / nn
+  hist(p_hat, breaks = seq(-0.005, 0.4, by = 0.01), col = "#fdae6b", border = "white",
+       freq = FALSE, xlim = c(0, 0.3),
+       main = paste0("n = ", nn, ": np = ", nn * p_benar), xlab = "Proporsi sampel")
+  curve(dnorm(x, p_benar, sqrt(p_benar * (1 - p_benar) / nn)), add = TRUE,
+        col = "firebrick", lwd = 2)
+}
+par(mfrow = c(1, 1))
+```
+
+Dengan $n = 20$ ($np = 1{,}6$), distribusi $\hat{p}$ sangat menceng dan "berbatang" – pendekatan normal **buruk**. Dengan $n = 300$ ($np = 24$), pendekatan normal **sangat baik**.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Standard Error
+
+### Standard Error vs Simpangan Baku
+
+| | Simpangan baku ($s$ atau $\sigma$) | Standard error ($SE$) |
+|---|---|---|
+| **Mengukur sebaran** | Data individu | Statistik (misalnya $\bar{x}$) dari sampel ke sampel |
+| **Menjawab** | "Seberapa beragam individu?" | "Seberapa tepat taksiran kita?" |
+| **Jika $n$ bertambah** | Tetap (mendekati $\sigma$) | Mengecil |
+| **Rumus (mean)** | $s = \sqrt{\dfrac{\sum (x_i - \bar{x})^2}{n-1}}$ | $SE = \dfrac{s}{\sqrt{n}}$ |
+
+Karena $\sigma$ biasanya tidak diketahui, SE ditaksir dengan $s/\sqrt{n}$ (untuk mean) atau $\sqrt{\hat{p}(1-\hat{p})/n}$ (untuk proporsi).
+
+```{r}
+set.seed(6)
+n_besar <- c(10, 40, 160, 640)
+kable(t(sapply(n_besar, function(nn) {
+  hasil <- replicate(2000, { s <- sample(populasi, nn); c(sd(s), sd(s) / sqrt(nn)) })
+  c(n = nn, Rata_SD_sampel = round(mean(hasil[1, ]), 3),
+    Rata_SE_taksiran = round(mean(hasil[2, ]), 3))
+})), caption = paste0("Rata-rata dari 2.000 sampel per n: SD stabil di sekitar sigma = ",
+                      round(sigma, 2), ", SE mengecil"))
+```
+
+### Hukum Akar Kuadrat
+
+Karena $SE \propto 1/\sqrt{n}$, untuk **membagi dua SE** dibutuhkan sampel **empat kali lipat**. Presisi semakin mahal: menambah $n$ dari 100 ke 400 memberi keuntungan yang sama dengan dari 400 ke 1.600.
+
+```{r}
+n_seq <- 10:1000
+plot(n_seq, sigma / sqrt(n_seq), type = "l", lwd = 2, col = "#4C72B0",
+     xlab = "Ukuran sampel (n)", ylab = "Standard error",
+     main = "SE Menurun Cepat di Awal, Lalu Melandai")
+points(c(100, 400), sigma / sqrt(c(100, 400)), pch = 16, col = "firebrick", cex = 1.3)
+text(c(100, 400), sigma / sqrt(c(100, 400)), pos = 3,
+     labels = paste0("n = ", c(100, 400), "\nSE = ", round(sigma / sqrt(c(100, 400)), 2)))
+```
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Estimasi
+
+### Point Estimate
+
+*Point estimate* adalah **satu angka** yang menaksir parameter.
+
+| Parameter | *Point estimate* | Penaksir tak bias? |
+|---|---|---|
+| $\mu$ | $\bar{x}$ | Ya |
+| $p$ | $\hat{p}$ | Ya |
+| $\sigma^2$ | $s^2$ (pembagi $n-1$) | Ya |
+| $\sigma$ | $s$ | Sedikit bias (diabaikan dalam praktik) |
+
+**Kelemahan point estimate:** hampir pasti tidak tepat sama dengan parameter, dan tidak memberi tahu seberapa jauh melesetnya.
+
+### Confidence Interval (Selang Kepercayaan)
+
+Selang kepercayaan memberikan **rentang nilai yang masuk akal** bagi parameter:
+
+$$\text{Point estimate} \ \pm\ \underbrace{\text{nilai kritis} \times SE}_{\text{margin of error}}$$
+
+#### CI untuk Mean, $\sigma$ Diketahui (z)
+
+$$\bar{x} \pm z_{\alpha/2} \frac{\sigma}{\sqrt{n}}$$
+
+| Tingkat kepercayaan | $\alpha$ | $z_{\alpha/2}$ |
+|---|---|---|
+| 90% | 0,10 | 1,645 |
+| 95% | 0,05 | 1,960 |
+| 99% | 0,01 | 2,576 |
+
+```{r}
+round(qnorm(c(0.95, 0.975, 0.995)), 3)
+```
+
+#### CI untuk Mean, $\sigma$ Tidak Diketahui (t)
+
+Dalam praktik $\sigma$ hampir tidak pernah diketahui dan diganti $s$. Penggantian ini menambah ketidakpastian, sehingga nilai kritis diambil dari **distribusi t** dengan derajat bebas $df = n - 1$:
+
+$$\bar{x} \pm t_{\alpha/2,\ n-1} \frac{s}{\sqrt{n}}$$
+
+```{r}
+curve(dnorm(x), -4, 4, lwd = 2, ylab = "Kepadatan", xlab = "Nilai",
+      main = "Distribusi t Berekor Lebih Tebal dari Normal")
+curve(dt(x, df = 3),  add = TRUE, lwd = 2, lty = 2, col = "firebrick")
+curve(dt(x, df = 10), add = TRUE, lwd = 2, lty = 3, col = "darkorange")
+legend("topright", bty = "n", lwd = 2, lty = c(1, 2, 3), col = c("black", "firebrick", "darkorange"),
+       legend = c("Normal baku (z)", "t, df = 3", "t, df = 10"))
+```
+
+```{r}
+data.frame(df = c(4, 9, 29, 99, Inf),
+           t_kritis_95 = round(qt(0.975, df = c(4, 9, 29, 99, Inf)), 3))
+```
+
+Untuk sampel kecil, nilai kritis t lebih besar daripada 1,96 (selang lebih lebar, "hukuman" karena menaksir $\sigma$). Saat $n$ membesar, distribusi t mendekati normal. Distribusi t dibahas lebih dalam pada Pertemuan 11.
+
+#### Contoh Perhitungan
+
+Satu sampel 40 mahasiswa (`satu_sampel`) dipakai untuk menaksir rata-rata waktu layar seluruh mahasiswa.
+
+```{r}
+n1 <- length(satu_sampel); xbar <- mean(satu_sampel); s <- sd(satu_sampel)
+t_krit <- qt(0.975, df = n1 - 1)
+se_hat <- s / sqrt(n1)
+moe    <- t_krit * se_hat
+
+c(n = n1, x_bar = round(xbar, 3), s = round(s, 3), SE = round(se_hat, 3),
+  t_kritis = round(t_krit, 3), MoE = round(moe, 3),
+  Bawah = round(xbar - moe, 3), Atas = round(xbar + moe, 3))
+```
+
+```{r}
+t.test(satu_sampel, conf.level = 0.95)$conf.int   # fungsi bawaan R, hasil sama
+```
+
+**Laporan:** "Rata-rata waktu layar mahasiswa diperkirakan `r round(xbar, 2)` jam per hari, dengan selang kepercayaan 95% antara `r round(xbar - moe, 2)` dan `r round(xbar + moe, 2)` jam (n = 40)."
+
+#### CI untuk Proporsi
+
+$$\hat{p} \pm z_{\alpha/2} \sqrt{\frac{\hat{p}(1-\hat{p})}{n}} \qquad \text{syarat: } n\hat{p} \geq 10 \text{ dan } n(1-\hat{p}) \geq 10$$
+
+```{r}
+x_ya <- 138; n_resp <- 400    # 138 dari 400 responden memakai QRIS setiap hari
+p_hat <- x_ya / n_resp
+se_p  <- sqrt(p_hat * (1 - p_hat) / n_resp)
+moe_p <- qnorm(0.975) * se_p
+
+c(p_hat = p_hat, SE = round(se_p, 4), MoE = round(moe_p, 4),
+  Bawah = round(p_hat - moe_p, 4), Atas = round(p_hat + moe_p, 4))
+
+c(n_p = n_resp * p_hat, n_1_min_p = n_resp * (1 - p_hat))   # syarat terpenuhi
+```
+
+"Sekitar 34,5% responden memakai QRIS setiap hari, *margin of error* ± `r round(moe_p * 100, 1)` poin persentase (kepercayaan 95%)" – format inilah yang sering dikutip media dari hasil survei.
+
+### Menafsirkan Selang Kepercayaan dengan Benar
+
+Kepercayaan 95% adalah sifat **prosedurnya**, bukan satu selang tertentu: jika pengambilan sampel dan perhitungan selang diulang berkali-kali, sekitar 95% selang yang dihasilkan akan memuat $\mu$.
+
+```{r}
+#| fig-height: 6.5
+set.seed(7)
+B <- 100
+selang <- t(replicate(B, {
+  s_i <- sample(populasi, 40)
+  m <- mean(s_i); e <- qt(0.975, 39) * sd(s_i) / sqrt(40)
+  c(bawah = m - e, atas = m + e)
+}))
+memuat <- selang[, "bawah"] <= mu & selang[, "atas"] >= mu
+
+plot(NULL, xlim = range(selang), ylim = c(1, B), xlab = "Waktu layar (jam)", ylab = "Sampel ke-",
+     main = paste0("100 Selang Kepercayaan 95%: ", sum(memuat), " memuat mu"))
+segments(selang[, "bawah"], 1:B, selang[, "atas"], 1:B,
+         col = ifelse(memuat, "grey50", "firebrick"), lwd = ifelse(memuat, 1, 2.5))
+abline(v = mu, col = "#4C72B0", lwd = 2)
+```
+
+Garis merah adalah selang yang **gagal** memuat $\mu$. Kita tidak pernah tahu apakah selang *kita* termasuk yang merah – tetapi kita tahu prosedurnya berhasil sekitar 95% dari waktu.
+
+| Tafsiran | Benar/Salah |
+|---|---|
+| "Kami 95% yakin bahwa selang 4,2–5,7 jam memuat rata-rata populasi." | **Benar** (bahasa sehari-hari yang diterima) |
+| "95% selang yang dibuat dengan prosedur ini akan memuat $\mu$." | **Benar** (tafsiran paling tepat) |
+| "Ada peluang 95% bahwa $\mu$ berada di antara 4,2 dan 5,7." | **Salah** – $\mu$ bukan variabel acak; ia di dalam atau di luar selang |
+| "95% mahasiswa memiliki waktu layar antara 4,2 dan 5,7 jam." | **Salah** – CI adalah tentang rata-rata, bukan individu |
+| "95% rata-rata sampel lain akan jatuh di selang ini." | **Salah** |
+
+### Faktor yang Memengaruhi Lebar Selang
+
+| Faktor | Jika dinaikkan | Lebar selang |
+|---|---|---|
+| Tingkat kepercayaan (90% → 99%) | Nilai kritis naik | Melebar |
+| Ukuran sampel $n$ | SE turun | Menyempit |
+| Variabilitas data ($s$) | SE naik | Melebar |
+
+```{r}
+lebar <- function(n, s, conf) 2 * qt(1 - (1 - conf) / 2, n - 1) * s / sqrt(n)
+tabel_lebar <- round(outer(c(20, 80, 320), c(0.90, 0.95, 0.99),
+                           Vectorize(function(n, cf) lebar(n, s = 3, conf = cf))), 3)
+dimnames(tabel_lebar) <- list(c("n = 20", "n = 80", "n = 320"), c("90%", "95%", "99%"))
+kable(tabel_lebar, caption = "Lebar CI (s = 3) menurut ukuran sampel dan tingkat kepercayaan")
+```
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Menentukan Ukuran Sampel
+
+Sebelum survei, peneliti biasanya menetapkan *margin of error* ($E$) yang diinginkan lalu menghitung $n$ minimum (selalu dibulatkan **ke atas**).
+
+| Parameter | Rumus ukuran sampel | Keterangan |
+|---|---|---|
+| Mean | $n = \left(\dfrac{z_{\alpha/2}\,\sigma}{E}\right)^2$ | $\sigma$ ditaksir dari studi sebelumnya atau survei percontohan |
+| Proporsi | $n = \dfrac{z_{\alpha/2}^2\; p(1-p)}{E^2}$ | Jika $p$ tidak diketahui, pakai $p = 0{,}5$ (paling konservatif) |
+
+```{r}
+n_mean <- function(sigma, E, conf = 0.95) ceiling((qnorm(1 - (1 - conf) / 2) * sigma / E)^2)
+n_prop <- function(E, p = 0.5, conf = 0.95) ceiling(qnorm(1 - (1 - conf) / 2)^2 * p * (1 - p) / E^2)
+
+n_mean(sigma = 3.5, E = 0.5)   # menaksir rata-rata waktu layar +- 0,5 jam
+```
+
+```{r}
+kable(data.frame(MoE = c("5%", "3%", "2%", "1%"),
+                 n_minimum = sapply(c(0.05, 0.03, 0.02, 0.01), n_prop)),
+      caption = "Ukuran sampel survei proporsi (p = 0,5; kepercayaan 95%)")
+```
+
+Survei nasional dengan *margin of error* sekitar ± 3% memerlukan sekitar 1.000–1.100 responden, **berapa pun ukuran populasinya** (asalkan populasi jauh lebih besar dari sampel). Memperkecil *margin of error* dari 2% ke 1% memerlukan sampel empat kali lipat.
+
+<div style="width: 85%; margin: 0 auto;">
+
+**Ukuran sampel tidak menyembuhkan bias.** Rumus di atas hanya mengendalikan galat acak. Jika metode sampling bias (Pertemuan 3), sampel sebesar apa pun tetap menghasilkan selang yang presisi di tempat yang salah.
+
+</div>
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Studi Kasus Komprehensif: Survei Adopsi QRIS UMKM
+
+**Konteks:** Dinas Koperasi ingin menaksir (1) proporsi UMKM kuliner yang menerima QRIS dan (2) rata-rata nilai transaksi QRIS harian per UMKM pengguna. Survei acak sederhana terhadap 250 UMKM dari daftar resmi menghasilkan data berikut.
+
+```{r}
+set.seed(2026)
+n_umkm <- 250
+terima_qris <- rbinom(n_umkm, 1, 0.62)
+nilai_trx   <- round(rlnorm(sum(terima_qris), meanlog = log(450000), sdlog = 0.6), -3)   # Rp/hari
+
+c(Jumlah_pengguna = sum(terima_qris))
+summary(nilai_trx)
+```
+
+### Langkah 1: Estimasi Proporsi
+
+```{r}
+p_hat_u <- mean(terima_qris)
+se_u    <- sqrt(p_hat_u * (1 - p_hat_u) / n_umkm)
+ci_u    <- p_hat_u + c(-1, 1) * qnorm(0.975) * se_u
+
+c(n_p = n_umkm * p_hat_u, n_1mp = n_umkm * (1 - p_hat_u))   # cek syarat
+round(c(p_hat = p_hat_u, SE = se_u, Bawah = ci_u[1], Atas = ci_u[2]), 4)
+```
+
+### Langkah 2: Estimasi Rata-rata Nilai Transaksi
+
+```{r}
+hist(nilai_trx / 1000, breaks = 25, col = "#4C72B0", border = "white",
+     main = "Nilai Transaksi QRIS Harian (UMKM pengguna)", xlab = "Ribu Rp per hari",
+     ylab = "Jumlah UMKM")
+```
+
+```{r}
+ci_trx <- t.test(nilai_trx)$conf.int
+round(c(n = length(nilai_trx), Mean = mean(nilai_trx), Median = median(nilai_trx),
+        SE = sd(nilai_trx) / sqrt(length(nilai_trx)), Bawah = ci_trx[1], Atas = ci_trx[2]))
+```
+
+### Langkah 3: Apakah CLT Dapat Diandalkan di Sini?
+
+Datanya **menjulur kanan**. Kita periksa dengan *bootstrap*: mengambil ulang sampel (dengan pengembalian) dari data kita sendiri untuk meniru distribusi sampling $\bar{x}$.
+
+```{r}
+set.seed(11)
+boot_mean <- replicate(5000, mean(sample(nilai_trx, replace = TRUE)))
+hist(boot_mean / 1000, breaks = 40, col = "#a1d99b", border = "white", freq = FALSE,
+     main = "Distribusi Bootstrap Rata-rata Nilai Transaksi", xlab = "Ribu Rp per hari")
+curve(dnorm(x, mean(nilai_trx) / 1000, sd(nilai_trx) / sqrt(length(nilai_trx)) / 1000),
+      add = TRUE, col = "firebrick", lwd = 2)
+```
+
+```{r}
+round(quantile(boot_mean, c(0.025, 0.975)))   # selang bootstrap persentil 95%
+```
+
+Distribusi *bootstrap* $\bar{x}$ hampir berbentuk lonceng dan selang *bootstrap* hampir sama dengan selang t. Dengan $n = 165$ pengguna, CLT bekerja baik meskipun data individunya menceng.
+
+### Langkah 4: Merencanakan Survei Lanjutan
+
+Dinas ingin survei tahun depan menghasilkan *margin of error* proporsi ± 3% dan rata-rata transaksi ± Rp 30.000 (kepercayaan 95%).
+
+```{r}
+c(n_untuk_proporsi = n_prop(E = 0.03, p = p_hat_u),
+  n_pengguna_untuk_mean = n_mean(sigma = sd(nilai_trx), E = 30000))
+```
+
+### Pertanyaan Diskusi dan Jawaban
+
+**1. Bagaimana melaporkan hasil proporsi?**
+
+"Diperkirakan `r round(p_hat_u * 100)`% UMKM kuliner telah menerima QRIS (CI 95%: `r round(ci_u[1] * 100, 1)`%–`r round(ci_u[2] * 100, 1)`%; n = 250)." Kalimat ini memuat *point estimate*, selang, tingkat kepercayaan, dan ukuran sampel.
+
+**2. Mengapa median transaksi jauh di bawah mean, dan mana yang dilaporkan?**
+
+Distribusinya menjulur kanan (segelintir UMKM besar). Untuk menggambarkan UMKM **tipikal**, median lebih tepat. Namun jika dinas ingin menaksir **total** nilai transaksi (mean $\times$ jumlah UMKM pengguna), yang dibutuhkan justru mean beserta selangnya.
+
+**3. Apakah selang 95% berarti 95% UMKM bertransaksi di rentang tersebut?**
+
+Tidak. Selang itu menaksir **rata-rata populasi**. Rentang nilai transaksi individu jauh lebih lebar – lihat histogram.
+
+**4. Mengapa ukuran sampel untuk proporsi tidak dihitung dengan p = 0,5?**
+
+Kita sudah memiliki taksiran $\hat{p} \approx$ `r round(p_hat_u, 2)` dari survei ini. Memakai $p = 0{,}5$ lebih aman (menghasilkan $n$ terbesar), tetapi dengan informasi sebelumnya kita dapat menghemat biaya. Perbedaannya kecil karena $p(1-p)$ hampir datar di sekitar 0,5.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Latihan Mandiri
+
+### Latihan Utama: Berat Kemasan Kopi Bubuk
+
+**Konteks:** Mesin pengisi kopi bubuk dirancang mengisi kemasan dengan rata-rata 250 gram. Dari data historis, simpangan baku pengisian $\sigma = 6$ gram. Petugas QC mengambil sampel acak 36 kemasan.
+
+```{r}
+set.seed(99)
+berat <- round(rnorm(36, mean = 248.5, sd = 6), 1)
+summary(berat)
+```
+
+#### Tugas 1: Hitung SE dan jelaskan maknanya
+
+```{r}
+sigma_k <- 6; n_k <- length(berat)
+sigma_k / sqrt(n_k)
+```
+
+**Jawaban:** SE = 6/6 = 1 gram. Rata-rata dari 36 kemasan biasanya meleset sekitar 1 gram dari rata-rata sebenarnya – jauh lebih kecil daripada variasi berat antarkemasan (6 gram).
+
+#### Tugas 2: Jika mesin bekerja benar ($\mu = 250$), berapa peluang rata-rata 36 kemasan kurang dari 248 gram?
+
+```{r}
+pnorm(248, mean = 250, sd = sigma_k / sqrt(n_k))
+```
+
+**Jawaban:** $z = (248 - 250)/1 = -2$, sehingga peluangnya sekitar `r round(pnorm(248, mean = 250, sd = sigma_k / sqrt(n_k)), 4)`. Kejadian ini **jarang** jika mesin bekerja benar – gagasan yang menjadi dasar uji hipotesis di Pertemuan 10.
+
+#### Tugas 3: Hitung CI 95% untuk rata-rata berat ($\sigma$ diketahui)
+
+```{r}
+ci_z <- mean(berat) + c(-1, 1) * qnorm(0.975) * sigma_k / sqrt(n_k)
+round(c(x_bar = mean(berat), Bawah = ci_z[1], Atas = ci_z[2]), 2)
+```
+
+#### Tugas 4: Hitung CI 95% jika $\sigma$ dianggap tidak diketahui (t)
+
+```{r}
+round(t.test(berat)$conf.int, 2)
+round(c(s = sd(berat), t_kritis = qt(0.975, 35), z_kritis = qnorm(0.975)), 3)
+```
+
+#### Tugas 5: Tafsirkan hasilnya
+
+**Jawaban:** Selang z dan selang t sangat mirip karena $n = 36$ cukup besar (t kritis hanya sedikit di atas 1,96) dan $s$ dekat dengan $\sigma$. Jika nilai 250 tidak berada di dalam selang, data memberi indikasi bahwa rata-rata pengisian mesin berbeda dari target – yang dapat dikonfirmasi dengan uji hipotesis. Hasil sampel ini: 250 berada **di luar** selang z.
+
+#### Tugas 6 (Tantangan): Ukuran sampel
+
+Berapa kemasan yang harus diambil agar *margin of error* CI 95% hanya ± 1 gram? Dan ± 0,5 gram?
+
+```{r}
+c(MoE_1 = n_mean(sigma = 6, E = 1), MoE_0.5 = n_mean(sigma = 6, E = 0.5))
+```
+
+**Jawaban:** 139 kemasan untuk ± 1 gram dan 554 kemasan untuk ± 0,5 gram – membagi dua *margin of error* membutuhkan sampel empat kali lipat.
+
+### Latihan Tambahan (Self-Check)
+
+Kerjakan soal-soal berikut secara mandiri sebelum melihat kunci jawaban pada komentar kode.
+
+**Soal A.** Waktu tunggu layanan pelanggan berdistribusi menjulur kanan dengan $\mu = 8$ menit dan $\sigma = 6$ menit. Untuk sampel acak 64 panggilan, tentukan mean, SE, dan bentuk distribusi sampling $\bar{x}$, lalu hitung $P(\bar{x} > 9)$.
+
+```{r}
+# Kunci jawaban:
+# Mean = 8; SE = 6 / sqrt(64) = 0.75; bentuk mendekati normal (CLT, n = 64)
+1 - pnorm(9, mean = 8, sd = 0.75)   # z = 1.33 -> sekitar 0.0912
+```
+
+**Soal B.** Survei 1.200 pemilih menunjukkan 54% mendukung sebuah kebijakan. Hitung CI 95% dan *margin of error*-nya.
+
+```{r}
+# Kunci jawaban:
+p <- 0.54; n <- 1200
+moe <- qnorm(0.975) * sqrt(p * (1 - p) / n)   # 0.0282 -> +- 2.8 poin persentase
+p + c(-1, 1) * moe                            # 0.512 sampai 0.568
+```
+
+**Soal C.** Sepuluh pengukuran pH air limbah: 6,8; 7,1; 6,9; 7,4; 7,0; 6,7; 7,2; 7,3; 6,9; 7,1. Hitung CI 95% untuk rata-rata pH secara manual dengan distribusi t lalu periksa dengan `t.test()`.
+
+```{r}
+ph <- c(6.8, 7.1, 6.9, 7.4, 7.0, 6.7, 7.2, 7.3, 6.9, 7.1)
+# Kunci jawaban:
+# x-bar = 7.04; s = 0.2171; SE = 0.0687; t(0.975, 9) = 2.262; MoE = 0.155
+mean(ph) + c(-1, 1) * qt(0.975, 9) * sd(ph) / sqrt(10)   # 6.885 sampai 7.195
+t.test(ph)$conf.int
+```
+
+**Soal D.** Sebuah media menulis: "Dengan CI 95% [62%, 68%], berarti 95% warga memiliki tingkat kepuasan antara 62% dan 68%." Perbaiki tafsiran ini.
+
+```{r}
+# Kunci jawaban:
+# Tafsiran keliru. Yang benar: "Kami 95% yakin bahwa proporsi warga yang puas di seluruh
+# populasi berada antara 62% dan 68%." CI menaksir PARAMETER populasi (proporsi yang puas),
+# bukan rentang nilai individu.
+```
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Kesalahan Umum dalam Sampling Distribution dan Estimasi
+
+1. **Menyamakan distribusi sampel dengan distribusi sampling** – yang pertama berisi data individu, yang kedua berisi statistik dari banyak sampel.
+2. **Mengira CLT membuat data menjadi normal** – CLT berbicara tentang distribusi **rata-rata**, bukan data individu.
+3. **Menganggap $n \geq 30$ selalu cukup** – data yang sangat menceng atau beroutlier bisa membutuhkan lebih.
+4. **Menyamakan SD dan SE** – SD mengukur keragaman individu; SE mengukur ketepatan taksiran.
+5. **Memakai z padahal $\sigma$ tidak diketahui dan $n$ kecil** – gunakan distribusi t.
+6. **Menafsirkan CI sebagai peluang parameter berada di dalam selang tertentu**, atau sebagai rentang nilai individu.
+7. **Membulatkan ukuran sampel ke bawah** – selalu bulatkan **ke atas**.
+8. **Mengira ukuran populasi menentukan ukuran sampel** – untuk populasi besar, yang menentukan adalah *margin of error*, tingkat kepercayaan, dan variabilitas.
+9. **Mengira sampel besar menghilangkan bias** – ukuran sampel hanya mengecilkan galat acak.
+10. **Memakai pendekatan normal untuk proporsi** saat $n\hat{p}$ atau $n(1-\hat{p})$ kurang dari 10.
+11. **Melaporkan point estimate tanpa selang atau $n$** – pembaca tidak dapat menilai ketepatannya.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Cheat Sheet: Fungsi R yang Digunakan
+
+| Fungsi | Kegunaan |
+|---|---|
+| `sample(x, n)` / `sample(x, replace = TRUE)` | Sampel acak / sampel *bootstrap* |
+| `replicate(B, ekspresi)` | Simulasi distribusi sampling |
+| `rgamma()`, `rexp()`, `runif()`, `rnorm()`, `rbinom()`, `rlnorm()` | Membangkitkan populasi/data simulasi |
+| `pnorm(q, mean, sd)` | Peluang kumulatif normal $P(X \leq q)$ |
+| `qnorm(p)` | Nilai kritis z (misalnya `qnorm(0.975)` = 1,96) |
+| `dnorm(x, mean, sd)` | Kepadatan normal (untuk menggambar kurva) |
+| `qt(p, df)`, `pt(q, df)`, `dt(x, df)` | Nilai kritis, peluang, dan kepadatan distribusi t |
+| `t.test(x, conf.level = 0.95)$conf.int` | Selang kepercayaan t untuk mean |
+| `curve(f(x), add = TRUE)` | Menambahkan kurva teoretis pada histogram |
+| `segments(x0, y0, x1, y1)` | Menggambar selang kepercayaan sebagai garis |
+| `ceiling(x)` | Membulatkan ke atas (ukuran sampel) |
+| `outer(a, b, f)` | Tabel nilai untuk kombinasi dua parameter |
+| `quantile(boot, c(0.025, 0.975))` | Selang *bootstrap* persentil |
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Glosarium Istilah
+
+| Istilah | Definisi Singkat |
+|:--------|:-----------------|
+| **Statistika Inferensial** | Menarik kesimpulan tentang populasi dari sampel |
+| **Distribusi Sampling** | Distribusi sebuah statistik dari semua kemungkinan sampel berukuran $n$ |
+| **Penaksir Tak Bias** | Statistik yang rata-rata distribusi samplingnya sama dengan parameter |
+| **Central Limit Theorem** | Distribusi $\bar{x}$ mendekati normal untuk $n$ besar, apa pun bentuk populasinya |
+| **Standard Error (SE)** | Simpangan baku distribusi sampling sebuah statistik |
+| **Koreksi Populasi Terhingga** | Faktor $\sqrt{(N-n)/(N-1)}$ bila sampel lebih dari sekitar 5% populasi |
+| **Point Estimate** | Satu nilai yang menaksir parameter |
+| **Confidence Interval** | Rentang nilai yang masuk akal bagi parameter dengan tingkat kepercayaan tertentu |
+| **Tingkat Kepercayaan** | Persentase selang (dari pengulangan prosedur) yang memuat parameter |
+| **Margin of Error** | Nilai kritis $\times$ SE; setengah lebar selang |
+| **Nilai Kritis** | Nilai dari distribusi z atau t yang menentukan lebar selang |
+| **Distribusi t** | Distribusi berekor tebal yang dipakai bila $\sigma$ ditaksir dengan $s$ |
+| **Derajat Bebas (df)** | Parameter distribusi t; $n-1$ untuk satu mean |
+| **Bootstrap** | Pengambilan sampel ulang dengan pengembalian dari data untuk meniru distribusi sampling |
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Rangkuman dan Kesimpulan
+<div style="width: 85%; margin: 0 auto;">
+
+<p>
+1. <strong>Distribusi sampling</strong> menggambarkan bagaimana sebuah statistik bervariasi dari sampel ke sampel; ia adalah fondasi seluruh statistika inferensial.
+</p>
+<p>
+2. <strong>$\bar{x}$ dan $\hat{p}$ adalah penaksir tak bias</strong> dengan SE masing-masing $\sigma/\sqrt{n}$ dan $\sqrt{p(1-p)/n}$.
+</p>
+<p>
+3. <strong>CLT</strong> menjamin distribusi $\bar{x}$ mendekati normal untuk $n$ cukup besar, apa pun bentuk populasinya; makin menceng populasi, makin besar $n$ yang dibutuhkan.
+</p>
+<p>
+4. <strong>SE bukan SD:</strong> SE mengecil sebanding $1/\sqrt{n}$ – presisi dua kali lipat membutuhkan sampel empat kali lipat.
+</p>
+<p>
+5. <strong>Selang kepercayaan</strong> = <em>point estimate</em> $\pm$ nilai kritis $\times$ SE. Gunakan z bila $\sigma$ diketahui, t bila $\sigma$ ditaksir. Kepercayaan 95% adalah sifat <strong>prosedur</strong>, bukan peluang untuk satu selang.
+</p>
+<p>
+6. <strong>Ukuran sampel</strong> dapat direncanakan dari <em>margin of error</em> yang diinginkan – tetapi tidak dapat menyembuhkan bias sampling.
+</p>
+</div>
+<p>
+<strong>Jembatan ke sesi berikutnya:</strong> Tugas 2 latihan tadi bertanya, "jika mesin bekerja benar, seberapa jarang hasil seperti ini?" Pertanyaan itulah inti <strong>uji hipotesis</strong> di Pertemuan 10: $H_0$, $H_1$, tingkat signifikansi, <em>p-value</em>, dan kesalahan Tipe I dan II.
+</p>
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Referensi Pendukung
+<div style="width: 85%; margin: 0 auto;">
+
+<p>
+Materi ini merangkum topik distribusi sampling dan estimasi (<em>sampling distributions and confidence intervals</em>) yang umum dibahas pada buku teks pengantar statistika bisnis/data science. Mahasiswa disarankan melengkapi pemahaman dengan merujuk pada:
+</p>
+
+<ul>
+  <li>Modul/slide perkuliahan "Introduction to Statistics (SDT-1102)" – Pertemuan 9: Sampling Distribution dan Estimasi.</li>
+  <li>Buku teks pengantar statistika pada bab <em>Sampling Distributions</em> dan <em>Confidence Interval Estimation</em>.</li>
+  <li>Efron, B., &amp; Tibshirani, R. J. (1993). <em>An Introduction to the Bootstrap</em>. Chapman &amp; Hall.</li>
+  <li>Dokumentasi resmi R: <code>?pnorm</code>, <code>?qnorm</code>, <code>?qt</code>, <code>?t.test</code>, <code>?replicate</code> (dapat diakses langsung di R/RStudio).</li>
+</ul>
+
+</div>
+

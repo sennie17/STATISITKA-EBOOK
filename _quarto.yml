@@ -3,22 +3,20 @@ project:
   output-dir: docs
   resources:
     - .nojekyll
-    - images/author/Bakti.png
+    - images/author/Jesen.png
 
 book:
-  title: "Quarto Template"
-  author: "Bakti Siregar, M.Sc."
+  title: "PRAKTIKUM PENGANTAR STATISTIKA"
+  author: "Jesen"
   date: today
-  description: "Deskripsi singkat tentang buku"
-  cover-image: images/Cover.png
-  repo-url: https://github.com/pakardata1/ebook-template-quarto.git
+  description: "Buku praktikum pengantar statistika yang memuat kumpulan materi dan penggunaan data menggunakan R, mulai dari statistika deskriptif hingga dasar-dasar inferensi."
+  repo-url: https://github.com/sennie17/STATISITKA-EBOOK.git
   repo-actions: [edit, issue]
   downloads: [pdf]
   chapters:
     - index.qmd
-    - chapters/bab-1.qmd
-    - chapters/bab-2.qmd
-    - chapters/bab-3.qmd
+    - chapters/bab-9.qmd
+    - chapters/bab-10.qmd
     - references/referensi.qmd
 
 bibliography:
@@ -40,7 +38,7 @@ format:
     link-external-newwindow: true
     include-in-header:
       text: |
-        <meta name="author" content="Bakti Siregar, M.Sc.">
+        <meta name="author" content="Jesen">
   pdf:
     documentclass: book
     pdf-engine: xelatex
@@ -49,7 +47,7 @@ format:
     number-sections: true
     toc: true
   epub:
-    cover-image: images/Cover.png
+    cover-image: images/Cover1.png
 
 execute:
   freeze: auto
@@ -58,3 +56,5 @@ execute:
   message: false
 
 lang: id
+language:
+  search-text-placeholder: "Cari di buku…"

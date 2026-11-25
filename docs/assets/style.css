@@ -1,168 +1,337 @@
-p.caption {
-  color: #777;
-  margin-top: 10px;
-}
-p code {
-  white-space: inherit;
-}
-pre {
-  word-break: normal;
-  word-wrap: normal;
-}
-pre code {
-  white-space: inherit;
+/* ====== Tema Navy & Emas - Praktikum Pengantar Statistika ====== */
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&family=Space+Grotesk:wght@500;700&display=swap");
+
+:root {
+  --navy: #0F2A43;
+  --biru: #1F4E79;
+  --emas: #F2B84B;
+  --krem: #F4F1E8;
+  --teks: #1B2733;
+  --garis: #E4DFD0;
 }
 
-
-/* TOC */
-
-.book .book-summary {
-    position: absolute;
-    top: 0;
-    left: -300px;
-    bottom: 0;
-    z-index: 1;
-    width: 300px;
-    color: #FFFFFF;
-    background: #315479;
-    border-right: 1px solid rgba(0,0,0,.15);
-}
-
-.book .book-summary ul.summary li a, .book .book-summary ul.summary li span {
-    margin: 5px 5px 5px 5px;
-    display: block;
-    padding: 10px 20px 10px 20px;
-    color: #FFFFFF;
-    background: 0 0;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
-    position: relative;
-}
-
-.book .book-summary ul.summary li.active>a {
-    padding-left: 5px;
-    border-radius: 10px 10px 10px 10px;
-    color: #FFFFFF;
-    font-weight: bold;
-    background: rgba(243,242,242,.35);
-    text-decoration: none;
-}
-
-.book .book-summary ul.summary li a:hover {
-    padding-left: 5px;
-    border-radius: 10px 10px 10px 10px;
-    font-weight: bold;
-    color: #FFFFFF;
-    background: rgba(243,242,242,.40);
-    text-decoration: none;
-}
-
-/* Tables */
-
-td, tr, th {
-    color:white !important;
-    background-color: transparent !important;
-}
-
-table {
-    border-radius: 10px 10px 10px 10px;
-    color:white !important;
-    background-color: rgb(78, 92, 104) !important;
-    padding: 6px 13px;
-    border: 1px solid #f0f0f0;
-}
-
-
-caption {
-    color:black;
-}
-
-
-/* source code copy button */
-.copy {
-  width: inherit;
-  background-color: #e2e2e2 ;
-  border: none;
-  border-radius: 2px;
-  float: right;
-  font-size: 60%;
-  padding: 4px 4px 4px 4px;
-  margin-left:5px;
-}
-
-.download {
-  width: inherit;
-  background-color: #e2e2e2 ;
-  border: none;
-  border-radius: 2px;
-  float: right;
-  font-size: 60%;
-  padding: 4px 4px 4px 4px;
-}
-
-.book .book-header.fixed {
-  font-family: 'Pacifico', sans-serif;
-  background-color:#F2F2F2;
-}
-
-.title {
-  font-family: 'Pacifico', sans-serif;  
-}
-
-.book .book-summary {
-  font-family:'PT Sans', sans-serif;
-}
-
-.book.font-family-0 {
-    font-family: 'Source Sans Pro', arial, sans-serif;
-}
-
-/*
-.book .book-body .page-wrapper .page-inner {
-  max-width: 980px !important;
-}
-*/
-
-
+/* ---- Dasar halaman ---- */
 body {
-  text-align: justify
+  font-family: "Inter", system-ui, sans-serif;
+  color: var(--teks);
+  background: var(--krem);
+}
+#quarto-content, main.content { background: transparent; }
+main.content { line-height: 1.75; font-size: 1.05rem; }
+
+/* ---- Judul ---- */
+h1, h2, h3, h4, .title {
+  font-family: "Space Grotesk", "Inter", sans-serif;
+  color: var(--navy);
+  letter-spacing: -0.3px;
+}
+h1.title { font-weight: 700; font-size: 2.6rem; line-height: 1.1; }
+h2 {
+  font-weight: 700;
+  border-bottom: none;
+  padding-bottom: 0.4rem;
+  position: relative;
+}
+h2::after {
+  content: "";
+  display: block;
+  width: 52px;
+  height: 4px;
+  border-radius: 2px;
+  background: var(--emas);
+  margin-top: 8px;
+}
+h3 { color: var(--biru); font-weight: 700; }
+.header-section-number { color: var(--emas); margin-right: 6px; }
+
+/* ---- Sidebar kiri ---- */
+#quarto-sidebar { background-color: var(--navy); }
+#quarto-sidebar .sidebar-title,
+#quarto-sidebar .sidebar-title a,
+#quarto-sidebar a,
+#quarto-sidebar .menu-text {
+  color: #C9D5E1;
+}
+#quarto-sidebar .sidebar-title {
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #FFFFFF;
+}
+#quarto-sidebar .sidebar-item a {
+  border-radius: 10px;
+  padding: 8px 12px;
+  transition: background 0.15s;
+}
+#quarto-sidebar .sidebar-item a:hover {
+  background: rgba(255, 255, 255, 0.10);
+  color: #FFFFFF;
+}
+#quarto-sidebar .sidebar-link.active,
+#quarto-sidebar .sidebar-link.active .menu-text {
+  color: #FFFFFF !important;
+  font-weight: 600;
+  background: rgba(255, 255, 255, 0.12);
+}
+#quarto-sidebar .sidebar-link.active .menu-text { background: transparent; }
+#quarto-sidebar .sidebar-item-section .sidebar-link.active { color: var(--emas) !important; }
+#quarto-sidebar .sidebar-tools-main a,
+#quarto-sidebar .sidebar-tools-main .bi { color: #FFFFFF; }
+#quarto-sidebar .quarto-search-button,
+#quarto-sidebar .aa-Autocomplete .aa-Form {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.22);
+  color: #D6E0EA;
 }
 
+/* ---- Daftar isi kanan ---- */
+#TOC a, nav[role="doc-toc"] a { color: #4A5A6A; }
+#TOC .active, nav[role="doc-toc"] .active {
+  color: var(--navy) !important;
+  font-weight: 600;
+  border-left: 3px solid var(--emas) !important;
+}
+#toc-title, .toc-title {
+  letter-spacing: 2px;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  color: #5B6B7A;
+}
+
+/* ---- Tabel (menggantikan tabel abu-abu gelap) ---- */
+table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  border: 1px solid var(--garis);
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 0.95rem;
+  background: #FFFFFF;
+  margin: 1.2rem 0;
+}
+thead tr, thead th {
+  background: var(--navy) !important;
+  color: #F4F1EA !important;
+  font-weight: 600;
+  border-bottom: none !important;
+}
+th, td {
+  padding: 0.75rem 1rem !important;
+  border-top: 1px solid var(--garis) !important;
+  color: var(--teks) !important;
+  background-color: transparent !important;
+}
+thead th { color: #F4F1EA !important; border-top: none !important; }
+tbody tr:nth-child(even) td { background-color: #F7F4EA !important; }
+caption, table caption { color: #5B6B7A !important; }
+p.caption, .figure-caption, figcaption { color: #5B6B7A; font-size: 0.9rem; }
+
+/* ---- Blok kode ---- */
+div.sourceCode, pre.sourceCode {
+  background: var(--navy);
+  border: none;
+  border-radius: 12px;
+}
+pre, pre code { font-family: "JetBrains Mono", ui-monospace, monospace; }
+/* ---- Warna kode di latar navy (menimpa warna bawaan Quarto) ---- */
+#quarto-content div.sourceCode pre code span            { color: #E6EDF4; }  /* teks biasa, nama variabel, kurung */
+#quarto-content div.sourceCode pre code span.va         { color: #FFFFFF; }  /* nama variabel: satu_sampel, populasi */
+#quarto-content div.sourceCode pre code span.fu         { color: #F2B84B; }  /* nama fungsi: sample, mean */
+#quarto-content div.sourceCode pre code span.dv,
+#quarto-content div.sourceCode pre code span.fl,
+#quarto-content div.sourceCode pre code span.bn         { color: #FF9E80; }  /* angka */
+#quarto-content div.sourceCode pre code span.st,
+#quarto-content div.sourceCode pre code span.ss,
+#quarto-content div.sourceCode pre code span.vs,
+#quarto-content div.sourceCode pre code span.ch,
+#quarto-content div.sourceCode pre code span.sc         { color: #7FD1C4; }  /* teks dalam tanda kutip */
+#quarto-content div.sourceCode pre code span.kw,
+#quarto-content div.sourceCode pre code span.cf,
+#quarto-content div.sourceCode pre code span.op,
+#quarto-content div.sourceCode pre code span.ot         { color: #9DB8FF; }  /* <-, =, if, for */
+#quarto-content div.sourceCode pre code span.co,
+#quarto-content div.sourceCode pre code span.do,
+#quarto-content div.sourceCode pre code span.an         { color: #8FA3B7; font-style: italic; }  /* komentar */
+#quarto-content div.sourceCode pre code span.at,
+#quarto-content div.sourceCode pre code span.dt,
+#quarto-content div.sourceCode pre code span.cn,
+#quarto-content div.sourceCode pre code span.bu,
+#quarto-content div.sourceCode pre code span.im         { color: #C9B8FF; }  /* argumen, konstanta */
+#quarto-content div.sourceCode pre code span.er,
+#quarto-content div.sourceCode pre code span.al         { color: #FF6B6B; }  /* error */
+/* hasil output R */
+div.cell-output pre:not(.sourceCode) {
+  background: #0B2036;
+  color: #B9C7D6;
+  border: none;
+  border-radius: 12px;
+}
+p code, li code {
+  background: #E9EEF4;
+  color: var(--biru);
+  border-radius: 6px;
+  padding: 1px 6px;
+}
+p code { white-space: inherit; }
+pre { word-break: normal; word-wrap: normal; }
+pre code { white-space: inherit; }
+
+/* ---- Kutipan jadi kotak "Ingat" ---- */
+blockquote {
+  background: #FFF6DD;
+  border-left: 5px solid var(--emas);
+  border-radius: 0 12px 12px 0;
+  padding: 14px 20px;
+  margin: 1.4rem 0;
+  color: var(--teks);
+}
+blockquote p:last-child { margin-bottom: 0; }
+
+/* ---- Gambar ---- */
+.quarto-figure img, figure img {
+  border: 1px solid var(--garis);
+  border-radius: 12px;
+  background: #FBFAF5;
+  padding: 8px;
+}
+
+/* ---- Pemisah ---- */
+hr { border: none; height: 1px; background: var(--garis); opacity: 1; width: 85%; margin: 2rem auto; }
+
+/* ---- Tombol bab sebelumnya / selanjutnya ---- */
+.nav-page .pagination .page-link {
+  border-radius: 14px;
+  border: 1px solid var(--garis);
+  background: #FFFFFF;
+  color: var(--navy);
+}
+.nav-page .pagination .page-link:hover { border-color: var(--emas); }
+
+/* ---- Link ---- */
+a { color: var(--biru); }
+a:hover { color: var(--navy); }
+
+/* ---- Kartu bab di halaman depan (dipakai di index.qmd) ---- */
+.kartu-bab {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin: 1.2rem 0;
+}
+.kartu-bab a {
+  flex: 1 1 200px;
+  display: block;
+  padding: 22px;
+  border-radius: 16px;
+  background: #FFFFFF;
+  color: var(--teks);
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgba(15, 42, 67, 0.06), 0 6px 18px rgba(15, 42, 67, 0.06);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.kartu-bab a:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 26px rgba(15, 42, 67, 0.14);
+}
+.kartu-bab .no {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: var(--navy);
+  color: var(--emas);
+  display: grid; place-items: center;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700; font-size: 1.1rem;
+}
+.kartu-bab .jdl { margin-top: 14px; font-weight: 600; font-size: 1.05rem; line-height: 1.35; }
+.kartu-bab .ket { margin-top: 6px; font-size: 0.88rem; line-height: 1.55; color: #5B6B7A; }
+.kartu-bab .buka { margin-top: 12px; font-size: 0.88rem; font-weight: 600; color: var(--biru); }
+
+/* ---- Sidebar: judul atas, tombol bawah ---- */
+#quarto-sidebar {
+  display: flex;
+  flex-direction: column;
+}
+#quarto-sidebar .sidebar-header,
+#quarto-sidebar .sidebar-title { display: contents; }
+#quarto-sidebar .sidebar-title > a {
+  order: 0;
+  padding: 16px 20px 8px 20px;
+  font-size: 1.3rem;
+  line-height: 1.3;
+}
+#quarto-sidebar .mt-2.flex-shrink-0 { order: 1; padding: 0 12px; }
+#quarto-sidebar .sidebar-menu-container { order: 2; flex: 1 1 auto; }
+#quarto-sidebar .sidebar-tools-main {
+  order: 3;
+  display: flex;
+  gap: 8px;
+  padding: 16px 12px;
+  margin: 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+}
+#quarto-sidebar .sidebar-tools-main a {
+  flex: 1 1 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 12px;
+  color: #F4F1EA;
+}
+#quarto-sidebar .sidebar-tools-main a:hover { background: rgba(255, 255, 255, 0.10); }
+
+/* ---- Kolom search: teks terlihat ---- */
+#quarto-sidebar .aa-Form,
+#quarto-sidebar .aa-DetachedSearchButton {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+}
+#quarto-sidebar .aa-Input,
+#quarto-sidebar .aa-DetachedSearchButtonPlaceholder,
+#quarto-sidebar .aa-DetachedSearchButtonIcon,
+#quarto-sidebar .aa-SubmitIcon { color: #F4F1EA; }
+#quarto-sidebar .aa-Input::placeholder { color: #B9C7D6; opacity: 1; }
+
+/* ---- Foto bulat di sidebar ---- */
 #quarto-sidebar .sidebar-header::before {
   content: "";
   display: block;
+  order: -1;                       /* paksa foto tetap paling atas */
+  flex: 0 0 auto;
   width: 132px;
   aspect-ratio: 1;
-  margin: 1rem auto 1.5rem;
-  background: url("../images/author/Bakti.png") center 26% / cover no-repeat;
+  margin: 1.5rem auto 0.5rem;
+  background: url("../images/author/Jesen.png") center 26% / cover no-repeat;
   border: 4px solid #fff;
   border-radius: 50%;
-  outline: 2px solid #315479;
+  outline: 2px solid #F2B84B;      /* cincin emas, sebelumnya biru */
   outline-offset: 3px;
-  box-shadow: 0 0 0 7px rgba(49, 84, 121, 0.12), 0 10px 24px rgba(0, 40, 70, 0.2);
+  box-shadow: 0 0 0 7px rgba(242, 184, 75, 0.15), 0 10px 24px rgba(0, 0, 0, 0.3);
 }
 
+/* ---- Foto bulat di bagian Penulis ---- */
 #penulis .quarto-figure-right {
   float: right;
   width: clamp(150px, 24vw, 220px);
   margin: 0 0 1rem 1.5rem;
 }
-
-#penulis .quarto-figure-right figure {
-  margin: 0;
-}
+#penulis .quarto-figure-right figure { margin: 0; }
 
 #penulis .author-portrait {
   width: 100% !important;
   aspect-ratio: 1;
   object-fit: cover;
   object-position: center 26%;
-  border: 4px solid #fff;
-  border-radius: 50%;
-  outline: 2px solid #315479;
+  border: 4px solid #fff !important;
+  border-radius: 50% !important;
+  padding: 0 !important;            /* menimpa bingkai gambar umum */
+  background: none !important;
+  outline: 2px solid #F2B84B;
   outline-offset: 3px;
-  box-shadow: 0 0 0 7px rgba(49, 84, 121, 0.12), 0 10px 24px rgba(0, 40, 70, 0.2);
+  box-shadow: 0 0 0 7px rgba(242, 184, 75, 0.18), 0 10px 24px rgba(15, 42, 67, 0.2);
 }
 
 #penulis .quarto-figure-right figcaption {
@@ -178,24 +347,91 @@ body {
   }
 }
 
+/* ---- Teks paragraf rata kiri-kanan ---- */
+main.content p,
+main.content li {
+  text-align: justify;
+  hyphens: auto;            /* memotong kata panjang di ujung baris supaya jarak antarkata tidak renggang */
+}
+main.content figcaption,
+main.content table p,
+main.content .author-portrait + figcaption { text-align: center; }
+/* ---- Banner halaman depan ---- */
+body:has(.hero-buku) #title-block-header { display: none; }
 
-.nocopy {
-        -webkit-touch-callout: none;  /* iOS Safari */   
-	-webkit-user-select: none;    /* Chrome all / Safari all */
-	-khtml-user-select: none;     /* Konqueror */
-	-moz-user-select: none;       /* Firefox all */
-	-ms-user-select: none;        /* IE 10+ */
-	-o-user-select: none;
-	user-select: none;            /* Likely future */
+.hero-buku {
+  position: relative;
+  overflow: hidden;
+  border-radius: 20px;
+  padding: 44px 48px;
+  margin-bottom: 2rem;
+  background: linear-gradient(120deg, #0F2A43 0%, #1F4E79 100%);
+  color: #F4F1EA;
+  text-align: left;
+}
+.hero-buku svg {
+  position: absolute;
+  right: 24px; bottom: 0;
+  width: 460px; max-width: 55%;
+  opacity: 0.45;
+}
+.hero-buku > div { position: relative; }
+.hero-label {
+  display: flex; align-items: center; gap: 14px;
+  font-size: 0.8rem; font-weight: 600; letter-spacing: 3px; color: #F2B84B;
+}
+.hero-label span { width: 36px; height: 3px; background: #F2B84B; }
+.hero-judul {
+  margin-top: 20px;
+  font-family: "Space Grotesk", sans-serif;
+  font-weight: 700; font-size: 3.2rem; line-height: 1.05; letter-spacing: -1px;
+  color: #FFFFFF;
+}
+.hero-judul em { font-style: normal; color: #F2B84B; }
+.hero-sub { margin-top: 16px; font-size: 1.1rem; color: #D6E0EA; }
+.hero-meta { display: flex; flex-wrap: wrap; gap: 36px; margin-top: 28px; }
+.hero-meta small { display: block; font-size: 0.72rem; letter-spacing: 2px; color: #B9C7D6; }
+.hero-meta b { font-size: 1.05rem; font-weight: 600; }
+@media (max-width: 700px) {
+  .hero-buku { padding: 32px 24px; }
+  .hero-judul { font-size: 2.2rem; }
+  .hero-buku svg { display: none; }
 }
 
-/* NO SELECT + HIGHLIGHT COLOR */
-* {
-  user-select: none;
+/* ---- Judul sidebar seperti di desain ---- */
+#quarto-sidebar .sidebar-title > a {
+  text-align: center;
+  font-family: "Space Grotesk", sans-serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  line-height: 1.3;
+  color: #FFFFFF;
+  text-decoration: none;
+  padding: 8px 20px 4px 20px;
 }
-*::selection {
-  background: none;
+#quarto-sidebar .sidebar-title > a::after {
+  content: "Jesen · Sains Data · ITSB";
+  display: block;
+  margin-top: 8px;
+  font-family: "Inter", sans-serif;
+  font-size: 0.85rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  color: #B9C7D6;
 }
-*::-moz-selection {
-  background: none;
+
+/* ---- Titik emas pada bab yang aktif ---- */
+#quarto-sidebar .sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
+#quarto-sidebar .sidebar-link::before {
+  content: "";
+  flex: 0 0 8px;
+  width: 8px; height: 8px;
+  border-radius: 50%;
+}
+#quarto-sidebar .sidebar-link.active::before { background: #F2B84B; }
+#quarto-sidebar .chapter-number { color: #8FA3B7; }

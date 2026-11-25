@@ -12,3 +12,5 @@ _book/
 .Renviron
 
 /.quarto/
+
+**/*.quarto_ipynb

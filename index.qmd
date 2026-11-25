@@ -1,51 +1,76 @@
 ---
 # title: "Kata Pengantar"
-author: "Bakti Siregar, M.Sc."
-description: "Deskripsi Singkat"
+author: "Jesen"
+description: "Kumpulan Praktikum dan Materi Pengantar Statistika"
 ---
+
+```{=html}
+<div class="hero-buku">
+  <svg viewBox="0 0 480 240" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+    <g fill="rgba(255,255,255,0.14)">
+      <rect x="44" y="200" width="40" height="20" rx="3"/><rect x="88" y="168" width="40" height="52" rx="3"/>
+      <rect x="132" y="118" width="40" height="102" rx="3"/><rect x="176" y="67" width="40" height="153" rx="3"/>
+      <rect x="220" y="45" width="40" height="175" rx="3"/><rect x="264" y="67" width="40" height="153" rx="3"/>
+      <rect x="308" y="118" width="40" height="102" rx="3"/><rect x="352" y="168" width="40" height="52" rx="3"/>
+      <rect x="396" y="200" width="40" height="20" rx="3"/>
+    </g>
+    <path d="M0,216 C80,210 120,170 160,110 C190,66 215,30 240,30 C265,30 290,66 320,110 C360,170 400,210 480,216" fill="none" stroke="#F2B84B" stroke-width="4" stroke-linecap="round"/>
+  </svg>
+  <div class="hero-label"><span></span>BUKU PRAKTIKUM</div>
+  <div class="hero-judul">Praktikum Pengantar<br><em>Statistika</em></div>
+  <div class="hero-sub">Kumpulan Praktikum dan Materi Pengantar Statistika</div>
+  <div class="hero-meta">
+    <div><small>PENULIS</small><b>Jesen</b></div>
+    <div><small>DITERBITKAN</small><b>25 November 2026</b></div>
+  </div>
+</div>
+```
 
 # Kata Pengantar {.unnumbered}
 
-Dengan mengucap syukur kepada Tuhan Yang Maha Esa, saya sangat senang dapat mempersembahkan eBook **"Quarto Template"** kepada para pembaca dan pengguna. eBook ini disusun sebagai panduan praktis untuk membantu mahasiswa, dosen, peneliti, serta praktisi dalam memanfaatkan Quarto sebagai salah satu perangkat untuk menyusun, mengelola, dan menerbitkan dokumen secara profesional.
+::: {.cover-kata}
+![](images/Cover1.png)
+:::
 
-Quarto merupakan perangkat *open-source scientific and technical publishing* yang memungkinkan pengguna mengintegrasikan teks, kode pemrograman, hasil analisis, visualisasi data, serta berbagai elemen pendukung lainnya ke dalam satu dokumen. Dengan Quarto, proses penulisan dan publikasi dapat dilakukan secara lebih terstruktur, reproducible, dan efisien dalam berbagai format keluaran, seperti HTML, PDF, Microsoft Word, serta format publikasi lainnya.
+Puji syukur penulis panjatkan kepada Tuhan Yang Maha Esa atas eBook **"Praktikum Pengantar Statistika"** ini. Buku ini disusun sebagai kumpulan tugas praktikum yang penulis kerjakan selama mempelajari statistika, kemudian dirapikan dalam satu buku elektronik agar lebih mudah dibaca, dipelajari ulang, dan dibagikan.
 
-Contoh sitasi: tuliskan `[@xie2015]` untuk merujuk entri `xie2015` di `references/book.bib`. Pada hasil render, sitasinya tampil seperti ini [[@xie2015]](references/referensi.qmd#ref-xie2015).
+Statistika merupakan dasar penting bagi mahasiswa Sains Data dalam memahami data, mulai dari menyajikan, meringkas, hingga menarik kesimpulan darinya. Melalui praktikum, konsep-konsep yang awalnya terasa abstrak di kelas dapat dicoba langsung dengan bahasa pemrograman R. Setiap bab dalam buku ini memuat materi, latihan beserta langkah pengerjaannya.
 
-Melalui eBook ini, pembaca akan diperkenalkan pada penggunaan template Quarto, mulai dari pengenalan struktur proyek, pengaturan konfigurasi, penulisan dokumen menggunakan Markdown, integrasi kode pemrograman, pengelolaan referensi, hingga proses *rendering* menjadi dokumen yang siap digunakan dan dipublikasikan.
+Buku ini ditulis menggunakan Quarto, sehingga teks, kode, hasil analisis, dan visualisasi data berada dalam satu dokumen yang dapat dijalankan ulang. Dengan begitu, hasil yang ditampilkan dapat ditelusuri dan diperiksa kembali oleh pembaca.
 
-Materi disusun secara bertahap agar mudah dipahami dan dipraktikkan, termasuk oleh pengguna yang baru pertama kali mengenal Quarto. Template dan contoh yang disajikan diharapkan dapat menjadi referensi dalam mengembangkan berbagai kebutuhan dokumentasi akademik, laporan penelitian, modul pembelajaran, buku elektronik, maupun publikasi berbasis data.
+Penulis menyadari bahwa buku ini masih jauh dari sempurna. Sebagai mahasiswa yang masih dalam tahap belajar, penulis mungkin melakukan kekeliruan dalam penjelasan maupun penulisan kode. Karena itu, kritik dan saran dari pembaca sangat penulis harapkan untuk perbaikan ke depan.
 
-Saya berharap eBook ini dapat memberikan manfaat nyata dalam mendukung peningkatan literasi digital, produktivitas akademik, dan penerapan praktik penulisan ilmiah yang modern. Lebih dari sekadar panduan teknis, eBook ini diharapkan dapat mendorong pembaca untuk mengeksplorasi berbagai kemampuan Quarto dan mengembangkan template sesuai dengan kebutuhan masing-masing.
+Penulis mengucapkan terima kasih kepada Mr. Bakti Siregar, M.Sc. atas bimbingan selama perkuliahan dan praktikum, serta kepada teman-teman yang telah membantu dan memberi semangat. Semoga buku ini bermanfaat bagi pembaca yang sedang mempelajari statistika.
 
-Saya menyadari bahwa eBook ini masih memiliki ruang untuk penyempurnaan. Oleh karena itu, kritik, saran, dan masukan dari para pembaca sangat diharapkan sebagai bahan evaluasi untuk pengembangan edisi berikutnya.
 
-Akhir kata, semoga eBook ini dapat menjadi referensi yang bermanfaat dan memberikan kontribusi positif bagi dunia pendidikan, penelitian, dan pengembangan ilmu pengetahuan.
-
-**Bakti Siregar, M.Sc.**  
+**Jesen**
 Penulis
 
 
-## Penulis 
+## Penulis
 
-![Foto Bakti Siregar, M.Sc.](images/author/Bakti.png){.author-portrait width=1.5in fig-align="right" fig-pos="H"}
+![Jesen](images/author/Jesen.png){.author-portrait width=1.5in fig-align="right" fig-pos="H"}
 
-**[Bakti Siregar, M.Sc., CDS](https://www.linkedin.com/in/dsciencelabs/)** bekerja sebagai Dosen di Prodi Sains Data Institut Teknologi Sains Bandung. Beliau adalah meraih gelar Magister-nya dari Departemen Matematika Terapan (Applied Mathematics) National Sun Yat Sen University, Taiwan. Selain mengajar beliau juga pernah bekerja sebagai **Data Scientist Freelance** di perusahaan-perusahaan ternama seperti [JNE](https://www.jne.co.id/id/beranda), [Samora Group](https://www.samoragroup.co.id/home/en), [Pertamina](https://www.pertamina.com/), dan saat ini masih aktif sebagai **Data Scientist Freelance** di [PT. Green City Traffic](PT. Green City Traffic). Beliau memiliki antusiasme khusus dalam mengerjakan proyek (mengajar) Big Data Analytics, Machine Learning, Optimisasi, dan Analisis Time Series di bidang keuangan dan investasi. Keahlian utama yang dimilikinya adalah bahasa pemrograman Statistik seperti R Studio dan Python. Beliau juga sudah terbiasa dalam mengaplikasikan sistem basis data MySQL/NoSQL untuk manajemen data, serta mahir dalam menggunakan tools Big Data seperti Spark dan Hadoop. Beberapa project beliau dapat dilihat di link berikut: [Rpubs](https://rpubs.com/dsciencelabs), [Github](https://github.com/dsciencelabs), [Website](https://dsciencelabs.github.io/web/index.html), dan [Kaggle](https://www.kaggle.com/baktisiregar/code). 
+**[Jesen](https://www.linkedin.com/in/jesenn)** adalah mahasiswa S1 Program Studi Sains Data di Institut Teknologi Sains Bandung (ITSB). Saat ini ia sedang aktif mempelajari Python, statistika, R, analisis data, dan *machine learning* sebagai fondasi untuk memahami bagaimana data diolah menjadi informasi yang bermanfaat.
 
+Ia tertarik pada kecerdasan buatan (*Artificial Intelligence*) dan penyelesaian masalah berbasis data, terutama bagaimana data dapat dimanfaatkan untuk mendukung pengambilan keputusan. Dalam proses belajarnya, ia terbiasa mempraktikkan langsung konsep yang dipelajari di kelas melalui latihan dan tugas praktikum, termasuk yang dikumpulkan dalam buku ini.
 
-## Ucapan Terima Kasih 
-
-Proses penulisan Tempate eBook ini tidak terlepas dari dukungan berbagai pihak. Saya ingin mengucapkan terima kasih kepada:
-
-* **Keluarga** yang selalu memberikan dukungan moral dan semangat tanpa henti.
-* **Rekan-rekan dan Kolaborator** yang telah memberikan masukan, saran, dan kritik yang konstruktif.
-* Institusi dan Organisasi, Khususnya **[ITSB](https://itsb.ac.id/)** yang telah menyediakan sumber daya dan fasilitas yang diperlukan selama proses penelitian dan penulisan.
-
-Saya berharap Template eBook ini dapat menjadi referensi yang bermanfaat dan memberikan inspirasi serta pengetahuan baru bagi pembaca. Semoga Ebook ini dapat memenuhi ekspektasi dan kebutuhan para pembaca dan semoga ilmu yang disampaikan dapat bermanfaat bagi semua.
+Buku **"Praktikum Pengantar Statistika"** ini menjadi salah satu langkah awal dalam mendokumentasikan perjalanan belajarnya. Sebagai mahasiswa yang masih terus belajar, ia terbuka terhadap masukan dan koreksi dari pembaca. Repositori buku ini dapat dilihat di [GitHub](https://github.com/sennie17).
 
 
-## Masukan & Saran 
+## Ucapan Terima Kasih
 
-Semua masukan dan tanggapan Anda sangat berarti bagi kami untuk memperbaiki Ebook Quarto Template ini kedepannya. Bagi para pembaca/pengguna yang ingin menyampaikan masukan dan tanggapan, dipersilahkan melalui kontak dibawah ini!
+Penyusunan eBook ini tidak terlepas dari bantuan dan dukungan berbagai pihak. Dengan penuh rasa hormat, saya ingin mengucapkan terima kasih kepada:
 
-**Email:** dsciencelabs@outlook.com
+* **Mr. Bakti Siregar, M.Sc.**, dosen pengampu mata kuliah Pengantar Statistika di [Institut Teknologi Sains Bandung](https://itsb.ac.id/), atas ilmu, bimbingan, dan kesabaran selama perkuliahan dan praktikum. Tanpa arahan beliau, buku ini tidak akan dapat tersusun.
+* **Para pembaca dan pengguna buku ini**, yang telah meluangkan waktu untuk membaca dan mempelajarinya. Kehadiran dan masukan Anda menjadi semangat bagi saya untuk terus belajar dan memperbaiki tulisan ini.
+
+Saya berharap eBook ini dapat bermanfaat bagi siapa pun yang sedang mempelajari statistika, khususnya sesama mahasiswa yang baru mulai mengenal analisis data. Semoga ilmu yang tertuang di dalamnya dapat memberi manfaat bagi kita semua.
+
+## Masukan & Saran
+
+Buku ini disusun oleh seorang mahasiswa yang masih terus belajar, sehingga kritik, koreksi, dan saran dari pembaca sangat berarti untuk perbaikan ke depan. Jika Anda menemukan kekeliruan atau memiliki usulan, silakan sampaikan melalui kontak berikut:
+
+**Email:** [jesentriago08@gmail.com](mailto:jesentriago08@gmail.com)
+**LinkedIn:** [Jesen](https://www.linkedin.com/in/jesenn)
+**GitHub:** [Laporkan masalah atau usulan](https://github.com/sennie17/STATISITKA-EBOOK/issues)

@@ -1,0 +1,900 @@
+# Bab 2: Jenis Data dan Skala Pengukuran
+
+```{r}
+#| label: setup
+#| include: false
+# Untuk grafiknya agar keliatan lebih rapih dan enak di lihat
+knitr::opts_chunk$set(
+  fig.width  = 9,
+  fig.height = 5.5,
+  fig.align  = "center",
+  out.width  = "100%",
+  dpi        = 150
+)
+library(knitr)
+```
+
+## Jenis Data
+
+### Kualitatif vs Kuantitatif
+
+| Jenis                         | Definisi                                                                             | Contoh                                                      | Ringkasan yang tepat                  |
+| :---------------------------- | :----------------------------------------------------------------------------------- | :---------------------------------------------------------- | :------------------------------------ |
+| **Kualitatif**<br>(kategorik) | Data berupa **label, kategori, atau atribut**                                        | Metode pembayaran,<br>golongan darah,<br>tingkat pendidikan | Frekuensi, persentase,<br>modus       |
+| **Kuantitatif**<br>(numerik)  | Data berupa **angka hasil menghitung atau mengukur** yang bermakna secara aritmetika | Jumlah transaksi,<br>berat badan, lama<br>menonton          | Mean, median,<br>simpangan baku, dsb. |
+
+```{r}
+metode_bayar <- c("QRIS", "Tunai", "QRIS", "Debit", "QRIS", "E-Wallet", "Tunai")
+nominal_trx <- c(25000, 18000, 42500, 150000, 12000, 67000, 30000)
+
+table(metode_bayar)                        # kualitatif -> dihitung frekuensinya
+```
+
+```{r}
+prop.table(table(metode_bayar))
+```
+
+```{r}
+mean(nominal_trx)                          # kuantitatif -> dapat dirata-ratakan
+```
+
+### Kuantitatif Diskrit vs Kontinu
+
+| Jenis | Ciri | Contoh | Cara memperoleh |
+|---|---|---|---|
+| **Diskrit** | Nilai **terhitung** (biasanya bilangan bulat); ada "celah" di antara nilai yang mungkin | Jumlah anak, jumlah transaksi, jumlah mahasiswa yang hadir | **Menghitung** (*counting*) |
+| **Kontinu** | Nilai dapat berada **di mana saja** dalam suatu rentang, dibatasi hanya oleh ketelitian alat | Tinggi badan, waktu tempuh, suhu, kadar TSS air | **Mengukur** (*measuring*) |
+
+Pertanyaan praktis untuk membedakan: **“Apakah nilai 2,5 masuk akal?”** Jumlah anak 2,5
+tidak mungkin (diskrit), tetapi waktu tempuh 2,5 jam masuk akal (kontinu).
+
+```{r}
+jumlah_anak <- c(0L, 2L, 1L, 3L, 2L)             # L -> integer (bilangan bulat)
+waktu_jam <- c(1.25, 2.5, 0.75, 3.1, 1.8)        # numeric (bilangan desimal)
+
+class(jumlah_anak); class(waktu_jam)
+```
+
+```{r}
+# Memeriksa apakah semua nilai bilangan bulat
+semua_bulat <- function(x) all(x == round(x))
+c(jumlah_anak = semua_bulat(jumlah_anak), waktu_jam = semua_bulat(waktu_jam))
+```
+
+<div style="width: 85%; margin: 0 auto;">
+
+<p>
+<strong>Pembulatan tidak mengubah jenis data.</strong> Usia yang dicatat “21 tahun” tetap <strong>kontinu</strong>, karena usia sebenarnya terus bertambah; bilangan bulat hanya akibat cara pencatatan. Sebaliknya, uang (Rp) secara teknis <strong>diskrit</strong> (satuan terkecil rupiah), tetapi karena rentangnya sangat besar, dalam praktik <strong>diperlakukan sebagai kontinu</strong>.
+</p>
+
+</div>
+
+Perbedaan diskrit-kontinu memengaruhi grafik yang tepat (Pertemuan 4): data diskrit dengan sedikit nilai cocok dengan diagram batang per nilai, data kontinu dengan histogram.
+
+```{r}
+set.seed(21)
+anak <- rpois(200, lambda = 2)                                  # diskrit
+tempuh <- rgamma(200, shape = 4, rate = 2)                      # kontinu (jam)
+
+par(mfrow = c(1, 2))
+barplot(table(anak), col = "#4C72B0", border = "white",
+        main = "Diskrit: Jumlah Anak", xlab = "Jumlah anak", ylab = "Frekuensi")
+hist(tempuh, breaks = 15, col = "#DD8452", border = "white",
+     main = "Kontinu: Waktu Tempuh", xlab = "Jam", ylab = "Frekuensi")
+```
+
+```{r}
+par(mfrow = c(1, 1))
+```
+
+### Pohon Klasifikasi Data
+
+
+| Tingkat 1 | Tingkat 2 | Skala yang mungkin | Contoh |
+|---|---|---|---|
+| Kualitatif | Tanpa urutan | Nominal | Provinsi, merek ponsel |
+| Kualitatif | Berurutan | Ordinal | Tingkat pendidikan, peringkat hotel |
+| Kuantitatif | Diskrit | Rasio (umumnya) | Jumlah kunjungan |
+| Kuantitatif | Kontinu | Interval atau rasio | Suhu °C (interval), berat (rasio) |
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Sumber Data
+
+### Data Primer vs Sekunder
+
+| Aspek | Data Primer | Data Sekunder |
+|---|---|---|
+| **Definisi** | Dikumpulkan **sendiri** oleh peneliti untuk tujuan penelitiannya | Dikumpulkan **pihak lain** untuk tujuan lain, lalu dipakai ulang |
+| **Contoh** | Kuesioner kepuasan yang Anda sebar; pengukuran sampel air di lapangan | Data BPS, laporan keuangan emiten, *dataset* Kaggle, log transaksi perusahaan |
+| **Kelebihan** | Sesuai kebutuhan; definisi variabel dan metode diketahui persis | Murah, cepat, sering berukuran besar dan mencakup periode panjang |
+| **Kelemahan** | Mahal, lama, butuh desain yang cermat | Definisi variabel mungkin tidak sesuai; kualitas dan cara pengumpulan harus diverifikasi |
+
+Dalam *data science*, sebagian besar pekerjaan memakai data **sekunder** (misalnya data transaksi
+yang tercatat otomatis). Karena kita tidak mengumpulkannya sendiri, **metadata** – keterangan
+tentang arti tiap variabel, satuan, kode, periode, dan cara pengumpulan – menjadi sangat penting.
+
+### Menjelajahi Data Sekunder di R
+
+R menyediakan banyak dataset sekunder bawaan beserta dokumentasinya. Contohnya **airquality**:
+pengukuran kualitas udara harian di New York (Mei–September 1973).
+
+```{r}
+str(airquality)
+```
+
+```{r}
+head(airquality)
+```
+
+Tanpa membaca dokumentasi airquality, kita tidak tahu bahwa Ozone diukur dalam **ppb**,
+Temp dalam **°F** (bukan °C), dan Month dikodekan 5–9 untuk Mei–September. Inilah pentingnya
+metadata.
+
+<style>
+table thead tr th,
+table > thead > tr > th {
+  text-align: center !important;
+}
+</style>
+
+```{r}
+library(knitr)
+
+metadata_airquality <- data.frame(
+  Variabel = names(airquality),
+  Keterangan = c(
+    "Rata-rata ozon 13.00-15.00",
+    "Radiasi matahari 08.00-12.00",
+    "Rata-rata kecepatan angin 07.00-10.00",
+    "Suhu maksimum harian",
+    "Bulan pengamatan",
+    "Tanggal pengamatan"
+  ),
+  Satuan = c(
+    "ppb",
+    "Langley",
+    "mil/jam",
+    "°F",
+    "Kode 5-9 (Mei-Sep)",
+    "1-31"
+  )
+)
+
+kable(metadata_airquality, caption = "Kamus Data (Data Dictionary) airquality")
+```
+
+```{r}
+colSums(is.na(airquality))    # data sekunder sering memiliki nilai hilang (NA)
+```
+
+### Mensimulasikan Data Primer
+
+Data primer biasanya berasal dari formulir atau kuesioner yang Anda rancang. Contoh: hasil
+formulir online yang diekspor ke CSV. Di sini isi CSV kita tulis langsung sebagai teks.
+
+```{r}
+csv_survei <- "responden,usia,jenis_kelamin,pendidikan,kepuasan,pengeluaran_bulanan
+               R01,23,P,S1,Puas,1250000
+               R02,31,L,SMA,Sangat Puas,980000
+               R03,27,P,S2,Netral,2100000
+               R04,45,L,S1,Tidak Puas,1750000
+               R05,19,P,SMA,Puas,650000
+               R06,38,L,D3,Sangat Tidak Puas,1400000"
+
+survei <- read.csv(text = csv_survei, stringsAsFactors = FALSE)
+str(survei)
+```
+
+Perhatikan: read.csv() membaca pendidikan dan kepuasan sebagai teks biasa (chr). R **tidak tahu** bahwa “SMA < D3 < S1 < S2” atau bahwa “Puas” lebih baik dari “Netral”. Informasi urutan
+itu harus kita tambahkan – inilah topik bagian berikutnya.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Skala Pengukuran
+
+Skala pengukuran (tipologi Stevens) mengelompokkan data menurut **sifat-sifat matematis** yang
+dimiliki nilainya. Setiap tingkat memiliki semua sifat tingkat sebelumnya ditambah satu sifat baru.
+
+| Skala | Sifat baru | Arti | Contoh |
+|---|---|---|---|
+| **Nominal** | Identitas | Nilai hanya **membedakan** kategori | Golongan darah, metode pembayaran, jenis kelamin |
+| **Ordinal** | + Urutan | Kategori dapat **diurutkan**, tetapi jarak antarkategori tidak pasti sama | Tingkat kepuasan, pendidikan terakhir, peringkat lomba |
+| **Interval** | + Jarak sama | Selisih antarnilai **bermakna dan setara**, tetapi **nol tidak mutlak** | Suhu °C/°F, tahun kalender, skor IQ |
+| **Rasio** | + Nol mutlak | Nol berarti **"tidak ada sama sekali"**, sehingga **perbandingan (rasio)** bermakna | Berat, pendapatan, jumlah transaksi |
+
+### Operasi yang Sah untuk Tiap Skala
+
+| Operasi / Statistik | Nominal | Ordinal | Interval | Rasio |
+|---|:---:|:---:|:---:|:---:|
+| Frekuensi, modus | Ya | Ya | Ya | Ya |
+| Mengurutkan, median, persentil | Tidak | Ya | Ya | Ya |
+| Penjumlahan/selisih, mean, simpangan baku | Tidak | Diperdebatkan | Ya | Ya |
+| Perbandingan "dua kali lipat", koefisien variasi | Tidak | Tidak | Tidak | Ya |
+
+Tabel ini akan terus kita pakai: pada Pertemuan 5 untuk memilih ukuran pemusatan, dan pada
+paruh kedua semester untuk memilih uji statistik.
+
+### Nominal: Angka Hanya Sebagai Label
+
+Jika kategori nominal dikodekan dengan angka, R akan dengan senang hati menghitung rata-ratanya – dan hasilnya tidak bermakna.
+
+```{r}
+# Kode provinsi: 31 = DKI Jakarta, 32 = Jawa Barat, 33 = Jawa Tengah, 73 = Sulawesi Selatan
+kode_prov <- c(32, 32, 31, 73, 33, 32, 31)
+mean(kode_prov)        # "rata-rata provinsi" = 37,7 -> tidak bermakna!
+```
+
+```{r}
+# Perlakukan sebagai kategori
+prov <- factor(kode_prov, levels = c(31, 32, 33, 73),
+               labels = c("DKI Jakarta", "Jawa Barat", "Jawa Tengah", "Sulawesi Selatan"))
+
+table(prov)
+```
+
+```{r}
+names(which.max(table(prov)))        # modus: satu-satunya ukuran pusat yang sah
+```
+
+### Ordinal: Berurutan, Jarak Tidak Pasti
+
+Pada skala kepuasan “Sangat Tidak Puas – Tidak Puas – Netral – Puas – Sangat Puas”, kita tahu
+urutannya, tetapi **tidak** tahu apakah jarak “Netral ke Puas” sama dengan jarak “Puas ke Sangat
+Puas”.
+
+```{r}
+tingkat_puas <- c("Sangat Tidak Puas", "Tidak Puas", "Netral", "Puas", "Sangat Puas")
+
+survei$kepuasan <- factor(
+  trimws(survei$kepuasan),
+  levels = tingkat_puas,
+  ordered = TRUE
+)
+
+survei$kepuasan
+```
+
+```{r}
+survei$kepuasan > "Netral"    # perbandingan urutan kini sah
+```
+
+```{r}
+table(survei$kepuasan)
+```
+
+```{r}
+# Median untuk data ordinal: kategori tengah setelah diurutkan.
+# Jika n genap dan dua data tengah berbeda kategori, median berada "di antara" keduanya.
+median_ordinal <- function(x) {
+  m <- median(as.integer(x), na.rm = TRUE)
+  if (m == floor(m)) return(levels(x)[m])
+  paste("antara", levels(x)[floor(m)], "dan", levels(x)[ceiling(m)])
+}
+sort(as.integer(survei$kepuasan))   # posisi urutan tiap responden
+```
+
+```{r}
+median_ordinal(survei$kepuasan)
+```
+
+<div style="width: 85%; margin: 0 auto;">
+
+<p>
+<strong>Likert: mean atau median?</strong> Skor Likert (1–5) dari <strong>satu butir pertanyaan</strong> secara ketat bersifat ordinal, sehingga median dan modus lebih tepat. Dalam praktik, <strong>jumlah atau rata-rata dari banyak butir</strong> (misalnya indeks kepuasan dari 10 pertanyaan) sering diperlakukan sebagai data interval. Apa pun pilihannya, <strong>nyatakan asumsi Anda</strong>.
+</p>
+
+</div>
+
+### Interval: Selisih Bermakna, Rasio Tidak
+
+Suhu dalam °C memiliki jarak yang setara (naik dari 10 ke 20 °C sama besarnya dengan dari 20
+ke 30 °C), tetapi titik 0 °C **bukan** “tidak ada panas” – hanya titik beku air yang dipilih secara
+konvensi. Akibatnya, “20 °C dua kali lebih panas dari 10 °C” adalah pernyataan **keliru.**
+
+```{r}
+library(knitr)
+
+suhu_c <- c(pagi = 10, siang = 20)
+suhu_f <- suhu_c * 9 / 5 + 32
+suhu_k <- suhu_c + 273.15
+
+kable(data.frame(
+  Satuan = c("Celsius", "Fahrenheit", "Kelvin"),
+  Pagi = c(suhu_c["pagi"], suhu_f["pagi"], suhu_k["pagi"]),
+  Siang = c(suhu_c["siang"], suhu_f["siang"], suhu_k["siang"]),
+  Rasio_Siang_per_Pagi = round(c(suhu_c["siang"] / suhu_c["pagi"],
+                                 suhu_f["siang"] / suhu_f["pagi"],
+                                 suhu_k["siang"] / suhu_k["pagi"]), 3),
+  Selisih = c(diff(suhu_c), diff(suhu_f), diff(suhu_k))
+), caption = "Suhu yang sama dalam tiga satuan")
+```
+
+“Rasio” suhu berubah-ubah tergantung satuan (2 kali dalam °C, 1,36 kali dalam °F, 1,035 kali dalam
+Kelvin) – tanda bahwa rasio pada skala interval **tidak bermakna**. Hanya Kelvin, yang nolnya mutlak, yang merupakan skala rasio.
+
+### Rasio: Semua Operasi Sah
+
+Pada skala rasio, perbandingan tetap **sama** berapa pun satuannya.
+
+```{r}
+berat_kg <- c(koper_A = 10, koper_B = 20)
+berat_lb <- berat_kg * 2.20462
+
+c(Rasio_kg = unname(berat_kg["koper_B"] / berat_kg["koper_A"]),
+  Rasio_lb = unname(berat_lb["koper_B"] / berat_lb["koper_A"]))
+```
+
+Koper B **benar-benar** dua kali lebih berat dari koper A, dalam satuan apa pun. Karena itu
+koefisien variasi (Pertemuan 5) hanya sah untuk skala rasio.
+
+### Menentukan Skala: Tiga Pertanyaan Berurutan
+
+| Langkah | Pertanyaan | Jika "Tidak" | Jika "Ya" |
+|:--------|:-----------|:-------------|:----------|
+| 1 | Apakah nilainya dapat diurutkan secara bermakna? | **Nominal** | Lanjut ke 2 |
+| 2 | Apakah jarak antarnilai setara dan bermakna? | **Ordinal** | Lanjut ke 3 |
+| 3 | Apakah nol berarti "tidak ada sama sekali"? | **Interval** | **Rasio** |
+
+```{r}
+tentukan_skala <- function(bisa_diurutkan, jarak_setara, nol_mutlak) {
+  if (!bisa_diurutkan) return("Nominal")
+  if (!jarak_setara) return("Ordinal")
+  if (!nol_mutlak) return("Interval")
+  "Rasio"
+}
+
+contoh <- data.frame(
+  Variabel = c("Golongan darah", "Peringkat lomba", "Tahun lahir", "Jumlah transaksi QRIS",
+               "Kadar TSS air (mg/L)", "Ukuran baju (S/M/L/XL)"),
+
+  urut = c(FALSE, TRUE, TRUE, TRUE, TRUE, TRUE),
+  jarak = c(FALSE, FALSE, TRUE, TRUE, TRUE, FALSE),
+  nol = c(FALSE, FALSE, FALSE, TRUE, TRUE, FALSE)
+)
+contoh$Skala <- mapply(tentukan_skala, contoh$urut, contoh$jarak, contoh$nol)
+kable(contoh, caption = "Contoh Penentuan Skala Pengukuran")
+```
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Skala dan Tipe Data di R
+
+### Memetakan Skala ke Tipe Data
+
+| Skala | Tipe R yang disarankan | Cara membuat |
+|---|---|---|
+| Nominal | `factor` (tanpa urutan) | `factor(x)` |
+| Ordinal | `ordered` factor | `factor(x, levels = ..., ordered = TRUE)` |
+| Interval | `numeric` / `integer` | `as.numeric(x)` |
+| Rasio | `numeric` / `integer` | `as.numeric(x)` |
+| Label/ID | `character` | `as.character(x)` |
+
+Tipe yang tepat membuat R **membantu** kita: grafik mengikuti urutan kategori, fungsi ringkasan
+memilih cara yang benar, dan model statistik memperlakukan variabel dengan semestinya.
+
+```{r}
+summary(survei$kepuasan)            # ordered factor -> frekuensi per kategori, sesuai urutan
+```
+
+```{r}
+summary(survei$pengeluaran_bulanan) # numeric -> ringkasan angka
+```
+
+### Urutan Level yang Keliru
+
+Tanpa urutan yang ditentukan, R mengurutkan kategori **menurut abjad**, yang sering tidak logis:
+
+```{r}
+ukuran_baju <- c("M", "L", "S", "XL", "M", "L", "M", "S", "XL", "L", "M")
+
+par(mfrow = c(1, 2))
+barplot(table(factor(ukuran_baju)), col = "grey70", main = "Urutan abjad (keliru)")
+barplot(table(factor(ukuran_baju, levels = c("S", "M", "L", "XL"))), col = "#4C72B0",
+        main = "Urutan logis (benar)")
+```
+
+### Jebakan: Mengonversi Factor Berisi Angka
+
+Jika sebuah factor berisi angka, as.numeric() mengembalikan **nomor urut level**, bukan
+angkanya.
+
+```{r}
+tahun <- factor(c("2021", "2023", "2021", "2024"))
+as.numeric(tahun)                     # SALAH: 1 2 1 3 (nomor level)
+```
+
+```{r}
+as.numeric(as.character(tahun))      # BENAR: 2021 2023 2021 2024
+```
+
+### Jebakan: Angka Tersimpan sebagai Teks
+
+Data dari formulir atau spreadsheet sering memuat simbol (Rp, titik ribuan, koma desimal) sehingga
+terbaca sebagai teks.
+
+```{r}
+harga_teks <- c("Rp 12.500", "Rp 8.000", "Rp 150.000", "Rp 27.250")
+# mean(harga_teks) akan menghasilkan NA disertai peringatan
+
+harga <- as.numeric(gsub("[^0-9]", "", harga_teks)) # buang semua karakter non-angka 
+
+harga
+```
+
+```{r}
+mean(harga)
+```
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Struktur Dataset
+
+### Observasi, Variabel, Feature, dan Target
+
+| Istilah statistika | Istilah *machine learning* | Posisi dalam tabel | Contoh |
+|---|---|---|---|
+| **Observasi** (unit observasi, kasus) | *Instance, sample, record* | Baris | Satu bunga iris |
+| **Variabel** | *Attribute, column* | Kolom | Panjang kelopak |
+| **Variabel independen** | ***Feature*** (prediktor, *X*) | Kolom yang dipakai untuk memprediksi | Panjang dan lebar kelopak/mahkota |
+| **Variabel dependen** | ***Target*** (label, respons, *y*) | Kolom yang ingin diprediksi | Spesies |
+
+```{r}
+str(iris)
+```
+
+```{r}
+X <- iris[, c("Sepal.Length", "Sepal.Width", "Petal.Length", "Petal.Width")] # feature
+y <- iris$Species                                                            # target
+
+dim(X)                                                                       # 150 observasi x 4 feature
+
+```
+
+```{r}
+table(y)                                                                     # target kategorik (3 kelas)
+```
+
+**Jenis target menentukan jenis tugas:**
+
+| Skala target | Tugas | Contoh |
+|:-------------|:------|:-------|
+| Nominal (2 kategori) | Klasifikasi biner | Pelanggan *churn* atau tidak |
+| Nominal (> 2 kategori) | Klasifikasi multikelas | Spesies iris |
+| Ordinal | Klasifikasi ordinal | Tingkat risiko kredit rendah/sedang/tinggi |
+| Interval/rasio | Regresi | Harga rumah, kadar TSS |
+
+### Tidy Data
+
+Sebuah dataset disebut ***tidy*** jika memenuhi tiga prinsip:
+
+1. Setiap **variabel** menempati satu **kolom**.
+2. Setiap **observasi** menempati satu **baris**.
+3. Setiap **nilai** menempati satu **sel**.
+
+Hampir semua fungsi statistika di R mengasumsikan data *tidy*.
+
+### Format Wide vs Long
+
+Data yang sama dapat disusun dalam dua format. Contoh: kadar TSS (mg/L) di tiga titik pemantauan selama tiga bulan.
+
+```{r}
+library(knitr)
+library(kableExtra)
+
+tss_wide <- data.frame(
+  titik = c("Hulu", "Tengah", "Hilir"),
+  Jan = c(45, 120, 210),
+  Feb = c(38, 95, 185),
+  Mar = c(52, 140, 260)
+)
+
+kable(
+  tss_wide,
+  align = "cccc",
+  booktabs = TRUE,
+  caption = "Format WIDE: bulan tersebar sebagai kolom"
+) %>%
+  kable_styling(
+    latex_options = "hold_position",
+    position = "center"
+  ) %>%
+  column_spec(1:4, width = "2.5cm")
+```
+
+```{r}
+library(knitr)
+library(kableExtra)
+
+tss_long <- reshape(
+  tss_wide,
+  direction = "long",
+  varying = c("Jan", "Feb", "Mar"),
+  v.names = "tss",
+  timevar = "bulan",
+  times = c("Jan", "Feb", "Mar"),
+  idvar = "titik"
+)
+rownames(tss_long) <- NULL
+tss_long$bulan <- factor(tss_long$bulan, levels = c("Jan", "Feb", "Mar"))
+
+kable(
+  tss_long,
+  align = "ccc",
+  booktabs = TRUE,
+  caption = "Format LONG (tidy): satu baris = satu pengukuran"
+) %>%
+  kable_styling(
+    latex_options = "hold_position",
+    position = "center"
+  )
+```
+
+Pada format wide, satu variabel (bulan) tersembunyi di nama-nama kolom. Format long bersifat
+tidy: setiap baris adalah **satu pengukuran** (titik x bulan), sehingga mudah diringkas per kelompok:
+
+```{r}
+aggregate(tss ~ titik, data = tss_long, FUN = mean)
+```
+
+```{r}
+aggregate(tss ~ bulan, data = tss_long, FUN = mean)
+```
+
+Format wide tetap berguna untuk **menyajikan** tabel kepada pembaca manusia; format long lebih
+cocok untuk **analisis.**
+
+## Studi Kasus Komprehensif: Membersihkan Data Pelanggan
+
+**Konteks**: Tim analytics sebuah e-commerce menerima ekspor data pelanggan (data **sekunder**
+dari sistem CRM) untuk membangun model prediksi churn (pelanggan berhenti berlangganan).
+Datanya masih “mentah”.
+
+```{r}
+csv_pelanggan <- "id,gender,kota,segmen,rating_layanan,lama_langganan_bln,total_belanja,suhu_gudang_c,churn
+C001,1,Bekasi,Gold,4,26,Rp 4.250.000,24.5,Tidak
+C002,2,Bandung,Silver,2,5,Rp 850.000,25.1,Ya
+C003,2,Bekasi,Platinum,5,48,Rp 12.900.000,23.8,Tidak
+C004,1,Surabaya,Silver,3,12,Rp 1.320.000,26.0,Tidak
+C005,1,Bandung,Bronze,1,3,Rp 210.000,24.9,Ya
+C006,2,Medan,Gold,4,30,Rp 5.100.000,25.4,Tidak
+C007,1,Bekasi,Bronze,2,7,Rp 480.000,24.2,Ya
+C008,2,Surabaya,Platinum,5,60,Rp 15.750.000,25.7,Tidak"
+
+pelanggan <- read.csv(text = csv_pelanggan, stringsAsFactors = FALSE)
+str(pelanggan)
+```
+
+**Metadata dari tim CRM:** gender 1 = Laki-laki, 2 = Perempuan; segmen berurutan Bronze <
+Silver < Gold < Platinum; rating_layanan skala 1–5 (1 = sangat buruk); suhu_gudang_c = suhu
+rata-rata gudang pengirim (°C).
+
+### Langkah 1: Klasifikasi Setiap Variabel
+
+| Variabel | Jenis data | Skala | Tipe R saat ini | Tipe R seharusnya | Peran |
+|---|---|---|---|---|---|
+| `id` | Label | – | `chr` | `character` | Pengenal (bukan *feature*) |
+| `gender` | Kualitatif | Nominal | `int` | `factor` | *Feature* |
+| `kota` | Kualitatif | Nominal | `chr` | `factor` | *Feature* |
+| `segmen` | Kualitatif | Ordinal | `chr` | `ordered` | *Feature* |
+| `rating_layanan` | Kualitatif (berkode angka) | Ordinal | `int` | `ordered` | *Feature* |
+| `lama_langganan_bln` | Kuantitatif kontinu (dicatat bulat) | Rasio | `int` | `numeric` | *Feature* |
+| `total_belanja` | Kuantitatif kontinu | Rasio | `chr` | `numeric` | *Feature* |
+| `suhu_gudang_c` | Kuantitatif kontinu | Interval | `num` | `numeric` | *Feature* |
+| `churn` | Kualitatif | Nominal | `chr` | `factor` | *Target* |
+
+### Langkah 2: Mengonversi ke Tipe yang Tepat
+
+```{r}
+bersih <- within(pelanggan, {
+  gender   <- factor(gender, levels = c(1, 2), labels = c("Laki-laki", "Perempuan"))
+  kota     <- factor(kota)
+  segmen   <- factor(segmen, levels = c("Bronze", "Silver", "Gold", "Platinum"),
+                     ordered = TRUE)
+  rating_layanan <- factor(rating_layanan, levels = 1:5, ordered = TRUE)
+  total_belanja  <- as.numeric(gsub("[^0-9]", "", total_belanja))
+  churn          <- factor(churn, levels = c("Tidak", "Ya"))
+})
+
+str(bersih)
+```
+
+### Langkah 3: Ringkasan yang Sesuai Skala
+
+```{r}
+table(bersih$gender)                                      # nominal -> frekuensi
+```
+
+```{r}
+table(bersih$segmen)                                      # ordinal -> frekuensi berurutan
+```
+
+```{r}
+median_ordinal(bersih$rating_layanan)                     # ordinal -> median kategori
+```
+
+```{r}
+mean(bersih$total_belanja)                                # rasio -> mean sah
+```
+
+```{r}
+max(bersih$total_belanja) / min(bersih$total_belanja)     # rasio -> perbandingan sah
+```
+
+```{r}
+table(bersih$segmen, bersih$churn) # hubungan feature ordinal dan target
+```
+
+### Langkah 4: Memisahkan Feature dan Target
+
+```{r}
+X_pel <- bersih[, setdiff(names(bersih), c("id", "churn"))]
+y_pel <- bersih$churn
+names(X_pel)
+```
+
+```{r}
+table(y_pel)
+```
+
+### Pertanyaan Diskusi dan Jawaban
+
+**1. Mengapa `gender` tidak boleh dibiarkan sebagai `int`?**
+
+Karena angka 1 dan 2 hanya **kode**. Jika dibiarkan numerik, model akan menganggap "Perempuan = 2 kali Laki-laki" atau menghitung rata-rata gender (misalnya 1,5) yang tidak bermakna.
+
+**2. Bolehkah kita menyatakan "rata-rata rating layanan = 3,25"?**
+
+Secara ketat tidak, karena `rating_layanan` adalah **satu butir** skala ordinal – jarak antara rating 1 ke 2 belum tentu sama dengan 4 ke 5. Laporan yang aman: median (antara 3 dan 4) dan distribusi frekuensinya. Jika mean tetap dilaporkan, nyatakan bahwa rating diasumsikan berskala interval.
+
+**3. Mengapa rasio "suhu gudang C003 dibanding C001" tidak bermakna, sementara rasio total belanja bermakna?**
+
+Suhu °C berskala **interval** (nol tidak mutlak), sedangkan total belanja berskala **rasio** (Rp 0 berarti tidak berbelanja sama sekali). Pelanggan C008 benar-benar berbelanja sekitar 75 kali lipat pelanggan C005.
+
+**4. Mengapa `id` dikeluarkan dari *feature*?**
+
+`id` unik untuk setiap pelanggan dan tidak memuat informasi perilaku. Memasukkannya dapat membuat model "menghafal" pelanggan, bukan mempelajari pola.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Latihan Mandiri
+
+### Latihan Utama: Dataset airquality
+
+Gunakan dataset bawaan airquality (data sekunder).
+
+#### Tugas 1: Klasifikasikan setiap variabel
+
+Tentukan jenis data (kualitatif/kuantitatif; diskrit/kontinu) dan skala pengukuran untuk Ozone,
+Solar.R, Wind, Temp, Month, dan Day.
+
+**Jawaban:**
+
+| Variabel | Jenis | Skala | Alasan |
+|---|---|---|---|
+| `Ozone` | Kuantitatif kontinu | Rasio | 0 ppb berarti tidak ada ozon |
+| `Solar.R` | Kuantitatif kontinu | Rasio | 0 berarti tidak ada radiasi |
+| `Wind` | Kuantitatif kontinu | Rasio | 0 mil/jam berarti tidak ada angin |
+| `Temp` | Kuantitatif kontinu | **Interval** | Suhu °F tidak memiliki nol mutlak |
+| `Month` | Kualitatif (berkode angka) | Ordinal | Bulan berurutan; kodenya label |
+| `Day` | Kualitatif (berkode angka) | Ordinal | Menunjukkan urutan tanggal, bukan kuantitas |
+
+#### Tugas 2: Ubah Month menjadi factor berurutan dengan label nama bulan
+
+```{r}
+aq <- airquality
+aq$Month <- factor(aq$Month, levels = 5:9,
+                   labels = c("Mei", "Jun", "Jul", "Agu", "Sep"), ordered = TRUE)
+
+table(aq$Month)
+```
+
+#### Tugas 3: Hitung rata-rata ozon per bulan dengan mengabaikan nilai hilang
+
+```{r}
+aggregate(Ozone ~ Month, data = aq, FUN = mean) # baris dengan NA otomatis diabaikan
+```
+
+#### Tugas 4: Konversi Temp ke °C dan Kelvin, lalu jelaskan mengapa rasio suhu hanya sah pada Kelvin
+
+```{r}
+aq$Temp_C <- (aq$Temp - 32) * 5 / 9
+aq$Temp_K <- aq$Temp_C + 273.15
+suhu_ekstrem <- aq[c(which.min(aq$Temp), which.max(aq$Temp)), c("Temp", "Temp_C", "Temp_K")]
+suhu_ekstrem
+```
+
+```{r}
+round(suhu_ekstrem[2, ] / suhu_ekstrem[1, ], 3)
+```
+
+**Jawaban:** Hari terpanas “tampak” 1.73 kali lebih panas dalam °F dan 2.71 kali dalam °C, tetapi
+hanya 1.08 kali dalam Kelvin. Hanya Kelvin yang nolnya mutlak, sehingga hanya rasio Kelvin yang
+bermakna secara fisik.
+
+#### Tugas 5: Tentukan *feature* dan *target*
+
+Jika tujuannya memprediksi kadar ozon dari kondisi cuaca, tentukan feature, target, dan jenis
+tugasnya.
+
+**Jawaban:** Target = Ozone (rasio) sehingga tugasnya **regresi**; feature = Solar.R, Wind, Temp, dan
+Month. Day sebaiknya tidak dipakai langsung karena hanya urutan tanggal.
+
+#### Tugas 6 (Tantangan): Ubah ke format long
+
+Ubah kolom Ozone, Wind, dan Temp untuk 3 hari pertama menjadi format long dengan kolom
+variabel dan nilai.
+
+```{r}
+aq3 <- airquality[1:3, c("Month", "Day", "Ozone", "Wind", "Temp")]
+aq3_long <- reshape(aq3, direction = "long", varying = c("Ozone", "Wind", "Temp"),
+            v.names = "nilai", timevar = "variabel",
+            times = c("Ozone", "Wind", "Temp"), idvar = c("Month", "Day"))
+rownames(aq3_long) <- NULL
+aq3_long
+```
+
+**Catatan:** format long seperti ini praktis untuk visualisasi banyak variabel sekaligus, tetapi perhatikan bahwa kolom nilai kini mencampur satuan berbeda (ppb, mil/jam, °F) – jangan meringkasnya bersama-sama.
+
+### Latihan Tambahan (Self-Check)
+
+Kerjakan soal-soal berikut secara mandiri sebelum melihat kunci jawaban pada komentar kode.
+
+**Soal A.** Tentukan skala pengukuran: (1) nomor punggung pemain, (2) peringkat klasemen liga,
+(3) skor TOEFL, (4) waktu lari 100 m, (5) tahun berdirinya perusahaan, (6) jumlah karyawan, (7)
+tingkat keparahan gempa pada skala MMI (I–XII).
+
+```{r}
+# Kunci jawaban:
+# (1) Nominal (2) Ordinal (3) Interval (skor tanpa nol mutlak)
+# (4) Rasio (5) Interval (tahun 0 bukan "tidak ada waktu")
+# (6) Rasio (7) Ordinal (tingkatan intensitas, jarak tidak setara)
+```
+
+**Soal B.** Tentukan apakah data berikut diskrit atau kontinu: (1) jumlah SKS yang diambil, (2) IPK,
+(3) volume air hujan harian, (4) jumlah kendaraan yang melintas per jam, (5) usia dalam tahun.
+
+```{r}
+# Kunci jawaban:
+# (1) Diskrit (2) Kontinu (dalam rentang 0-4, dibulatkan 2 desimal)
+# (3) Kontinu (4) Diskrit
+# (5) Kontinu (usia terus bertambah; bilangan bulat hanya akibat pencatatan)
+```
+
+**Soal C.** Diberikan vektor `kelas_hotel <- c("Bintang 3", "Bintang 5", "Bintang 4", "Bintang 3", "Bintang 5", "Bintang 3")`. Ubah menjadi ordered factor, tampilkan
+frekuensinya sesuai urutan, lalu tentukan medianya.
+
+```{r}
+kelas_hotel <- c("Bintang 3", "Bintang 5", "Bintang 4", "Bintang 3", "Bintang 5", "Bintang 3")
+# Kunci jawaban:
+kelas_hotel <- factor(kelas_hotel, levels = c("Bintang 3", "Bintang 4", "Bintang 5"),
+                      ordered = TRUE)
+
+table(kelas_hotel)          # 3, 1, 2
+median_ordinal(kelas_hotel) # "antara Bintang 3 dan Bintang 4"
+# Urutan kode: 1, 1, 1, 2, 3, 3 -> median = (1 + 2) / 2 = 1,5
+# Pada data ordinal berukuran genap, median bisa jatuh di antara dua kategori.
+```
+
+**Soal D.** Seorang analis menyatakan: “Kota A (suhu rata-rata 30 °C) dua kali lebih panas daripada
+Kota B (15 °C).” Apakah pernyataan ini benar? Buktikan dengan R.
+
+```{r}
+# Kunci jawaban:
+c(A = 30, B = 15) + 273.15         # 303.15 K dan 288.15 K
+(30 + 273.15) / (15 + 273.15)      # rasio sebenarnya ~ 1.052
+# Pernyataan KELIRU: °C berskala interval. Yang benar: Kota A lebih panas 15 °C daripada Kota B.
+```
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Kesalahan Umum dalam Jenis Data dan Skala Pengukuran
+
+1. **Menghitung mean dari kode kategori** – misalnya "rata-rata gender = 1,5" atau "rata-rata kode provinsi".
+2. **Menganggap semua angka sebagai kuantitatif** – nomor punggung, kode pos, dan NIM adalah label.
+3. **Membuat pernyataan rasio pada skala interval** – "20 °C dua kali lebih panas dari 10 °C".
+4. **Mengira pembulatan membuat data menjadi diskrit** – usia "21 tahun" tetap kontinu.
+5. **Membiarkan data ordinal sebagai teks** – R mengurutkannya menurut abjad sehingga grafik dan tabel menjadi tidak logis.
+6. **Memakai `as.numeric()` langsung pada factor berisi angka** – hasilnya nomor level; gunakan `as.numeric(as.character(x))`.
+7. **Membiarkan angka tersimpan sebagai teks** ("Rp 12.500") – perhitungan menghasilkan `NA`.
+8. **Memakai data sekunder tanpa membaca metadata** – satuan (°F vs °C) atau kode (5 = Mei) disalahartikan.
+9. **Memasukkan kolom ID sebagai *feature*** – model menghafal, bukan belajar.
+10. **Menganalisis data dalam format *wide*** ketika sebuah variabel tersembunyi di nama kolom – ubah ke format *long* terlebih dahulu.
+11. **Merata-ratakan satu butir Likert tanpa menyatakan asumsi** – laporkan median/frekuensi, atau nyatakan asumsi interval secara eksplisit.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Cheat Sheet: Fungsi R yang Digunakan
+
+| Fungsi | Kegunaan |
+|---|---|
+| `class(x)`, `str(df)` | Memeriksa tipe data |
+| `integer (2L)`, `numeric` | Tipe bilangan bulat dan desimal |
+| `factor(x, levels, labels)` | Data nominal; memberi label pada kode |
+| `factor(x, levels, ordered = TRUE)` | Data ordinal |
+| `levels(x)` | Melihat kategori dan urutannya |
+| `as.integer(f)` | Nomor urut level sebuah factor |
+| `as.numeric(as.character(f))` | Mengonversi factor berisi angka menjadi angka sebenarnya |
+| `as.character(x)` | Mengubah menjadi teks |
+| `gsub("[^0-9]", "", x)` | Membuang karakter selain angka |
+| `read.csv(text = ...)` / `read.csv("file.csv")` | Membaca data CSV |
+| `is.na(x)`, `colSums(is.na(df))` | Mendeteksi dan menghitung nilai hilang |
+| `table(x)`, `prop.table(table(x))` | Frekuensi dan proporsi |
+| `within(df, {...})` | Mengubah beberapa kolom sekaligus |
+| `reshape(df, direction = "long")` | Mengubah format *wide* menjadi *long* |
+| `aggregate(y ~ g, data, FUN)` | Ringkasan per kelompok |
+| `setdiff(a, b)` | Elemen `a` yang tidak ada di `b` (memilih kolom *feature*) |
+| `mapply(f, ...)` | Menerapkan fungsi ke beberapa vektor secara berpasangan |
+| `data(nama)`, `?nama` | Memuat dataset bawaan dan membaca dokumentasinya |
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Glosarium Istilah
+
+| Istilah | Definisi Singkat |
+|:--------|:-----------------|
+| **Data Kualitatif** | Data berupa label atau kategori |
+| **Data Kuantitatif** | Data berupa angka hasil menghitung atau mengukur |
+| **Data Diskrit** | Data kuantitatif yang nilainya terhitung (hasil menghitung) |
+| **Data Kontinu** | Data kuantitatif yang dapat bernilai berapa pun dalam suatu rentang (hasil mengukur) |
+| **Data Primer** | Data yang dikumpulkan sendiri untuk tujuan penelitian |
+| **Data Sekunder** | Data yang dikumpulkan pihak lain dan dipakai ulang |
+| **Metadata / Kamus Data** | Keterangan arti, satuan, kode, dan asal-usul setiap variabel |
+| **Skala Nominal** | Skala yang hanya membedakan kategori |
+| **Skala Ordinal** | Skala kategori yang dapat diurutkan, jarak tidak pasti setara |
+| **Skala Interval** | Skala dengan jarak setara tetapi tanpa nol mutlak |
+| **Skala Rasio** | Skala dengan jarak setara dan nol mutlak; perbandingan bermakna |
+| **Nol Mutlak** | Titik nol yang berarti "tidak ada sama sekali" |
+| **Factor** | Tipe data R untuk variabel kategorik |
+| **Ordered Factor** | Factor yang kategorinya memiliki urutan |
+| **Observasi** | Satu baris data (satu unit yang diamati) |
+| **Feature** | Variabel masukan untuk memprediksi (variabel independen) |
+| **Target** | Variabel yang ingin diprediksi (variabel dependen) |
+| **Tidy Data** | Data dengan satu variabel per kolom, satu observasi per baris, satu nilai per sel |
+| **Format Wide / Long** | Susunan data dengan pengukuran berulang sebagai kolom / sebagai baris |
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Rangkuman dan Kesimpulan
+
+<div style="width: 85%; margin: 0 auto;">
+
+<p>
+1. <strong>Data kualitatif</strong> berupa kategori; <strong>data kuantitatif</strong> berupa angka yang bermakna secara aritmetika. Data kuantitatif dibagi menjadi <strong>diskrit</strong> (menghitung) dan <strong>kontinu</strong> (mengukur).
+</p>
+<p>
+2. <strong>Data primer</strong> dikumpulkan sendiri, <strong>data sekunder</strong> dipakai ulang. Data sekunder wajib disertai <strong>metadata</strong>.
+</p>
+<p>
+3. <strong>Skala pengukuran</strong> – nominal, ordinal, interval, rasio – bersifat bertingkat. Makin tinggi skalanya, makin banyak operasi yang sah. Rasio "dua kali lipat" hanya sah pada skala <strong>rasio</strong>.
+</p>
+<p>
+4. <strong>Tipe data di R harus mencerminkan skala</strong>: <code>factor</code> untuk nominal, <code>ordered</code> untuk ordinal, <code>numeric</code> untuk interval/rasio. R hanya tahu tipe penyimpanan; maknanya ditentukan analis.
+</p>
+<p>
+5. Dataset <strong><em>tidy</em></strong> menempatkan observasi di baris dan variabel di kolom. Dalam <em>machine learning</em>, variabel dibagi menjadi <strong><em>feature</em></strong> dan <strong><em>target</em></strong>, dan skala target menentukan jenis tugas (klasifikasi atau regresi).
+</p>
+</div>
+<p>
+<strong>Jembatan ke sesi berikutnya:</strong> setelah memahami <strong>jenis</strong> data, Pertemuan 3 membahas <strong>bagaimana data</strong> diperoleh – metode pengumpulan data, teknik sampling probabilitas dan
+non-probabilitas, serta berbagai bentuk <strong>bias</strong> yang dapat merusak kesimpulan.
+</p>
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Referensi Pendukung
+
+<div style="width: 85%; margin: 0 auto;">
+
+<p>
+Materi ini merangkum topik jenis data dan skala pengukuran (<em>types of data and levels of measurement</em>) yang umum dibahas pada bab awal buku teks pengantar statistika bisnis/data science. Mahasiswa disarankan melengkapi pemahaman dengan merujuk pada:
+</p>
+
+<ul>
+  <li>Modul/slide perkuliahan "Introduction to Statistics (SDT-1102)" – Pertemuan 2: Jenis Data dan Skala Pengukuran.</li>
+  <li>Stevens, S. S. (1946). On the Theory of Scales of Measurement. <em>Science</em>, 103(2684), 677–680.</li>
+  <li>Wickham, H. (2014). Tidy Data. <em>Journal of Statistical Software</em>, 59(10).</li>
+  <li>Dokumentasi resmi R: <code>?factor</code>, <code>?read.csv</code>, <code>?reshape</code>, <code>?airquality</code>, <code>?iris</code> (dapat diakses langsung di R/RStudio).</li>
+</ul>
+
+</div>

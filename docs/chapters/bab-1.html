@@ -1,0 +1,2159 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="id" xml:lang="id"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.11.9">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Buku praktikum pengantar statistika yang memuat kumpulan materi dan penggunaan data menggunakan R, mulai dari statistika deskriptif hingga dasar-dasar inferensi.">
+
+<title>1&nbsp; Bab 1: Konsep Dasar Statistika dan Data – PRAKTIKUM PENGANTAR STATISTIKA</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/bab-2.html" rel="next">
+<link href="../index.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/scrollable-regions/scrollable-regions.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-8575377b15774f46c10fa1d7752ca172.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Tidak ada hasil",
+    "search-matching-documents-text": "dokumen cocok",
+    "search-copy-link-title": "Salin tautan untuk mencari",
+    "search-hide-matches-text": "Sembunyikan kecocokan lainnya",
+    "search-more-match-text": "kecocokan lainnya di dokumen ini",
+    "search-more-matches-text": "kecocokan lainnya di dokumen ini",
+    "search-clear-button-title": "Hapus",
+    "search-text-placeholder": "Cari di buku…",
+    "search-detached-cancel-button-title": "Batal",
+    "search-submit-button-title": "Kirim",
+    "search-label": "Mencari"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<meta name="author" content="Jesen">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Skip to main content</a>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" aria-label="Bilah alat">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alihkan bilah sisi" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="Jalur"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/bab-1.html"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Bab 1: Konsep Dasar Statistika dan Data</span></a></li></ol></nav>
+        <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Mencari" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto" aria-label="Situs web">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">PRAKTIKUM PENGANTAR STATISTIKA</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/sennie17/STATISITKA-EBOOK.git" title="Kode Sumber" class="quarto-navigation-tool px-1" aria-label="Kode Sumber"><i class="bi bi-github"></i></a>
+    <a href="../PRAKTIKUM-PENGANTAR-STATISTIKA.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Mencari"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kata Pengantar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/bab-1.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Bab 1: Konsep Dasar Statistika dan Data</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/bab-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Bab 2: Jenis Data dan Skala Pengukuran</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/bab-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Bab 3: Pengumpulan dan Sampling Data</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/bab-4.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bab 4: Penyajian dan Visualisasi Data</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/bab-5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Bab 5: Ukuran Pemusatan dan Sebaran</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/bab-9.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bab 9: Sampling Distribution dan Estimasi</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/bab-10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bab 10: Konsep dan Uji Hipotesis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references/referensi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referensi</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" aria-labelledby="toc-title" class="toc-active">
+    <h2 id="toc-title">Daftar Isi</h2>
+   
+  <ul>
+  <li><a href="#mengenal-r-secara-singkat" id="toc-mengenal-r-secara-singkat" class="nav-link active" data-scroll-target="#mengenal-r-secara-singkat"><span class="header-section-number">1.1</span> Mengenal R Secara Singkat</a>
+  <ul class="collapse">
+  <li><a href="#vektor-kumpulan-nilai-sejenis" id="toc-vektor-kumpulan-nilai-sejenis" class="nav-link" data-scroll-target="#vektor-kumpulan-nilai-sejenis"><span class="header-section-number">1.1.1</span> Vektor: Kumpulan Nilai Sejenis</a></li>
+  <li><a href="#data-frame-tabel-data" id="toc-data-frame-tabel-data" class="nav-link" data-scroll-target="#data-frame-tabel-data"><span class="header-section-number">1.1.2</span> Data Frame: Tabel Data</a></li>
+  </ul></li>
+  <li><a href="#fundamental-statistika" id="toc-fundamental-statistika" class="nav-link" data-scroll-target="#fundamental-statistika"><span class="header-section-number">1.2</span> Fundamental Statistika</a>
+  <ul class="collapse">
+  <li><a href="#statistika-vs-statistik" id="toc-statistika-vs-statistik" class="nav-link" data-scroll-target="#statistika-vs-statistik"><span class="header-section-number">1.2.1</span> Statistika vs Statistik</a></li>
+  <li><a href="#siklus-kerja-statistika" id="toc-siklus-kerja-statistika" class="nav-link" data-scroll-target="#siklus-kerja-statistika"><span class="header-section-number">1.2.2</span> Siklus Kerja Statistika</a></li>
+  <li><a href="#statistika-deskriptif-vs-inferensial" id="toc-statistika-deskriptif-vs-inferensial" class="nav-link" data-scroll-target="#statistika-deskriptif-vs-inferensial"><span class="header-section-number">1.2.3</span> Statistika Deskriptif vs Inferensial</a></li>
+  </ul></li>
+  <li><a href="#populasi-dan-sampel" id="toc-populasi-dan-sampel" class="nav-link" data-scroll-target="#populasi-dan-sampel"><span class="header-section-number">1.3</span> Populasi dan Sampel</a>
+  <ul class="collapse">
+  <li><a href="#definisi-kunci" id="toc-definisi-kunci" class="nav-link" data-scroll-target="#definisi-kunci"><span class="header-section-number">1.3.1</span> Definisi Kunci</a></li>
+  <li><a href="#mengapa-tidak-mengamati-seluruh-populasi" id="toc-mengapa-tidak-mengamati-seluruh-populasi" class="nav-link" data-scroll-target="#mengapa-tidak-mengamati-seluruh-populasi"><span class="header-section-number">1.3.2</span> Mengapa Tidak Mengamati Seluruh Populasi?</a></li>
+  <li><a href="#simulasi-populasi-yang-pura-pura-kita-ketahui" id="toc-simulasi-populasi-yang-pura-pura-kita-ketahui" class="nav-link" data-scroll-target="#simulasi-populasi-yang-pura-pura-kita-ketahui"><span class="header-section-number">1.3.3</span> Simulasi: Populasi yang (Pura-pura) Kita Ketahui</a></li>
+  <li><a href="#mengambil-sampel-dan-menghitung-statistik" id="toc-mengambil-sampel-dan-menghitung-statistik" class="nav-link" data-scroll-target="#mengambil-sampel-dan-menghitung-statistik"><span class="header-section-number">1.3.4</span> Mengambil Sampel dan Menghitung Statistik</a></li>
+  <li><a href="#unit-observasi-bisa-berubah" id="toc-unit-observasi-bisa-berubah" class="nav-link" data-scroll-target="#unit-observasi-bisa-berubah"><span class="header-section-number">1.3.5</span> Unit Observasi Bisa Berubah</a></li>
+  </ul></li>
+  <li><a href="#variabilitas-sampling-statistik-itu-berubah-ubah" id="toc-variabilitas-sampling-statistik-itu-berubah-ubah" class="nav-link" data-scroll-target="#variabilitas-sampling-statistik-itu-berubah-ubah"><span class="header-section-number">1.4</span> Variabilitas Sampling: Statistik Itu Berubah-ubah</a>
+  <ul class="collapse">
+  <li><a href="#sekilas-inferensi" id="toc-sekilas-inferensi" class="nav-link" data-scroll-target="#sekilas-inferensi"><span class="header-section-number">1.4.1</span> Sekilas Inferensi</a></li>
+  </ul></li>
+  <li><a href="#variabel" id="toc-variabel" class="nav-link" data-scroll-target="#variabel"><span class="header-section-number">1.5</span> Variabel</a>
+  <ul class="collapse">
+  <li><a href="#variabel-numerik-vs-kategorik" id="toc-variabel-numerik-vs-kategorik" class="nav-link" data-scroll-target="#variabel-numerik-vs-kategorik"><span class="header-section-number">1.5.1</span> Variabel Numerik vs Kategorik</a></li>
+  <li><a href="#variabel-independen-vs-dependen" id="toc-variabel-independen-vs-dependen" class="nav-link" data-scroll-target="#variabel-independen-vs-dependen"><span class="header-section-number">1.5.2</span> Variabel Independen vs Dependen</a></li>
+  <li><a href="#kerangka-membaca-sebuah-studi" id="toc-kerangka-membaca-sebuah-studi" class="nav-link" data-scroll-target="#kerangka-membaca-sebuah-studi"><span class="header-section-number">1.5.3</span> Kerangka Membaca Sebuah Studi</a></li>
+  </ul></li>
+  <li><a href="#studi-kasus-komprehensif-survei-pemakaian-qris" id="toc-studi-kasus-komprehensif-survei-pemakaian-qris" class="nav-link" data-scroll-target="#studi-kasus-komprehensif-survei-pemakaian-qris"><span class="header-section-number">1.6</span> Studi Kasus Komprehensif: Survei Pemakaian QRIS</a>
+  <ul class="collapse">
+  <li><a href="#langkah-1-identifikasi-komponen-studi" id="toc-langkah-1-identifikasi-komponen-studi" class="nav-link" data-scroll-target="#langkah-1-identifikasi-komponen-studi"><span class="header-section-number">1.6.1</span> Langkah 1: Identifikasi Komponen Studi</a></li>
+  <li><a href="#langkah-2-menghitung-statistik-dari-sampel" id="toc-langkah-2-menghitung-statistik-dari-sampel" class="nav-link" data-scroll-target="#langkah-2-menghitung-statistik-dari-sampel"><span class="header-section-number">1.6.2</span> Langkah 2: Menghitung Statistik dari Sampel</a></li>
+  <li><a href="#langkah-3-variabel-independen-dan-dependen" id="toc-langkah-3-variabel-independen-dan-dependen" class="nav-link" data-scroll-target="#langkah-3-variabel-independen-dan-dependen"><span class="header-section-number">1.6.3</span> Langkah 3: Variabel Independen dan Dependen</a></li>
+  <li><a href="#pertanyaan-diskusi-dan-jawaban" id="toc-pertanyaan-diskusi-dan-jawaban" class="nav-link" data-scroll-target="#pertanyaan-diskusi-dan-jawaban"><span class="header-section-number">1.6.4</span> Pertanyaan Diskusi dan Jawaban</a></li>
+  </ul></li>
+  <li><a href="#latihan-mandiri" id="toc-latihan-mandiri" class="nav-link" data-scroll-target="#latihan-mandiri"><span class="header-section-number">1.7</span> Latihan Mandiri</a>
+  <ul class="collapse">
+  <li><a href="#latihan-utama-survei-kepuasan-aplikasi-kampus" id="toc-latihan-utama-survei-kepuasan-aplikasi-kampus" class="nav-link" data-scroll-target="#latihan-utama-survei-kepuasan-aplikasi-kampus"><span class="header-section-number">1.7.1</span> Latihan Utama: Survei Kepuasan Aplikasi Kampus</a></li>
+  <li><a href="#latihan-tambahan-self-check" id="toc-latihan-tambahan-self-check" class="nav-link" data-scroll-target="#latihan-tambahan-self-check"><span class="header-section-number">1.7.2</span> Latihan Tambahan (Self-Check)</a></li>
+  </ul></li>
+  <li><a href="#kesalahan-umum-pada-konsep-dasar" id="toc-kesalahan-umum-pada-konsep-dasar" class="nav-link" data-scroll-target="#kesalahan-umum-pada-konsep-dasar"><span class="header-section-number">1.8</span> Kesalahan Umum pada Konsep Dasar</a></li>
+  <li><a href="#cheat-sheet-fungsi-r-yang-digunakan" id="toc-cheat-sheet-fungsi-r-yang-digunakan" class="nav-link" data-scroll-target="#cheat-sheet-fungsi-r-yang-digunakan"><span class="header-section-number">1.9</span> Cheat Sheet: Fungsi R yang Digunakan</a></li>
+  <li><a href="#glosarium-istilah" id="toc-glosarium-istilah" class="nav-link" data-scroll-target="#glosarium-istilah"><span class="header-section-number">1.10</span> Glosarium Istilah</a></li>
+  <li><a href="#rangkuman-dan-kesimpulan" id="toc-rangkuman-dan-kesimpulan" class="nav-link" data-scroll-target="#rangkuman-dan-kesimpulan"><span class="header-section-number">1.11</span> Rangkuman dan Kesimpulan</a></li>
+  <li><a href="#referensi-pendukung" id="toc-referensi-pendukung" class="nav-link" data-scroll-target="#referensi-pendukung"><span class="header-section-number">1.12</span> Referensi Pendukung</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/sennie17/STATISITKA-EBOOK.git/edit/main/chapters/bab-1.qmd" class="toc-action"><i class="bi bi-github"></i>Sunting laman ini</a></li><li><a href="https://github.com/sennie17/STATISITKA-EBOOK.git/issues/new" class="toc-action"><i class="bi empty"></i>Laporkan isu</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content" tabindex="-1">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Bab 1: Konsep Dasar Statistika dan Data</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<section id="mengenal-r-secara-singkat" class="level2" data-number="1.1">
+<h2 data-number="1.1" class="anchored" data-anchor-id="mengenal-r-secara-singkat"><span class="header-section-number">1.1</span> Mengenal R Secara Singkat</h2>
+<p>Sepanjang semester kita memakai R sebagai “kalkulator statistika”. Bagian ini hanya membekali perintah minimal yang dibutuhkan pada pertemuan ini.</p>
+<section id="vektor-kumpulan-nilai-sejenis" class="level3" data-number="1.1.1">
+<h3 data-number="1.1.1" class="anchored" data-anchor-id="vektor-kumpulan-nilai-sejenis"><span class="header-section-number">1.1.1</span> Vektor: Kumpulan Nilai Sejenis</h3>
+<p>Vektor dibuat dengan fungsi c() (combine). Satu vektor biasanya mewakili <strong>satu variabel.</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>tinggi <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">160</span>, <span class="dv">172</span>, <span class="dv">168</span>, <span class="dv">155</span>, <span class="dv">181</span>)        <span class="co"># numerik</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>prodi <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"DS"</span>, <span class="st">"SI"</span>, <span class="st">"DS"</span>, <span class="st">"TI"</span>, <span class="st">"DS"</span>)    <span class="co"># karakter (teks)</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>lulus <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="cn">TRUE</span>, <span class="cn">TRUE</span>, <span class="cn">FALSE</span>, <span class="cn">TRUE</span>, <span class="cn">TRUE</span>)   <span class="co"># logika</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(tinggi)                              <span class="co"># banyaknya elemen</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>tinggi[<span class="dv">2</span>]                                   <span class="co"># elemen ke-2</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 172</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>tinggi <span class="sc">*</span> <span class="fl">0.01</span>                               <span class="co"># operasi berlaku untuk setiap elemen (cm -&gt; m)</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.60 1.72 1.68 1.55 1.81</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(tinggi); <span class="fu">class</span>(prodi); <span class="fu">class</span>(lulus)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "numeric"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "character"</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "logical"</code></pre>
+</div>
+</div>
+</section>
+<section id="data-frame-tabel-data" class="level3" data-number="1.1.2">
+<h3 data-number="1.1.2" class="anchored" data-anchor-id="data-frame-tabel-data"><span class="header-section-number">1.1.2</span> Data Frame: Tabel Data</h3>
+<p><em>Data frame</em> adalah tabel: <strong>baris = observasi, kolom = variabel</strong>. Inilah bentuk data yang paling sering kita jumpai.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>mhs_kecil <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="at">nama =</span> <span class="fu">c</span>(<span class="st">"Ayu"</span>, <span class="st">"Budi"</span>, <span class="st">"Citra"</span>, <span class="st">"Dedi"</span>, <span class="st">"Eka"</span>),</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="at">prodi =</span> prodi,</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="at">tinggi =</span> tinggi,</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="at">lulus =</span> lulus</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>mhs_kecil</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   nama prodi tinggi lulus
+1   Ayu    DS    160  TRUE
+2  Budi    SI    172  TRUE
+3 Citra    DS    168 FALSE
+4  Dedi    TI    155  TRUE
+5   Eka    DS    181  TRUE</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">nrow</span>(mhs_kecil); <span class="fu">ncol</span>(mhs_kecil)    <span class="co"># banyaknya baris dan kolom</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5</code></pre>
+</div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mhs_kecil<span class="sc">$</span>tinggi                    <span class="co"># mengambil satu kolom dengan $</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 160 172 168 155 181</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(mhs_kecil)                      <span class="co"># struktur: nama kolom, tipe, contoh isi</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   5 obs. of  4 variables:
+ $ nama  : chr  "Ayu" "Budi" "Citra" "Dedi" ...
+ $ prodi : chr  "DS" "SI" "DS" "TI" ...
+ $ tinggi: num  160 172 168 155 181
+ $ lulus : logi  TRUE TRUE FALSE TRUE TRUE</code></pre>
+</div>
+</div>
+<p>Fungsi str() akan sering kita pakai untuk “berkenalan” dengan dataset baru: berapa observasinya, apa saja variabelnya, dan apa tipenya.</p>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+</section>
+<section id="fundamental-statistika" class="level2" data-number="1.2">
+<h2 data-number="1.2" class="anchored" data-anchor-id="fundamental-statistika"><span class="header-section-number">1.2</span> Fundamental Statistika</h2>
+<section id="statistika-vs-statistik" class="level3" data-number="1.2.1">
+<h3 data-number="1.2.1" class="anchored" data-anchor-id="statistika-vs-statistik"><span class="header-section-number">1.2.1</span> Statistika vs Statistik</h3>
+<p>Dua kata ini mirip tetapi maknanya berbeda:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 37%">
+<col style="width: 29%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Istilah</th>
+<th style="text-align: left;">Makna</th>
+<th style="text-align: left;">Contoh</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Statistika</strong> (<em>statistics</em> sebagai ilmu)</td>
+<td style="text-align: left;">Ilmu tentang cara <strong>mengumpulkan, mengolah, menyajikan, menganalisis, dan menginterpretasikan</strong> data untuk menarik kesimpulan dalam kondisi ketidakpastian</td>
+<td style="text-align: left;">“Saya sedang belajar statistika.”</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Statistik</strong> (<em>a statistic</em>)</td>
+<td style="text-align: left;"><strong>Nilai ringkasan</strong> yang dihitung dari data <strong>sampel</strong></td>
+<td style="text-align: left;">“Rata-rata tinggi 5 mahasiswa tadi adalah 167,2 cm.”</td>
+</tr>
+</tbody>
+</table>
+<p>Dalam bahasa sehari-hari, “statistik” juga sering berarti “kumpulan angka” (misalnya “statistik pengangguran”). Dalam kuliah ini kita memakai makna teknisnya: <strong>nilai yang dihitung dari sampel.</strong></p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(mhs_kecil<span class="sc">$</span>tinggi)    <span class="co"># sebuah statistik: rata-rata sampel</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 167.2</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(mhs_kecil<span class="sc">$</span>lulus)     <span class="co"># sebuah statistik: proporsi lulus (TRUE dihitung 1)</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.8</code></pre>
+</div>
+</div>
+</section>
+<section id="siklus-kerja-statistika" class="level3" data-number="1.2.2">
+<h3 data-number="1.2.2" class="anchored" data-anchor-id="siklus-kerja-statistika"><span class="header-section-number">1.2.2</span> Siklus Kerja Statistika</h3>
+<p>Statistika bukan sekadar menghitung rumus. Ia adalah sebuah siklus:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 29%">
+<col style="width: 48%">
+<col style="width: 22%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Tahap</th>
+<th style="text-align: left;">Pertanyaan yang dijawab</th>
+<th style="text-align: left;">Dibahas pada</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>1. Merumuskan masalah</strong></td>
+<td style="text-align: left;">Apa yang ingin diketahui?<br>Tentang siapa?</td>
+<td style="text-align: left;"><strong>Pertemuan 1</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>2. Mengumpulkan data</strong></td>
+<td style="text-align: left;">Bagaimana data diperoleh?<br>Siapa yang diamati?</td>
+<td style="text-align: left;"><strong>Pertemuan 2–3</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>3. Menyajikan &amp; meringkas</strong></td>
+<td style="text-align: left;">Seperti apa pola datanya?</td>
+<td style="text-align: left;"><strong>Pertemuan 4–7</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>4. Menarik kesimpulan</strong></td>
+<td style="text-align: left;">Apa yang bisa dikatakan tentang populasi?</td>
+<td style="text-align: left;"><strong>Pertemuan 9–15</strong></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>5. Mengomunikasikan</strong></td>
+<td style="text-align: left;">Bagaimana melaporkan hasil secara jujur?</td>
+<td style="text-align: left;"><strong>Sepanjang semester</strong></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="statistika-deskriptif-vs-inferensial" class="level3" data-number="1.2.3">
+<h3 data-number="1.2.3" class="anchored" data-anchor-id="statistika-deskriptif-vs-inferensial"><span class="header-section-number">1.2.3</span> Statistika Deskriptif vs Inferensial</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 33%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Aspek</th>
+<th style="text-align: left;">Statistika Deskriptif</th>
+<th style="text-align: left;">Statistika Inferensial</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Tujuan</strong></td>
+<td style="text-align: left;">Meringkas dan menggambarkan data yang <strong>ada di tangan</strong></td>
+<td style="text-align: left;">Menarik kesimpulan tentang <strong>populasi</strong> berdasarkan sampel</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Cakupan kesimpulan</strong></td>
+<td style="text-align: left;">Hanya berlaku untuk data yang diamati</td>
+<td style="text-align: left;">Digeneralisasi ke kelompok yang lebih besar</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Alat</strong></td>
+<td style="text-align: left;">Tabel, grafik, mean, median, simpangan baku</td>
+<td style="text-align: left;">Estimasi, selang kepercayaan, uji hipotesis, regresi</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Ketidakpastian</strong></td>
+<td style="text-align: left;">Tidak dinyatakan</td>
+<td style="text-align: left;"><strong>Selalu</strong> dinyatakan (misalnya <em>margin of error</em>, <em>p-value</em>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Contoh kalimat</strong></td>
+<td style="text-align: left;">“Rata-rata IPK 50 mahasiswa yang disurvei adalah 3,21.”</td>
+<td style="text-align: left;">“Rata-rata IPK seluruh mahasiswa diperkirakan antara 3,13 dan 3,29 (kepercayaan 95%).”</td>
+</tr>
+</tbody>
+</table>
+<p>Perhatikan perbedaan kalimatnya: kalimat deskriptif hanya <strong>melaporkan</strong>, sedangkan kalimat inferensial <strong>menggeneralisasi</strong> dan <strong>menyebutkan ketidakpastian</strong>. Pada paruh pertama semester (Pertemuan 1–7) kita fokus pada statistika deskriptif; paruh kedua (Pertemuan 9–15) pada inferensial.</p>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+</section>
+<section id="populasi-dan-sampel" class="level2" data-number="1.3">
+<h2 data-number="1.3" class="anchored" data-anchor-id="populasi-dan-sampel"><span class="header-section-number">1.3</span> Populasi dan Sampel</h2>
+<section id="definisi-kunci" class="level3" data-number="1.3.1">
+<h3 data-number="1.3.1" class="anchored" data-anchor-id="definisi-kunci"><span class="header-section-number">1.3.1</span> Definisi Kunci</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 15%">
+<col style="width: 45%">
+<col style="width: 40%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Istilah</th>
+<th style="text-align: left;">Definisi</th>
+<th style="text-align: left;">Contoh (Survei Kebiasaan Belajar)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Populasi</strong></td>
+<td style="text-align: left;"><strong>Seluruh</strong> objek/individu yang menjadi sasaran kesimpulan</td>
+<td style="text-align: left;">Seluruh 5.000 mahasiswa aktif sebuah universitas</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Sampel</strong></td>
+<td style="text-align: left;"><strong>Sebagian</strong> populasi yang benar-benar diamati</td>
+<td style="text-align: left;">50 mahasiswa yang mengisi survei</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Unit observasi</strong></td>
+<td style="text-align: left;">Satu “entitas” tempat data dicatat (satu baris data)</td>
+<td style="text-align: left;">Satu orang mahasiswa</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Parameter</strong></td>
+<td style="text-align: left;">Nilai ringkasan <strong>populasi</strong> (biasanya tidak diketahui)</td>
+<td style="text-align: left;">Rata-rata IPK <strong>seluruh</strong> mahasiswa, μ</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Statistik</strong></td>
+<td style="text-align: left;">Nilai ringkasan <strong>sampel</strong> (dapat dihitung)</td>
+<td style="text-align: left;">Rata-rata IPK <strong>50 mahasiswa</strong>, <span class="math inline">\(\bar{x}\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>Cara mudah mengingat: <strong>P</strong>arameter – <strong>P</strong>opulasi; <strong>S</strong>tatistik – <strong>S</strong>ampel.</p>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th style="text-align: left;">Ukuran</th>
+<th style="text-align: left;">Parameter (Populasi)</th>
+<th style="text-align: left;">Statistik (Sampel)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Banyaknya data</strong></td>
+<td style="text-align: left;"><span class="math inline">\(N\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(n\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Rata-rata</strong></td>
+<td style="text-align: left;"><span class="math inline">\(\mu\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(\bar{x}\)</span></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Proporsi</strong></td>
+<td style="text-align: left;"><span class="math inline">\(p\)</span> (atau <span class="math inline">\(\pi\)</span>)</td>
+<td style="text-align: left;"><span class="math inline">\(\hat{p}\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Simpangan baku</strong></td>
+<td style="text-align: left;"><span class="math inline">\(\sigma\)</span></td>
+<td style="text-align: left;"><span class="math inline">\(s\)</span></td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="mengapa-tidak-mengamati-seluruh-populasi" class="level3" data-number="1.3.2">
+<h3 data-number="1.3.2" class="anchored" data-anchor-id="mengapa-tidak-mengamati-seluruh-populasi"><span class="header-section-number">1.3.2</span> Mengapa Tidak Mengamati Seluruh Populasi?</h3>
+<p>Mengamati seluruh populasi disebut sensus. Sensus ideal, tetapi sering tidak mungkin atau tidak efisien karena:</p>
+<ol type="1">
+<li><p><strong>Biaya dan waktu</strong> – menyurvei 270 juta penduduk Indonesia hanya dilakukan BPS setiap 10 tahun.</p></li>
+<li><p><strong>Populasi tak terhingga atau terus berubah</strong> – misalnya seluruh transaksi QRIS di masa depan.</p></li>
+<li><p><strong>Pengamatan bersifat merusak</strong> – menguji umur lampu atau kekuatan beton berarti menghancurkannya; menguji seluruh produksi berarti tidak ada yang tersisa untuk dijual.</p></li>
+<li><p><strong>Sampel yang dirancang baik sudah cukup akurat</strong> – dan sering lebih teliti karena petugasnya lebih sedikit dan terlatih.</p></li>
+</ol>
+</section>
+<section id="simulasi-populasi-yang-pura-pura-kita-ketahui" class="level3" data-number="1.3.3">
+<h3 data-number="1.3.3" class="anchored" data-anchor-id="simulasi-populasi-yang-pura-pura-kita-ketahui"><span class="header-section-number">1.3.3</span> Simulasi: Populasi yang (Pura-pura) Kita Ketahui</h3>
+<p>Di dunia nyata parameter populasi <strong>tidak diketahui</strong>. Agar dapat melihat hubungan parameter dan statistik, kita <strong>menyimulasikan</strong> sebuah populasi 5.000 mahasiswa, sehingga – khusus di praktikum ini – kita tahu “kebenarannya”.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>N <span class="ot">&lt;-</span> <span class="dv">5000</span></span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>populasi <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">id =</span> <span class="dv">1</span><span class="sc">:</span>N,</span>
+<span id="cb24-5"><a href="#cb24-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">fakultas =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Teknik"</span>, <span class="st">"Ekonomi"</span>, <span class="st">"Sains"</span>, <span class="st">"Hukum"</span>, <span class="st">"Kedokteran"</span>), N,</span>
+<span id="cb24-6"><a href="#cb24-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.30</span>, <span class="fl">0.25</span>, <span class="fl">0.20</span>, <span class="fl">0.15</span>, <span class="fl">0.10</span>)),</span>
+<span id="cb24-7"><a href="#cb24-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">jenis_kel =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Perempuan"</span>, <span class="st">"Laki-laki"</span>), N, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb24-8"><a href="#cb24-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">tinggal =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Kos"</span>, <span class="st">"Rumah Ortu"</span>, <span class="st">"Asrama"</span>), N, <span class="at">replace =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb24-9"><a href="#cb24-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.55</span>, <span class="fl">0.35</span>, <span class="fl">0.10</span>)),</span>
+<span id="cb24-10"><a href="#cb24-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">jam_belajar =</span> <span class="fu">round</span>(<span class="fu">pmax</span>(<span class="dv">0</span>, <span class="fu">rnorm</span>(N, <span class="at">mean =</span> <span class="dv">14</span>, <span class="at">sd =</span> <span class="dv">5</span>)), <span class="dv">1</span>)            <span class="co"># jam per minggu</span></span>
+<span id="cb24-11"><a href="#cb24-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb24-12"><a href="#cb24-12" aria-hidden="true" tabindex="-1"></a><span class="co"># IPK dipengaruhi jam belajar ditambah faktor acak lain</span></span>
+<span id="cb24-13"><a href="#cb24-13" aria-hidden="true" tabindex="-1"></a>populasi<span class="sc">$</span>ipk <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">pmin</span>(<span class="dv">4</span>, <span class="fu">pmax</span>(<span class="fl">1.5</span>, <span class="fl">2.3</span> <span class="sc">+</span> <span class="fl">0.065</span> <span class="sc">*</span> populasi<span class="sc">$</span>jam_belajar <span class="sc">+</span></span>
+<span id="cb24-14"><a href="#cb24-14" aria-hidden="true" tabindex="-1"></a>                                        <span class="fu">rnorm</span>(N, <span class="dv">0</span>, <span class="fl">0.3</span>))), <span class="dv">2</span>)</span>
+<span id="cb24-15"><a href="#cb24-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-16"><a href="#cb24-16" aria-hidden="true" tabindex="-1"></a>populasi<span class="sc">$</span>uang_saku <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">rlnorm</span>(N, <span class="at">meanlog =</span> <span class="fu">log</span>(<span class="dv">2</span>), <span class="at">sdlog =</span> <span class="fl">0.4</span>), <span class="dv">2</span>)  <span class="co"># juta rupiah/bulan</span></span>
+<span id="cb24-17"><a href="#cb24-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-18"><a href="#cb24-18" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(populasi)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  id fakultas jenis_kel    tinggal jam_belajar  ipk uang_saku
+1  1    Sains Perempuan Rumah Ortu         7.6 2.50      3.01
+2  2    Sains Laki-laki Rumah Ortu        12.4 3.17      1.75
+3  3   Teknik Perempuan Rumah Ortu        17.0 3.14      1.33
+4  4   Teknik Laki-laki        Kos        13.6 2.76      2.60
+5  5    Sains Laki-laki Rumah Ortu        14.1 3.40      1.63
+6  6   Teknik Laki-laki     Asrama        20.4 3.57      2.86</code></pre>
+</div>
+</div>
+<p><strong>Parameter</strong> populasi (dalam kenyataan tidak kita ketahui):</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>mu    <span class="ot">&lt;-</span> <span class="fu">mean</span>(populasi<span class="sc">$</span>ipk)                        <span class="co"># rata-rata IPK populasi</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>p_kos <span class="ot">&lt;-</span> <span class="fu">mean</span>(populasi<span class="sc">$</span>tinggal <span class="sc">==</span> <span class="st">"Kos"</span>)           <span class="co"># proporsi mahasiswa kos</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">mu =</span> mu, <span class="at">p_kos =</span> p_kos)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      mu    p_kos 
+3.211766 0.554200 </code></pre>
+</div>
+</div>
+</section>
+<section id="mengambil-sampel-dan-menghitung-statistik" class="level3" data-number="1.3.4">
+<h3 data-number="1.3.4" class="anchored" data-anchor-id="mengambil-sampel-dan-menghitung-statistik"><span class="header-section-number">1.3.4</span> Mengambil Sampel dan Menghitung Statistik</h3>
+<p>Sekarang kita berperan sebagai peneliti yang hanya mampu menyurvei <strong>50 mahasiswa</strong> yang dipilih secara acak.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>)</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="dv">50</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>sampel <span class="ot">&lt;-</span> populasi[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span>N, n), ]</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>x_bar <span class="ot">&lt;-</span> <span class="fu">mean</span>(sampel<span class="sc">$</span>ipk)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>p_hat <span class="ot">&lt;-</span> <span class="fu">mean</span>(sampel<span class="sc">$</span>tinggal <span class="sc">==</span> <span class="st">"Kos"</span>)</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">data.frame</span>(</span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">Ukuran =</span> <span class="fu">c</span>(<span class="st">"Rata-rata IPK"</span>, <span class="st">"Proporsi tinggal di kos"</span>),</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">Parameter =</span> <span class="fu">round</span>(<span class="fu">c</span>(mu, p_kos), <span class="dv">3</span>),</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">Statistik =</span> <span class="fu">round</span>(<span class="fu">c</span>(x_bar, p_hat), <span class="dv">3</span>),</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Selisih =</span> <span class="fu">round</span>(<span class="fu">c</span>(x_bar <span class="sc">-</span> mu, p_hat <span class="sc">-</span> p_kos), <span class="dv">3</span>)</span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a>), <span class="at">caption =</span> <span class="st">"Parameter populasi vs statistik dari satu sampel (n = 50)"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Parameter populasi vs statistik dari satu sampel (n = 50)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Ukuran</th>
+<th style="text-align: right;">Parameter</th>
+<th style="text-align: right;">Statistik</th>
+<th style="text-align: right;">Selisih</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Rata-rata IPK</td>
+<td style="text-align: right;">3.212</td>
+<td style="text-align: right;">3.241</td>
+<td style="text-align: right;">0.029</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Proporsi tinggal di kos</td>
+<td style="text-align: right;">0.554</td>
+<td style="text-align: right;">0.620</td>
+<td style="text-align: right;">0.066</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Statistik sampel <strong>dekat</strong> dengan parameter, tetapi <strong>tidak sama persis</strong>. Selisih ini disebut <strong>kesalahan sampling</strong> (sampling error) – bukan karena peneliti ceroboh, melainkan karena kita hanya melihat sebagian populasi.</p>
+</section>
+<section id="unit-observasi-bisa-berubah" class="level3" data-number="1.3.5">
+<h3 data-number="1.3.5" class="anchored" data-anchor-id="unit-observasi-bisa-berubah"><span class="header-section-number">1.3.5</span> Unit Observasi Bisa Berubah</h3>
+<p>Unit observasi ditentukan oleh <strong>tingkat</strong> di mana data dicatat. Data mahasiswa di atas memiliki unit observasi “satu mahasiswa”. Jika data tersebut diringkas per fakultas, unit observasinya berubah menjadi “satu fakultas”:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(knitr)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(kableExtra)</span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>per_fakultas <span class="ot">&lt;-</span> <span class="fu">aggregate</span>(</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cbind</span>(ipk, jam_belajar) <span class="sc">~</span> fakultas,</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">data =</span> populasi,</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">FUN =</span> mean</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>per_fakultas<span class="sc">$</span>jumlah_mhs <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(</span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">table</span>(populasi<span class="sc">$</span>fakultas)[per_fakultas<span class="sc">$</span>fakultas]</span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(</span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>  per_fakultas,</span>
+<span id="cb29-15"><a href="#cb29-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">digits =</span> <span class="dv">2</span>,</span>
+<span id="cb29-16"><a href="#cb29-16" aria-hidden="true" tabindex="-1"></a>  <span class="at">caption =</span> <span class="st">"Data dengan unit observasi = fakultas (5 baris)"</span></span>
+<span id="cb29-17"><a href="#cb29-17" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Data dengan unit observasi = fakultas (5 baris)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">fakultas</th>
+<th style="text-align: right;">ipk</th>
+<th style="text-align: right;">jam_belajar</th>
+<th style="text-align: right;">jumlah_mhs</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Ekonomi</td>
+<td style="text-align: right;">3.21</td>
+<td style="text-align: right;">13.86</td>
+<td style="text-align: right;">1263</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Hukum</td>
+<td style="text-align: right;">3.21</td>
+<td style="text-align: right;">14.14</td>
+<td style="text-align: right;">725</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Kedokteran</td>
+<td style="text-align: right;">3.22</td>
+<td style="text-align: right;">14.26</td>
+<td style="text-align: right;">488</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Sains</td>
+<td style="text-align: right;">3.21</td>
+<td style="text-align: right;">14.05</td>
+<td style="text-align: right;">1023</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Teknik</td>
+<td style="text-align: right;">3.22</td>
+<td style="text-align: right;">14.11</td>
+<td style="text-align: right;">1501</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Tabel kedua hanya memiliki 5 baris. Kesimpulan dari data tingkat fakultas <strong>tidak otomatis</strong> berlaku untuk tingkat individu – kesalahan logika ini dikenal sebagai <strong><em>ecological fallacy</em></strong>. Selalu tanyakan: “satu baris data ini mewakili apa?”</p>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+</section>
+<section id="variabilitas-sampling-statistik-itu-berubah-ubah" class="level2" data-number="1.4">
+<h2 data-number="1.4" class="anchored" data-anchor-id="variabilitas-sampling-statistik-itu-berubah-ubah"><span class="header-section-number">1.4</span> Variabilitas Sampling: Statistik Itu Berubah-ubah</h2>
+<p>Jika peneliti lain mengambil sampel 50 mahasiswa yang berbeda, apakah ia memperoleh <span class="math inline">\(\bar{x}\)</span> yang sama? Mari kita ulangi pengambilan sampel sebanyak 1.000 kali.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2</span>) </span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>rata_sampel_50 <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">1000</span>, <span class="fu">mean</span>(<span class="fu">sample</span>(populasi<span class="sc">$</span>ipk, <span class="dv">50</span>)))</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(rata_sampel_50, <span class="at">breaks =</span> <span class="dv">30</span>, <span class="at">col =</span> <span class="st">"#4C72B0"</span>, <span class="at">border =</span> <span class="st">"white"</span>,</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Rata-rata IPK dari 1.000 Sampel Berbeda (n = 50)"</span>,</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Rata-rata IPK sampel"</span>, <span class="at">ylab =</span> <span class="st">"Frekuensi"</span>)</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> mu, <span class="at">col =</span> <span class="st">"firebrick"</span>, <span class="at">lwd =</span> <span class="dv">3</span>)</span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="st">"Parameter mu (sebenarnya)"</span>, <span class="at">col =</span> <span class="st">"firebrick"</span>, <span class="at">lwd =</span> <span class="dv">3</span>, <span class="at">bty =</span> <span class="st">"n"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-1_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(rata_sampel_50)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.0284 3.3844</code></pre>
+</div>
+</div>
+<p>Setiap sampel menghasilkan <span class="math inline">\(\bar{x}\)</span> yang berbeda, tetapi nilai-nilainya <strong>berkumpul di sekitar</strong> μ. Inilah alasan statistika inferensial selalu menyertakan ukuran ketidakpastian.</p>
+<p><strong>Pengaruh ukuran sampel.</strong> Apa yang terjadi jika sampel diperbesar?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">3</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>rata_sampel_10 <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">1000</span>, <span class="fu">mean</span>(<span class="fu">sample</span>(populasi<span class="sc">$</span>ipk, <span class="dv">10</span>)))</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>rata_sampel_200 <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">1000</span>, <span class="fu">mean</span>(<span class="fu">sample</span>(populasi<span class="sc">$</span>ipk, <span class="dv">200</span>)))</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>))</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (hasil <span class="cf">in</span> <span class="fu">list</span>(<span class="fu">list</span>(rata_sampel_10, <span class="st">"n = 10"</span>), <span class="fu">list</span>(rata_sampel_50, <span class="st">"n = 50"</span>),</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>              <span class="fu">list</span>(rata_sampel_200, <span class="st">"n = 200"</span>))) {</span>
+<span id="cb33-8"><a href="#cb33-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hist</span>(hasil[[<span class="dv">1</span>]], <span class="at">breaks =</span> <span class="dv">25</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="fl">2.9</span>, <span class="fl">3.5</span>), <span class="at">col =</span> <span class="st">"#9ecae1"</span>, <span class="at">border =</span> <span class="st">"white"</span>,</span>
+<span id="cb33-9"><a href="#cb33-9" aria-hidden="true" tabindex="-1"></a>       <span class="at">main =</span> hasil[[<span class="dv">2</span>]], <span class="at">xlab =</span> <span class="st">"Rata-rata IPK sampel"</span>, <span class="at">ylab =</span> <span class="st">"Frekuensi"</span>)</span>
+<span id="cb33-10"><a href="#cb33-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">abline</span>(<span class="at">v =</span> mu, <span class="at">col =</span> <span class="st">"firebrick"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb33-11"><a href="#cb33-11" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-1_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">c</span>(<span class="at">Sebaran_n10 =</span> <span class="fu">sd</span>(rata_sampel_10), <span class="at">Sebaran_n50 =</span> <span class="fu">sd</span>(rata_sampel_50),</span>
+<span id="cb34-4"><a href="#cb34-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">Sebaran_n200 =</span> <span class="fu">sd</span>(rata_sampel_200)), <span class="dv">4</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Sebaran_n10  Sebaran_n50 Sebaran_n200 
+      0.1358       0.0615       0.0292 </code></pre>
+</div>
+</div>
+<p>Semakin besar sampel, semakin <strong>sempit</strong> sebaran <span class="math inline">\(\bar{x}\)</span> di sekitar μ – statistik semakin dapat dipercaya. Ide ini akan dibahas secara formal pada Pertemuan 9 (sampling distribution dan <em>Central Limit Theorem</em>).</p>
+<section id="sekilas-inferensi" class="level3" data-number="1.4.1">
+<h3 data-number="1.4.1" class="anchored" data-anchor-id="sekilas-inferensi"><span class="header-section-number">1.4.1</span> Sekilas Inferensi</h3>
+<p>Sebagai pratinjau, statistika inferensial memungkinkan kita menyatakan: “berdasarkan satu sampel ini, μ <strong>kemungkinan besar</strong> berada di antara … dan …”.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>se <span class="ot">&lt;-</span> <span class="fu">sd</span>(sampel<span class="sc">$</span>ipk) <span class="sc">/</span> <span class="fu">sqrt</span>(n)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>selang <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">Bawah =</span> x_bar <span class="sc">-</span> <span class="dv">2</span> <span class="sc">*</span> se, <span class="at">Atas =</span> x_bar <span class="sc">+</span> <span class="dv">2</span> <span class="sc">*</span> se)</span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(selang, <span class="dv">3</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Bawah  Atas 
+3.102 3.380 </code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Apakah selang memuat parameter?</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a>mu <span class="sc">&gt;=</span> selang[<span class="st">"Bawah"</span>] <span class="sc">&amp;</span> mu <span class="sc">&lt;=</span> selang[<span class="st">"Atas"</span>]</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Bawah 
+ TRUE </code></pre>
+</div>
+</div>
+<p>Rumus di atas <strong>belum perlu dihafal</strong>; yang penting adalah idenya: kesimpulan tentang populasi dinyatakan sebagai <strong>rentang</strong> beserta tingkat kepercayaannya, bukan satu angka pasti.</p>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+</section>
+<section id="variabel" class="level2" data-number="1.5">
+<h2 data-number="1.5" class="anchored" data-anchor-id="variabel"><span class="header-section-number">1.5</span> Variabel</h2>
+<p><strong>Variabel</strong> adalah karakteristik yang <strong>nilainya bervariasi</strong> antarunit observasi. Dalam data frame, setiap kolom adalah satu variabel.</p>
+<section id="variabel-numerik-vs-kategorik" class="level3" data-number="1.5.1">
+<h3 data-number="1.5.1" class="anchored" data-anchor-id="variabel-numerik-vs-kategorik"><span class="header-section-number">1.5.1</span> Variabel Numerik vs Kategorik</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 16%">
+<col style="width: 43%">
+<col style="width: 26%">
+<col style="width: 13%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Jenis</th>
+<th style="text-align: left;">Ciri</th>
+<th style="text-align: left;">Contoh</th>
+<th style="text-align: left;">Tipe di R</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Numerik (kuantitatif)</strong></td>
+<td style="text-align: left;">Nilainya angka yang <strong>bermakna untuk dihitung</strong> (dijumlah, dirata-rata)</td>
+<td style="text-align: left;">IPK, jam belajar, uang saku, tinggi badan</td>
+<td style="text-align: left;"><code>numeric</code>, <code>integer</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Kategorik (kualitatif)</strong></td>
+<td style="text-align: left;">Nilainya <strong>label/kelompok</strong></td>
+<td style="text-align: left;">Fakultas, jenis kelamin, tempat tinggal</td>
+<td style="text-align: left;"><code>character</code>, <code>factor</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Jebakan penting</strong>: tidak semua yang ditulis dengan angka adalah variabel numerik. NIM, kode pos, nomor HP, atau kode fakultas “1, 2, 3” adalah <strong>kategorik</strong>, karena merata-ratakannya tidak bermakna.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(sampel)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   50 obs. of  7 variables:
+ $ id         : int  1017 4775 2177 1533 4567 2347 270 4050 3379 4065 ...
+ $ fakultas   : chr  "Ekonomi" "Ekonomi" "Sains" "Ekonomi" ...
+ $ jenis_kel  : chr  "Perempuan" "Laki-laki" "Laki-laki" "Perempuan" ...
+ $ tinggal    : chr  "Kos" "Kos" "Asrama" "Kos" ...
+ $ jam_belajar: num  20.6 19.7 15.4 24.1 19.9 8.8 25.3 14.4 10.1 19.7 ...
+ $ ipk        : num  3.53 3.39 3.77 3.66 3.25 2.59 4 2.55 2.46 3.53 ...
+ $ uang_saku  : num  2.94 3.7 2.5 2.61 2.47 1.36 2.28 4.9 2.27 1.28 ...</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a>jenis_variabel <span class="ot">&lt;-</span> <span class="cf">function</span>(x) <span class="cf">if</span> (<span class="fu">is.numeric</span>(x)) <span class="st">"Numerik"</span> <span class="cf">else</span> <span class="st">"Kategorik"</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(sampel, jenis_variabel)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         id    fakultas   jenis_kel     tinggal jam_belajar         ipk 
+  "Numerik" "Kategorik" "Kategorik" "Kategorik"   "Numerik"   "Numerik" 
+  uang_saku 
+  "Numerik" </code></pre>
+</div>
+</div>
+<p>Menurut R, kolom id bertipe numerik – padahal secara makna id hanyalah <strong>label</strong> unit observasi. R hanya melihat <strong>tipe penyimpanan</strong>, sedangkan menentukan jenis variabel adalah tugas <strong>analis</strong>, berdasarkan maknanya.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sampel<span class="sc">$</span>id)                   <span class="co"># dapat dihitung, tetapi "rata-rata nomor ID" tidak bermakna apa pun</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2248.94</code></pre>
+</div>
+</div>
+<p>Ringkasan yang tepat berbeda menurut jenis variabel:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(sampel<span class="sc">$</span>fakultas)            <span class="co"># kategorik -&gt; hitung frekuensi</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+   Ekonomi      Hukum Kedokteran      Sains     Teknik 
+        19          6          1         16          8 </code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(sampel<span class="sc">$</span>jam_belajar)       <span class="co"># numerik   -&gt; ringkasan angka</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   2.10   11.32   14.45   15.19   19.98   25.80 </code></pre>
+</div>
+</div>
+<p>Pembagian numerik menjadi diskrit/kontinu dan kategorik menjadi nominal/ordinal akan dibahas lebih rinci pada Pertemuan 2.</p>
+</section>
+<section id="variabel-independen-vs-dependen" class="level3" data-number="1.5.2">
+<h3 data-number="1.5.2" class="anchored" data-anchor-id="variabel-independen-vs-dependen"><span class="header-section-number">1.5.2</span> Variabel Independen vs Dependen</h3>
+<p>Ketika sebuah studi menyelidiki <strong>hubungan</strong> antarvariabel, peran variabel dibedakan:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 13%">
+<col style="width: 36%">
+<col style="width: 29%">
+<col style="width: 20%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Peran</th>
+<th style="text-align: left;">Nama lain</th>
+<th style="text-align: left;">Makna</th>
+<th style="text-align: left;">Contoh</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Independen</strong></td>
+<td style="text-align: left;">Variabel bebas, prediktor, <em>feature</em>, X</td>
+<td style="text-align: left;">Variabel yang <strong>diduga memengaruhi</strong></td>
+<td style="text-align: left;">Jam belajar per minggu</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Dependen</strong></td>
+<td style="text-align: left;">Variabel terikat, respons, <em>target</em>, Y</td>
+<td style="text-align: left;">Variabel yang <strong>diduga dipengaruhi</strong></td>
+<td style="text-align: left;">IPK</td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(sampel<span class="sc">$</span>jam_belajar, sampel<span class="sc">$</span>ipk, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> <span class="st">"steelblue"</span>,</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Jam belajar per minggu (variabel independen, X)"</span>,</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"IPK (variabel dependen, Y)"</span>,</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Hubungan Jam Belajar dan IPK (n = 50)"</span>)</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="fu">lm</span>(ipk <span class="sc">~</span> jam_belajar, <span class="at">data =</span> sampel), <span class="at">col =</span> <span class="st">"firebrick"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-1_files/figure-html/unnamed-chunk-26-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Secara umum, mahasiswa yang belajar lebih lama cenderung memiliki IPK lebih tinggi. Konvensi grafiknya: variabel independen di <strong>sumbu-x</strong>, dependen di <strong>sumbu-y</strong>. Hubungan ini akan diukur secara formal pada Pertemuan 15 (korelasi dan regresi).</p>
+<div style="width: 85%; margin: 0 auto;">
+<p>
+<strong>Peran variabel ditentukan oleh pertanyaan penelitian, bukan oleh variabelnya.</strong> “IPK” adalah variabel dependen jika pertanyaannya “apakah jam belajar memengaruhi IPK?”, tetapi menjadi variabel independen jika pertanyaannya “apakah IPK memengaruhi gaji pertama lulusan?”.
+</p>
+<p>
+<strong>Hubungan belum tentu sebab-akibat.</strong> Data survei (observasional) hanya menunjukkan bahwa dua variabel <strong>bergerak bersama</strong>. Untuk menyimpulkan sebab-akibat, dibutuhkan desain eksperimen (Pertemuan 3).
+</p>
+</div>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+<section id="kerangka-membaca-sebuah-studi" class="level3" data-number="1.5.3">
+<h3 data-number="1.5.3" class="anchored" data-anchor-id="kerangka-membaca-sebuah-studi"><span class="header-section-number">1.5.3</span> Kerangka Membaca Sebuah Studi</h3>
+<p>Setiap kali menjumpai klaim berbasis data, biasakan menjawab enam pertanyaan berikut:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 4%">
+<col style="width: 63%">
+<col style="width: 31%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">No</th>
+<th style="text-align: left;">Pertanyaan</th>
+<th style="text-align: left;">Mengidentifikasi</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>1</strong></td>
+<td style="text-align: left;">Kesimpulannya ditujukan kepada siapa?</td>
+<td style="text-align: left;"><strong>Populasi</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>2</strong></td>
+<td style="text-align: left;">Siapa yang benar-benar diamati, dan berapa banyak?</td>
+<td style="text-align: left;"><strong>Sampel</strong> dan n</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>3</strong></td>
+<td style="text-align: left;">Satu baris data mewakili apa?</td>
+<td style="text-align: left;"><strong>Unit observasi</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>4</strong></td>
+<td style="text-align: left;">Karakteristik apa yang diukur, dan apa jenisnya?</td>
+<td style="text-align: left;"><strong>Variabel</strong> (numerik/kategorik)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>5</strong></td>
+<td style="text-align: left;">Angka yang dilaporkan dihitung dari sampel atau populasi?</td>
+<td style="text-align: left;"><strong>Statistik</strong> atau <strong>parameter</strong></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>6</strong></td>
+<td style="text-align: left;">Apakah klaimnya hanya menggambarkan data, atau menggeneralisasi?</td>
+<td style="text-align: left;"><strong>Deskriptif</strong> atau <strong>inferensial</strong></td>
+</tr>
+</tbody>
+</table>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+</section>
+<section id="studi-kasus-komprehensif-survei-pemakaian-qris" class="level2" data-number="1.6">
+<h2 data-number="1.6" class="anchored" data-anchor-id="studi-kasus-komprehensif-survei-pemakaian-qris"><span class="header-section-number">1.6</span> Studi Kasus Komprehensif: Survei Pemakaian QRIS</h2>
+<p><strong>Konteks:</strong> Sebuah lembaga riset melaporkan: <em>“Survei terhadap 400 pelaku UMKM kuliner di Kota Bandung menunjukkan 72% sudah menerima pembayaran QRIS, dengan rata-rata 38 transaksi QRIS per minggu. Pelaku usaha yang lebih lama memakai QRIS cenderung memiliki omzet lebih tinggi. Dengan demikian, sekitar tujuh dari sepuluh UMKM kuliner di Bandung telah mengadopsi QRIS.”</em></p>
+<p>Kita simulasikan data survei tersebut agar dapat dianalisis.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2024</span>)</span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>n_umkm <span class="ot">&lt;-</span> <span class="dv">400</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>umkm <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">id_umkm      =</span> <span class="fu">sprintf</span>(<span class="st">"UMKM-%03d"</span>, <span class="dv">1</span><span class="sc">:</span>n_umkm),</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">jenis_usaha  =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Warung makan"</span>, <span class="st">"Kedai kopi"</span>, <span class="st">"Kue &amp; roti"</span>, <span class="st">"Street food"</span>),</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>                        n_umkm, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>   </span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">terima_qris =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Ya"</span>, <span class="st">"Tidak"</span>), n_umkm, <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.72</span>, <span class="fl">0.28</span>))</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>umkm<span class="sc">$</span>bulan_qris <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(umkm<span class="sc">$</span>terima_qris <span class="sc">==</span> <span class="st">"Ya"</span>, <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">48</span>, n_umkm, <span class="at">replace =</span> <span class="cn">TRUE</span>), <span class="dv">0</span>)</span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>umkm<span class="sc">$</span>trx_qris <span class="ot">&lt;-</span> <span class="fu">ifelse</span>(umkm<span class="sc">$</span>terima_qris <span class="sc">==</span> <span class="st">"Ya"</span>,</span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>                        <span class="fu">rpois</span>(n_umkm, <span class="at">lambda =</span> <span class="dv">20</span> <span class="sc">+</span> <span class="fl">0.75</span> <span class="sc">*</span> umkm<span class="sc">$</span>bulan_qris), <span class="dv">0</span>)</span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>umkm<span class="sc">$</span>omzet_juta <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">rlnorm</span>(n_umkm, <span class="fu">log</span>(<span class="dv">15</span> <span class="sc">+</span> <span class="fl">0.25</span> <span class="sc">*</span> umkm<span class="sc">$</span>bulan_qris), <span class="fl">0.35</span>),<span class="dv">1</span>)</span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(umkm)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   400 obs. of  6 variables:
+ $ id_umkm    : chr  "UMKM-001" "UMKM-002" "UMKM-003" "UMKM-004" ...
+ $ jenis_usaha: chr  "Kedai kopi" "Warung makan" "Warung makan" "Street food" ...
+ $ terima_qris: chr  "Ya" "Tidak" "Ya" "Tidak" ...
+ $ bulan_qris : num  47 0 39 0 8 24 21 38 0 0 ...
+ $ trx_qris   : num  54 0 44 0 33 37 34 43 0 0 ...
+ $ omzet_juta : num  22.1 15.8 25.6 13.8 14.3 23.9 25.5 24.4 15.5 9.7 ...</code></pre>
+</div>
+</div>
+<section id="langkah-1-identifikasi-komponen-studi" class="level3" data-number="1.6.1">
+<h3 data-number="1.6.1" class="anchored" data-anchor-id="langkah-1-identifikasi-komponen-studi"><span class="header-section-number">1.6.1</span> Langkah 1: Identifikasi Komponen Studi</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 25%">
+<col style="width: 74%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Komponen</th>
+<th style="text-align: left;">Jawaban</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Populasi</strong></td>
+<td style="text-align: left;">Seluruh pelaku UMKM kuliner di Kota Bandung</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Sampel</strong></td>
+<td style="text-align: left;">400 pelaku UMKM kuliner yang disurvei</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Unit observasi</strong></td>
+<td style="text-align: left;">Satu UMKM kuliner</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Variabel kategorik</strong></td>
+<td style="text-align: left;"><code>jenis_usaha</code>, <code>terima_qris</code> (dan <code>id_umkm</code> sebagai label)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Variabel numerik</strong></td>
+<td style="text-align: left;"><code>bulan_qris</code>, <code>trx_qris</code>, <code>omzet_juta</code></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Statistik</strong></td>
+<td style="text-align: left;">72% (proporsi penerima QRIS dalam sampel); 38 transaksi (rata-rata sampel)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Parameter yang diduga</strong></td>
+<td style="text-align: left;">Proporsi dan rata-rata transaksi pada <strong>seluruh</strong> UMKM kuliner Bandung</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="langkah-2-menghitung-statistik-dari-sampel" class="level3" data-number="1.6.2">
+<h3 data-number="1.6.2" class="anchored" data-anchor-id="langkah-2-menghitung-statistik-dari-sampel"><span class="header-section-number">1.6.2</span> Langkah 2: Menghitung Statistik dari Sampel</h3>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>p_hat_qris <span class="ot">&lt;-</span> <span class="fu">mean</span>(umkm<span class="sc">$</span>terima_qris <span class="sc">==</span> <span class="st">"Ya"</span>)</span>
+<span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>rata_trx <span class="ot">&lt;-</span> <span class="fu">mean</span>(umkm<span class="sc">$</span>trx_qris[umkm<span class="sc">$</span>terima_qris <span class="sc">==</span> <span class="st">"Ya"</span>])</span>
+<span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb53-4"><a href="#cb53-4" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">Proporsi_QRIS =</span> <span class="fu">round</span>(p_hat_qris, <span class="dv">3</span>), <span class="at">Rata_trx_per_minggu =</span> <span class="fu">round</span>(rata_trx, <span class="dv">1</span>))</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>      Proporsi_QRIS Rata_trx_per_minggu 
+              0.715              36.100 </code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(umkm<span class="sc">$</span>jenis_usaha, umkm<span class="sc">$</span>terima_qris)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>              
+               Tidak Ya
+  Kedai kopi      21 70
+  Kue &amp; roti      23 73
+  Street food     26 75
+  Warung makan    44 68</code></pre>
+</div>
+</div>
+<p>Karena datanya hasil simulasi, angkanya (71.5% dan 36.1 transaksi) sedikit berbeda dari laporan (72% dan 38 transaksi) – persis seperti dua sampel berbeda yang menghasilkan statistik berbeda.</p>
+</section>
+<section id="langkah-3-variabel-independen-dan-dependen" class="level3" data-number="1.6.3">
+<h3 data-number="1.6.3" class="anchored" data-anchor-id="langkah-3-variabel-independen-dan-dependen"><span class="header-section-number">1.6.3</span> Langkah 3: Variabel Independen dan Dependen</h3>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>pengguna <span class="ot">&lt;-</span> <span class="fu">subset</span>(umkm, terima_qris <span class="sc">==</span> <span class="st">"Ya"</span>)</span>
+<span id="cb57-2"><a href="#cb57-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(pengguna<span class="sc">$</span>bulan_qris, pengguna<span class="sc">$</span>omzet_juta, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> <span class="fu">rgb</span>(<span class="fl">0.3</span>, <span class="fl">0.45</span>, <span class="fl">0.7</span>,<span class="fl">0.6</span>),</span>
+<span id="cb57-3"><a href="#cb57-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Lama memakai QRIS (bulan) -- independen"</span>,</span>
+<span id="cb57-4"><a href="#cb57-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Omzet per bulan (juta Rp) -- dependen"</span>,</span>
+<span id="cb57-5"><a href="#cb57-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Lama Pemakaian QRIS vs Omzet UMKM"</span>)</span>
+<span id="cb57-6"><a href="#cb57-6" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="fu">lm</span>(omzet_juta <span class="sc">~</span> bulan_qris, <span class="at">data =</span> pengguna), <span class="at">col =</span> <span class="st">"firebrick"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-1_files/figure-html/unnamed-chunk-30-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="pertanyaan-diskusi-dan-jawaban" class="level3" data-number="1.6.4">
+<h3 data-number="1.6.4" class="anchored" data-anchor-id="pertanyaan-diskusi-dan-jawaban"><span class="header-section-number">1.6.4</span> Pertanyaan Diskusi dan Jawaban</h3>
+<p><strong>1. Bagian mana dari laporan itu yang deskriptif, dan mana yang inferensial?</strong></p>
+<p>“72% sudah menerima QRIS” dan “rata-rata 38 transaksi” adalah <strong>deskriptif</strong> (menggambarkan 400 UMKM dalam sampel). Kalimat “sekitar tujuh dari sepuluh UMKM kuliner <strong>di Bandung”</strong> adalah inferensial karena menggeneralisasi ke seluruh populasi.</p>
+<p><strong>2. Apakah generalisasi tersebut sah?</strong></p>
+<p>Hanya jika sampel 400 UMKM <strong>mewakili</strong> populasi – misalnya dipilih secara acak dari daftar seluruh UMKM kuliner Bandung. Jika survei dilakukan secara online melalui media sosial, UMKM yang sudah melek digital akan lebih banyak terjaring, dan angka 72% kemungkinan <strong>terlalu tinggi.</strong> Laporan juga sebaiknya menyebut ketidakpastiannya (misalnya margin of error).</p>
+<p><strong>3. Bolehkah disimpulkan bahwa “memakai QRIS menyebabkan omzet naik”?</strong></p>
+<p><strong>Tidak.</strong> Grafik menunjukkan <strong>kecenderungan bersama,</strong> tetapi data ini observasional. Bisa jadi UMKM yang omzetnya sudah besar lebih dahulu mengadopsi QRIS (arah sebab-akibat terbalik), atau ada faktor lain (lokasi strategis) yang memengaruhi keduanya.</p>
+<p><strong>4. Mengapa id_umkm tidak dianalisis?</strong></p>
+<p>id_umkm hanya <strong>pengenal</strong> unit observasi. Ia bukan karakteristik yang bervariasi secara bermakna, sehingga tidak dianalisis sebagai variabel.</p>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+</section>
+<section id="latihan-mandiri" class="level2" data-number="1.7">
+<h2 data-number="1.7" class="anchored" data-anchor-id="latihan-mandiri"><span class="header-section-number">1.7</span> Latihan Mandiri</h2>
+<section id="latihan-utama-survei-kepuasan-aplikasi-kampus" class="level3" data-number="1.7.1">
+<h3 data-number="1.7.1" class="anchored" data-anchor-id="latihan-utama-survei-kepuasan-aplikasi-kampus"><span class="header-section-number">1.7.1</span> Latihan Utama: Survei Kepuasan Aplikasi Kampus</h3>
+<p><strong>Konteks:</strong> Bagian TI sebuah universitas dengan 12.000 mahasiswa ingin mengetahui kepuasan terhadap aplikasi akademik barunya. Mereka menyebarkan kuesioner kepada 300 mahasiswa yang dipilih acak dari daftar mahasiswa aktif. Laporan awal menyebut: skor kepuasan rata-rata sekitar 3,5 (skala 1–5), sekitar 60% mahasiswa mengakses aplikasi setiap hari, dan mahasiswa yang lebih sering mengalami error cenderung memberi skor kepuasan lebih rendah.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">77</span>)</span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>survei_app <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">nim =</span> <span class="fu">sprintf</span>(<span class="st">"2024%04d"</span>, <span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">9999</span>, <span class="dv">300</span>)),</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">angkatan =</span> <span class="fu">sample</span>(<span class="dv">2021</span><span class="sc">:</span><span class="dv">2024</span>, <span class="dv">300</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb58-5"><a href="#cb58-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">akses_harian =</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Ya"</span>, <span class="st">"Tidak"</span>), <span class="dv">300</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.64</span>,<span class="fl">0.36</span>)),</span>
+<span id="cb58-6"><a href="#cb58-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">jumlah_error =</span> <span class="fu">rpois</span>(<span class="dv">300</span>, <span class="at">lambda =</span> <span class="dv">3</span>)</span>
+<span id="cb58-7"><a href="#cb58-7" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb58-8"><a href="#cb58-8" aria-hidden="true" tabindex="-1"></a>survei_app<span class="sc">$</span>kepuasan <span class="ot">&lt;-</span> <span class="fu">pmin</span>(<span class="dv">5</span>, <span class="fu">pmax</span>(<span class="dv">1</span>, <span class="fu">round</span>(<span class="fl">4.4</span> <span class="sc">-</span> <span class="fl">0.25</span> <span class="sc">*</span> survei_app<span class="sc">$</span>jumlah_error<span class="sc">+</span></span>
+<span id="cb58-9"><a href="#cb58-9" aria-hidden="true" tabindex="-1"></a>                                              <span class="fu">rnorm</span>(<span class="dv">300</span>, <span class="dv">0</span>, <span class="fl">0.6</span>))))</span>
+<span id="cb58-10"><a href="#cb58-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb58-11"><a href="#cb58-11" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(survei_app)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       nim angkatan akses_harian jumlah_error kepuasan
+1 20242706     2021           Ya            6        4
+2 20247365     2024        Tidak            1        3
+3 20246648     2022           Ya            1        5
+4 20246326     2022           Ya            3        3
+5 20244416     2024           Ya            4        3
+6 20248022     2024        Tidak            1        4</code></pre>
+</div>
+</div>
+<section id="tugas-1-identifikasi-komponen-studi" class="level4">
+<h4 class="anchored" data-anchor-id="tugas-1-identifikasi-komponen-studi">Tugas 1: Identifikasi komponen studi</h4>
+<p>Tentukan populasi, sampel, n, unit observasi, serta satu contoh parameter dan statistik.</p>
+<p><strong>Jawaban:</strong> Populasi = seluruh 12.000 mahasiswa aktif; sampel = 300 mahasiswa yang mengisi kuesioner (n = 300); unit observasi = satu mahasiswa. Parameter = proporsi <strong>seluruh</strong> mahasiswa yang mengakses aplikasi setiap hari (tidak diketahui); statistik = proporsi mahasiswa dalam sampel yang mengakses aplikasi setiap hari (dihitung pada Tugas 3, sekitar 62.3%).</p>
+</section>
+<section id="tugas-2-klasifikasikan-setiap-variabel" class="level4">
+<h4 class="anchored" data-anchor-id="tugas-2-klasifikasikan-setiap-variabel">Tugas 2: Klasifikasikan setiap variabel</h4>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sapply</span>(survei_app, class)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         nim     angkatan akses_harian jumlah_error     kepuasan 
+ "character"    "integer"  "character"    "integer"    "numeric" </code></pre>
+</div>
+</div>
+<p><strong>Jawaban:</strong> akses_harian kategorik; jumlah_error numerik; kepuasan pada skala 1–5 adalah <strong>kategorik berurutan</strong> (ordinal) meskipun ditulis sebagai angka – dibahas lebih lanjut di Pertemuan 2. nim adalah label (kategorik, disimpan sebagai teks). angkatan tersimpan sebagai numerik, tetapi dalam survei ini berfungsi sebagai <strong>kelompok</strong> (kategorik).</p>
+</section>
+<section id="tugas-3-hitung-statistik-sampel" class="level4">
+<h4 class="anchored" data-anchor-id="tugas-3-hitung-statistik-sampel">Tugas 3: Hitung statistik sampel</h4>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb62"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><a href="#cb62-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">Proporsi_akses_harian =</span> <span class="fu">mean</span>(survei_app<span class="sc">$</span>akses_harian <span class="sc">==</span> <span class="st">"Ya"</span>),</span>
+<span id="cb62-2"><a href="#cb62-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Rata_kepuasan         =</span> <span class="fu">mean</span>(survei_app<span class="sc">$</span>kepuasan),</span>
+<span id="cb62-3"><a href="#cb62-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Rata_error            =</span> <span class="fu">mean</span>(survei_app<span class="sc">$</span>jumlah_error))</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Proporsi_akses_harian         Rata_kepuasan            Rata_error 
+            0.6233333             3.5266667             3.1033333 </code></pre>
+</div>
+</div>
+</section>
+<section id="tugas-4-tentukan-variabel-independen-dan-dependen" class="level4">
+<h4 class="anchored" data-anchor-id="tugas-4-tentukan-variabel-independen-dan-dependen">Tugas 4: Tentukan variabel independen dan dependen</h4>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">boxplot</span>(kepuasan <span class="sc">~</span> jumlah_error, <span class="at">data =</span> survei_app, <span class="at">col =</span> <span class="st">"#c6dbef"</span>,</span>
+<span id="cb64-2"><a href="#cb64-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">"Jumlah error yang dialami (independen)"</span>,</span>
+<span id="cb64-3"><a href="#cb64-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Skor kepuasan (dependen)"</span>, <span class="at">main =</span> <span class="st">"Error vs Kepuasan"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-1_files/figure-html/unnamed-chunk-34-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Jawaban:</strong> Pertanyaannya adalah “apakah error memengaruhi kepuasan?”, sehingga jumlah_error = <strong>independen</strong> dan kepuasan = <strong>dependen.</strong> Grafik menunjukkan skor kepuasan cenderung turun seiring bertambahnya error.</p>
+</section>
+<section id="tugas-5-deskriptif-atau-inferensial" class="level4">
+<h4 class="anchored" data-anchor-id="tugas-5-deskriptif-atau-inferensial">Tugas 5: Deskriptif atau inferensial?</h4>
+<p>Klasifikasikan dua kalimat berikut: (a) “Rata-rata kepuasan 300 responden adalah 3,5.” (b) “Mayoritas mahasiswa universitas ini puas terhadap aplikasi akademik.”</p>
+<p><strong>Jawaban:</strong> (a) <strong>deskriptif</strong> – hanya melaporkan sampel. (b) <strong>inferensial</strong> – menggeneralisasi ke seluruh mahasiswa; sah karena sampel diambil acak dari daftar mahasiswa aktif, tetapi sebaiknya disertai ukuran ketidakpastian.</p>
+</section>
+<section id="tugas-6-tantangan-variabilitas-sampling" class="level4">
+<h4 class="anchored" data-anchor-id="tugas-6-tantangan-variabilitas-sampling">Tugas 6 (Tantangan): Variabilitas Sampling</h4>
+<p>Anggap survei_app sebagai populasi mini. Ambil 500 sampel acak berukuran 30, hitung proporsi akses_harian == “Ya” pada tiap sampel, dan gambarkan histogramnya.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">8</span>)</span>
+<span id="cb65-2"><a href="#cb65-2" aria-hidden="true" tabindex="-1"></a>prop_30 <span class="ot">&lt;-</span> <span class="fu">replicate</span>(<span class="dv">500</span>, <span class="fu">mean</span>(<span class="fu">sample</span>(survei_app<span class="sc">$</span>akses_harian, <span class="dv">30</span>) <span class="sc">==</span> <span class="st">"Ya"</span>))</span>
+<span id="cb65-3"><a href="#cb65-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(prop_30, <span class="at">breaks =</span> <span class="dv">15</span>, <span class="at">col =</span> <span class="st">"#fdae6b"</span>, <span class="at">border =</span> <span class="st">"white"</span>,</span>
+<span id="cb65-4"><a href="#cb65-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Proporsi Akses Harian dari 500 Sampel (n = 30)"</span>,</span>
+<span id="cb65-5"><a href="#cb65-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Proporsi sampel"</span>, <span class="at">ylab =</span> <span class="st">"Frekuensi"</span>)</span>
+<span id="cb65-6"><a href="#cb65-6" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> <span class="fu">mean</span>(survei_app<span class="sc">$</span>akses_harian <span class="sc">==</span> <span class="st">"Ya"</span>), <span class="at">col =</span> <span class="st">"firebrick"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-1_files/figure-html/unnamed-chunk-35-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="fu">range</span>(prop_30)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.4000000 0.8666667</code></pre>
+</div>
+</div>
+<p><strong>Jawaban:</strong> Proporsi sampel berkisar cukup lebar di sekitar proporsi “populasi” (garis merah). Dengan n = 30 saja, satu sampel bisa menghasilkan angka yang cukup jauh dari nilai sebenarnya – itulah mengapa ukuran sampel dan ketidakpastian penting.</p>
+</section>
+</section>
+<section id="latihan-tambahan-self-check" class="level3" data-number="1.7.2">
+<h3 data-number="1.7.2" class="anchored" data-anchor-id="latihan-tambahan-self-check"><span class="header-section-number">1.7.2</span> Latihan Tambahan (Self-Check)</h3>
+<p>Kerjakan soal-soal berikut secara mandiri sebelum melihat kunci jawaban pada komentar kode.</p>
+<p><strong>Soal A.</strong> Sebuah pabrik baterai memproduksi 50.000 baterai per hari. Petugas QC menguji umur 100 baterai dan mendapatkan rata-rata 18,2 jam. Tentukan populasi, sampel, parameter, statistik, dan jelaskan mengapa sensus tidak mungkin dilakukan.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb68"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><a href="#cb68-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Kunci jawaban:</span></span>
+<span id="cb68-2"><a href="#cb68-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Populasi  : seluruh 50.000 baterai produksi hari itu</span></span>
+<span id="cb68-3"><a href="#cb68-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Sampel    : 100 baterai yang diuji (n = 100)</span></span>
+<span id="cb68-4"><a href="#cb68-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Parameter : rata-rata umur SELURUH 50.000 baterai (mu, tidak diketahui)</span></span>
+<span id="cb68-5"><a href="#cb68-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Statistik : x-bar = 18,2 jam</span></span>
+<span id="cb68-6"><a href="#cb68-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Sensus tidak mungkin karena pengujian umur bersifat MERUSAK (baterai habis dipakai).</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Soal B.</strong> Klasifikasikan variabel berikut sebagai numerik atau kategorik: (1) nomor kursi pesawat, (2) berat bagasi, (3) kelas penerbangan (Ekonomi/Bisnis), (4) jumlah transit, (5) kode bandara (CGK, DPS), (6) lama penerbangan.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Kunci jawaban:</span></span>
+<span id="cb69-2"><a href="#cb69-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (1) Kategorik (label, meskipun memuat angka)    (2) Numerik</span></span>
+<span id="cb69-3"><a href="#cb69-3" aria-hidden="true" tabindex="-1"></a><span class="co"># (3) Kategorik                                   (4) Numerik</span></span>
+<span id="cb69-4"><a href="#cb69-4" aria-hidden="true" tabindex="-1"></a><span class="co"># (5) Kategorik                                   (6) Numerik</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Soal C.</strong> Buat data frame berisi 6 teman sekelas dengan variabel: nama, asal_daerah, tinggi_cm, jumlah_saudara. Tampilkan strukturnya dengan str() dan hitung rata-rata tinggi badan. Apakah angka ini parameter atau statistik jika tujuannya menggambarkan seluruh angkatan?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb70"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><a href="#cb70-1" aria-hidden="true" tabindex="-1"></a>teman <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb70-2"><a href="#cb70-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">nama =</span> <span class="fu">c</span>(<span class="st">"A"</span>, <span class="st">"B"</span>, <span class="st">"C"</span>, <span class="st">"D"</span>, <span class="st">"E"</span>, <span class="st">"F"</span>),</span>
+<span id="cb70-3"><a href="#cb70-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">asal_daerah =</span> <span class="fu">c</span>(<span class="st">"Bekasi"</span>, <span class="st">"Medan"</span>, <span class="st">"Bogor"</span>, <span class="st">"Makassar"</span>, <span class="st">"Bekasi"</span>, <span class="st">"Solo"</span>),</span>
+<span id="cb70-4"><a href="#cb70-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">tinggi_cm =</span> <span class="fu">c</span>(<span class="dv">158</span>, <span class="dv">170</span>, <span class="dv">165</span>, <span class="dv">175</span>, <span class="dv">162</span>, <span class="dv">168</span>),</span>
+<span id="cb70-5"><a href="#cb70-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">jumlah_saudara =</span> <span class="fu">c</span>(<span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="dv">4</span>)</span>
+<span id="cb70-6"><a href="#cb70-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb70-7"><a href="#cb70-7" aria-hidden="true" tabindex="-1"></a><span class="fu">str</span>(teman)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>'data.frame':   6 obs. of  4 variables:
+ $ nama          : chr  "A" "B" "C" "D" ...
+ $ asal_daerah   : chr  "Bekasi" "Medan" "Bogor" "Makassar" ...
+ $ tinggi_cm     : num  158 170 165 175 162 168
+ $ jumlah_saudara: num  2 1 3 0 2 4</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(teman<span class="sc">$</span>tinggi_cm)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 166.3333</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Kunci: rata-rata 6 orang adalah STATISTIK, karena 6 teman hanyalah sampel dari angkatan.</span></span>
+<span id="cb74-2"><a href="#cb74-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Namun jika tujuannya hanya menggambarkan 6 orang itu saja, keenamnya adalah populasi</span></span>
+<span id="cb74-3"><a href="#cb74-3" aria-hidden="true" tabindex="-1"></a><span class="co"># dan angka tersebut menjadi parameter. Populasi ditentukan oleh TUJUAN kesimpulan.</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Soal D.</strong> Seorang peneliti ingin mengetahui apakah durasi tidur memengaruhi konsentrasi belajar. Tentukan variabel independen dan dependen. Jika ia hanya mengamati (tanpa mengatur durasi tidur responden), bolehkah ia menyimpulkan sebab-akibat?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb75"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb75-1"><a href="#cb75-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Kunci jawaban:</span></span>
+<span id="cb75-2"><a href="#cb75-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Independen: durasi tidur; Dependen: skor konsentrasi belajar.</span></span>
+<span id="cb75-3"><a href="#cb75-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Karena hanya mengamati (studi observasional), ia hanya boleh menyimpulkan ADANYA HUBUNGAN,</span></span>
+<span id="cb75-4"><a href="#cb75-4" aria-hidden="true" tabindex="-1"></a><span class="co"># bukan sebab-akibat. Faktor lain (stres, konsumsi kafein) bisa memengaruhi keduanya.</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+</section>
+<section id="kesalahan-umum-pada-konsep-dasar" class="level2" data-number="1.8">
+<h2 data-number="1.8" class="anchored" data-anchor-id="kesalahan-umum-pada-konsep-dasar"><span class="header-section-number">1.8</span> Kesalahan Umum pada Konsep Dasar</h2>
+<ol type="1">
+<li><strong>Menyamakan “statistika” dan “statistik”</strong> – yang pertama ilmunya, yang kedua nilai ringkasan dari sampel.</li>
+<li><strong>Menganggap statistik sampel sama persis dengan parameter</strong> – selalu ada kesalahan sampling.</li>
+<li><strong>Menggeneralisasi dari sampel yang tidak mewakili</strong> – misalnya survei online untuk menggambarkan seluruh penduduk.</li>
+<li><strong>Menyebut parameter sebagai sesuatu yang “dihitung dari sampel”</strong> – parameter adalah milik populasi dan biasanya tidak diketahui.</li>
+<li><strong>Menganggap variabel berkode angka sebagai numerik</strong> – NIM, kode pos, dan kode kategori adalah kategorik.</li>
+<li><strong>Mengandalkan class() di R untuk menentukan jenis variabel</strong> – R hanya tahu tipe penyimpanan, bukan makna.</li>
+<li><strong>Salah menentukan unit observasi</strong> – sehingga kesimpulan tingkat kelompok dianggap berlaku untuk individu (ecological fallacy).</li>
+<li><strong>Menganggap peran independen/dependen melekat pada variabel</strong> – perannya ditentukan pertanyaan penelitian.</li>
+<li><strong>Menyimpulkan sebab-akibat dari data observasional</strong> – hubungan bukan berarti penyebab.</li>
+<li><strong>Melaporkan kesimpulan inferensial tanpa ketidakpastian</strong> – generalisasi harus disertai margin of error atau selang kepercayaan.</li>
+</ol>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+<section id="cheat-sheet-fungsi-r-yang-digunakan" class="level2" data-number="1.9">
+<h2 data-number="1.9" class="anchored" data-anchor-id="cheat-sheet-fungsi-r-yang-digunakan"><span class="header-section-number">1.9</span> Cheat Sheet: Fungsi R yang Digunakan</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 44%">
+<col style="width: 55%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Fungsi</th>
+<th style="text-align: left;">Kegunaan</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><code>c(...)</code></td>
+<td style="text-align: left;">Membuat vektor</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>data.frame(...)</code></td>
+<td style="text-align: left;">Membuat tabel data</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>head(df)</code></td>
+<td style="text-align: left;">Menampilkan 6 baris pertama</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>str(df)</code></td>
+<td style="text-align: left;">Menampilkan struktur data (variabel, tipe, contoh isi)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>nrow(df)</code>, <code>ncol(df)</code></td>
+<td style="text-align: left;">Banyaknya baris (observasi) dan kolom (variabel)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>df$kolom</code></td>
+<td style="text-align: left;">Mengambil satu variabel</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>class(x)</code></td>
+<td style="text-align: left;">Tipe penyimpanan objek di R</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>is.numeric(x)</code></td>
+<td style="text-align: left;">Memeriksa apakah objek bertipe numerik</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>sapply(df, fungsi)</code></td>
+<td style="text-align: left;">Menerapkan fungsi ke setiap kolom</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>length(x)</code></td>
+<td style="text-align: left;">Banyaknya elemen vektor</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>mean(x)</code></td>
+<td style="text-align: left;">Rata-rata; <code>mean(x == "A")</code> menghitung proporsi kategori “A”</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>table(x)</code></td>
+<td style="text-align: left;">Frekuensi setiap kategori</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>summary(x)</code></td>
+<td style="text-align: left;">Ringkasan angka variabel numerik</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>sample(x, n)</code></td>
+<td style="text-align: left;">Mengambil sampel acak berukuran <code>n</code></td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>set.seed(k)</code></td>
+<td style="text-align: left;">Mengunci bilangan acak agar hasil dapat direproduksi</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>replicate(B, ekspresi)</code></td>
+<td style="text-align: left;">Mengulang sebuah ekspresi sebanyak <code>B</code> kali (simulasi)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>subset(df, kondisi)</code></td>
+<td style="text-align: left;">Memilih baris yang memenuhi kondisi</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>aggregate(y ~ g, data, FUN)</code></td>
+<td style="text-align: left;">Meringkas variabel per kelompok</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>rnorm()</code>, <code>rlnorm()</code>, <code>rpois()</code></td>
+<td style="text-align: left;">Membangkitkan data acak (untuk simulasi)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>sd(x)</code>, <code>range(x)</code></td>
+<td style="text-align: left;">Simpangan baku dan nilai minimum–maksimum</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>round(x, d)</code></td>
+<td style="text-align: left;">Membulatkan ke <code>d</code> desimal</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>ifelse(kondisi, a, b)</code></td>
+<td style="text-align: left;">Memilih nilai <code>a</code> atau <code>b</code> menurut kondisi</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>sprintf(fmt, ...)</code></td>
+<td style="text-align: left;">Menyusun teks berformat (misalnya kode ID)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>plot(x, y)</code>, <code>hist(x)</code>, <code>boxplot()</code></td>
+<td style="text-align: left;">Grafik dasar</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>abline(lm(y ~ x))</code></td>
+<td style="text-align: left;">Menambahkan garis tren pada diagram pencar</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><code>par(mfrow = c(r, k))</code>, <code>legend()</code></td>
+<td style="text-align: left;">Mengatur susunan grafik dan menambahkan legenda</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><code>kable(df)</code></td>
+<td style="text-align: left;">Menampilkan tabel rapi (paket <code>knitr</code>)</td>
+</tr>
+</tbody>
+</table>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+<section id="glosarium-istilah" class="level2" data-number="1.10">
+<h2 data-number="1.10" class="anchored" data-anchor-id="glosarium-istilah"><span class="header-section-number">1.10</span> Glosarium Istilah</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 66%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Istilah</th>
+<th style="text-align: left;">Definisi Singkat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Statistika</strong></td>
+<td style="text-align: left;">Ilmu tentang mengumpulkan, mengolah, menyajikan, menganalisis, dan menginterpretasikan data dalam kondisi ketidakpastian</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Statistik</strong></td>
+<td style="text-align: left;">Nilai ringkasan yang dihitung dari data sampel</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Statistika Deskriptif</strong></td>
+<td style="text-align: left;">Cabang statistika yang meringkas dan menggambarkan data yang ada di tangan</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Statistika Inferensial</strong></td>
+<td style="text-align: left;">Cabang statistika yang menarik kesimpulan tentang populasi berdasarkan sampel</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Populasi</strong></td>
+<td style="text-align: left;">Seluruh objek atau individu yang menjadi sasaran kesimpulan</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Sampel</strong></td>
+<td style="text-align: left;">Sebagian populasi yang benar-benar diamati</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Sensus</strong></td>
+<td style="text-align: left;">Pengamatan terhadap seluruh anggota populasi</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Parameter</strong></td>
+<td style="text-align: left;">Nilai ringkasan populasi (biasanya tidak diketahui)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Unit Observasi</strong></td>
+<td style="text-align: left;">Satu entitas tempat data dicatat (satu baris data)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Variabel</strong></td>
+<td style="text-align: left;">Karakteristik yang nilainya bervariasi antarunit observasi</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Variabel Numerik</strong></td>
+<td style="text-align: left;">Variabel berupa angka yang bermakna untuk dihitung</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Variabel Kategorik</strong></td>
+<td style="text-align: left;">Variabel berupa label atau kelompok</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Variabel Independen</strong></td>
+<td style="text-align: left;">Variabel yang diduga memengaruhi (variabel bebas, prediktor, <em>feature</em>)</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Variabel Dependen</strong></td>
+<td style="text-align: left;">Variabel yang diduga dipengaruhi (variabel terikat, respons, <em>target</em>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Kesalahan Sampling</strong></td>
+<td style="text-align: left;">Selisih antara statistik sampel dan parameter populasi karena hanya sebagian populasi yang diamati</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Variabilitas Sampling</strong></td>
+<td style="text-align: left;">Perubahan nilai statistik dari satu sampel ke sampel lainnya</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Selang Kepercayaan</strong></td>
+<td style="text-align: left;">Rentang nilai yang diperkirakan memuat parameter populasi pada tingkat kepercayaan tertentu</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Margin of Error</strong></td>
+<td style="text-align: left;">Ukuran ketidakpastian dari estimasi yang dihitung dari sampel</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Ecological Fallacy</strong></td>
+<td style="text-align: left;">Kesalahan menerapkan kesimpulan tingkat kelompok pada individu</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Vektor</strong></td>
+<td style="text-align: left;">Kumpulan nilai sejenis di R yang mewakili satu variabel</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Data Frame</strong></td>
+<td style="text-align: left;">Tabel data di R: baris sebagai observasi, kolom sebagai variabel</td>
+</tr>
+</tbody>
+</table>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+<section id="rangkuman-dan-kesimpulan" class="level2" data-number="1.11">
+<h2 data-number="1.11" class="anchored" data-anchor-id="rangkuman-dan-kesimpulan"><span class="header-section-number">1.11</span> Rangkuman dan Kesimpulan</h2>
+<ol type="1">
+<li><p><strong>Statistika</strong> adalah ilmu tentang data dan ketidakpastian; <strong>statistik</strong> adalah nilai ringkasan dari sampel.</p></li>
+<li><p><strong>Statistika deskriptif</strong> menggambarkan data yang ada; <strong>statistika inferensial</strong> menggeneralisasi ke populasi dan selalu menyertakan ketidakpastian.</p></li>
+<li><p><strong>Populasi</strong> adalah sasaran kesimpulan, <strong>sampel</strong> adalah yang diamati. <strong>Parameter</strong> milik populasi (biasanya tak diketahui), <strong>statistik</strong> milik sampel (dapat dihitung).</p></li>
+<li><p>Statistik <strong>berubah-ubah</strong> dari sampel ke sampel (variabilitas sampling) dan semakin stabil ketika ukuran sampel membesar.</p></li>
+<li><p><strong>Unit observasi</strong> menentukan tingkat kesimpulan; jangan menerapkan kesimpulan kelompok ke individu.</p></li>
+<li><p><strong>Variabel</strong> dibedakan menurut jenisnya (numerik vs kategorik) dan menurut perannya (independen vs dependen). Jenis ditentukan <strong>makna</strong>, peran ditentukan <strong>pertanyaan penelitian</strong>.</p></li>
+<li><p>Hubungan antarvariabel dari data observasional <strong>bukan bukti sebab-akibat</strong>.</p></li>
+</ol>
+<p><strong>Jembatan ke sesi berikutnya:</strong> Pertemuan 2 memperdalam klasifikasi data – kualitatif vs kuantitatif, diskrit vs kontinu, sumber data primer vs sekunder, dan skala pengukuran (nominal, ordinal, interval, rasio) yang menentukan analisis apa yang sah dilakukan.</p>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+<section id="referensi-pendukung" class="level2" data-number="1.12">
+<h2 data-number="1.12" class="anchored" data-anchor-id="referensi-pendukung"><span class="header-section-number">1.12</span> Referensi Pendukung</h2>
+<p>Materi ini merangkum konsep dasar statistika (<em>introduction to statistics and data</em>) yang umum dibahas pada bab pertama buku teks pengantar statistika bisnis/data science. Mahasiswa disarankan melengkapi pemahaman dengan merujuk pada:</p>
+<ul>
+<li>Modul/slide perkuliahan “Introduction to Statistics (SDT-1102)” – Pertemuan 1: Konsep Dasar Statistika dan Data.</li>
+<li>Dokumentasi resmi R: <code>?data.frame</code>, <code>?str</code>, <code>?sample</code>, <code>?set.seed</code>, <code>?replicate</code>, <code>?aggregate</code> (dapat diakses langsung di R/RStudio).</li>
+<li>Buku teks pengantar statistika pada bab Pendahuluan: Data, Populasi, dan Sampel.</li>
+</ul>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Disalin!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Disalin!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      const newWindowLabel = "(opens in a new tab)";
+      const newWindowNoteId = "quarto-ext-newwindow-label";
+      // Links reference one hidden label through aria-describedby, so the
+      // announcement never changes their accessible name.
+      var describeNewWindow = (link) => {
+        if (!window.document.getElementById(newWindowNoteId)) {
+          var newWindowNote = window.document.createElement("span");
+          newWindowNote.id = newWindowNoteId;
+          newWindowNote.hidden = true;
+          newWindowNote.textContent = newWindowLabel;
+          window.document.body.appendChild(newWindowNote);
+        }
+        var describedBy = (link.getAttribute("aria-describedby") || "").split(/\s+/).filter(Boolean);
+        if (!describedBy.includes(newWindowNoteId)) {
+          describedBy.push(newWindowNoteId);
+          link.setAttribute("aria-describedby", describedBy.join(" "));
+        }
+      }
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+      window.quartoDecorateExternalLinks = function (root) {
+     var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            describeNewWindow(link);
+          if (!link.classList.contains('no-external-icon')) {
+          }
+        }
+      }
+      };
+      window.quartoDecorateExternalLinks(window.document);
+    // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+    // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+    const hideOnEscAndFocusOut = {
+      name: 'hideOnEscAndFocusOut',
+      defaultValue: true,
+      fn(instance) {
+        const dismiss = () => {
+          // A show scheduled by the trigger delay would otherwise reopen it
+          instance.clearDelayTimeouts();
+          instance.hide();
+        };
+        const onKeyDown = (event) => {
+          if (event.key !== 'Escape') {
+            return;
+          }
+          // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+          // except an open reveal.js slide menu, which Esc should close too.
+          // The menu handles keys only when its keyboard option is on.
+          const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+            window.Reveal.getConfig().menu?.keyboard !== false;
+          if (!menuHandlesEsc) {
+            event.stopPropagation();
+          }
+          if (instance.popper.contains(window.document.activeElement)) {
+            // Disabled while refocusing so the focus trigger does not reopen it
+            instance.disable();
+            instance.reference.focus();
+            instance.enable();
+          }
+          dismiss();
+        };
+        const onFocusOut = (event) => {
+          const target = event.relatedTarget;
+          if (target && !instance.reference.contains(target) &&
+              !instance.popper.contains(target)) {
+            dismiss();
+          }
+        };
+        // On the trigger too: a click trigger (code-annotations: select) has no
+        // blur handling. Attached for the instance's lifetime so leaving the
+        // trigger also cancels a show still pending on the trigger delay.
+        instance.reference.addEventListener('focusout', onFocusOut);
+        return {
+          onShow() {
+            window.document.addEventListener('keydown', onKeyDown, true);
+            instance.popper.addEventListener('focusout', onFocusOut);
+          },
+          onHide() {
+            window.document.removeEventListener('keydown', onKeyDown, true);
+            instance.popper.removeEventListener('focusout', onFocusOut);
+          },
+          onDestroy() {
+            instance.reference.removeEventListener('focusout', onFocusOut);
+          },
+        };
+      },
+    };
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+        plugins: [hideOnEscAndFocusOut],
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          // Each band is positioned against its own containing block, which is
+          // not the offsetParent of the lines, so place it from client rects.
+          const placeBand = (band, firstEl, lastEl, codeBlock) => {
+            const container = band.offsetParent;
+            if (container === null) {
+              return;
+            }
+            const containerRect = container.getBoundingClientRect();
+            // Reveal.js scales slides with a transform, so convert client
+            // pixels back to the CSS pixels of the container.
+            const scale = containerRect.height / container.offsetHeight || 1;
+            const firstRect = firstEl.getBoundingClientRect();
+            const lastRect = lastEl.getBoundingClientRect();
+            const top = (firstRect.top - containerRect.top) / scale - container.clientTop + container.scrollTop;
+            const height = (lastRect.bottom - firstRect.top) / scale;
+            band.style.top = top - 2 + "px";
+            band.style.height = height + 4 + "px";
+            if (codeBlock) {
+              // Without the copy button wrapper, the containing block is wider
+              // than the code block, so span the code block explicitly.
+              const blockRect = codeBlock.getBoundingClientRect();
+              band.style.left = (blockRect.left - containerRect.left) / scale - container.clientLeft + container.scrollLeft + "px";
+              band.style.width = blockRect.width / scale + "px";
+            }
+          };
+          if (lineIds.length > 0) {
+            const el = window.document.getElementById(lineIds[0]);
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const parent = el.parentElement.parentElement;
+            // cook up a div (if necessary) and position it
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            placeBand(div, el, lastEl, parent.closest("div.sourceCode") || parent);
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            placeBand(gutterDiv, el, lastEl);
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+  <script type="application/javascript">
+  window.quartoScrollableRegionsLabels = {"code":"Kode yang dapat digulir","output":"Keluaran yang dapat digulir"};
+  </script>
+<nav class="page-navigation" aria-label="Halaman">
+  <div class="nav-page nav-page-previous">
+      <a href="../index.html" class="pagination-link" aria-label="Kata Pengantar">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text">Kata Pengantar</span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/bab-2.html" class="pagination-link" aria-label="Bab 2: Jenis Data dan Skala Pengukuran">
+        <span class="nav-page-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Bab 2: Jenis Data dan Skala Pengukuran</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/sennie17/STATISITKA-EBOOK.git/edit/main/chapters/bab-1.qmd" class="toc-action"><i class="bi bi-github"></i>Sunting laman ini</a></li><li><a href="https://github.com/sennie17/STATISITKA-EBOOK.git/issues/new" class="toc-action"><i class="bi empty"></i>Laporkan isu</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

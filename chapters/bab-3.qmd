@@ -1,0 +1,882 @@
+# Bab 3: Pengumpulan dan Sampling Data
+
+```{r}
+#| label: setup
+#| include: false
+# Untuk grafiknya agar keliatan lebih rapih dan enak di lihat
+knitr::opts_chunk$set(
+  fig.width  = 9,
+  fig.height = 5.5,
+  fig.align  = "center",
+  out.width  = "100%",
+  dpi        = 150
+)
+library(knitr)
+```
+
+<style>
+table thead tr th,
+table > thead > tr > th {
+  text-align: center !important;
+}
+</style>
+
+## Metode Pengumpulan Data
+
+### Empat Metode Utama
+
+| Metode | Cara kerja | Kelebihan | Kelemahan | Contoh |
+|---|---|---|---|---|
+| **Observasi** | Mencatat perilaku/kejadian secara langsung tanpa bertanya | Data perilaku nyata, bukan pengakuan | Tidak dapat mengungkap alasan/opini; bisa mengubah perilaku yang diamati | Menghitung kendaraan di persimpangan; mencatat kadar TSS di titik pantau |
+| **Survei** (kuesioner) | Mengajukan pertanyaan terstruktur kepada banyak responden | Murah, cepat, menjangkau banyak orang | Rentan bias respons dan nonrespons; kedalaman terbatas | Survei kepuasan pelanggan *online* |
+| **Wawancara** | Tanya jawab langsung, terstruktur atau mendalam | Informasi mendalam; bisa menggali alasan | Mahal, lama, sampel kecil; rentan bias pewawancara | Wawancara tokoh masyarakat tentang dampak proyek |
+| **Eksperimen** | Peneliti **memberi perlakuan** secara acak lalu mengukur dampaknya | Satu-satunya cara yang kuat untuk menyimpulkan **sebab-akibat** | Tidak selalu etis atau praktis; kondisi bisa artifisial | Uji A/B dua desain halaman *checkout* |
+
+### Studi Observasional vs Eksperimen
+
+Perbedaan kuncinya: **siapa yang menentukan perlakuan?**
+
+- Pada **studi observasional**, subjek "memilih sendiri" kondisinya; peneliti hanya mencatat.
+- Pada **eksperimen**, peneliti menetapkan perlakuan **secara acak** (*random assignment*).
+
+Mengapa pengacakan penting? Karena ia menyeimbangkan faktor-faktor lain – termasuk yang tidak kita ketahui – di antara kelompok. Tanpa pengacakan, perbedaan hasil bisa disebabkan oleh **variabel pengganggu** (*confounder*).
+
+**Ilustrasi:** apakah mengikuti kelas tambahan (bootcamp) meningkatkan nilai ujian? Kita simulasikan 200 mahasiswa. "Motivasi" memengaruhi **keduanya:** mahasiswa bermotivasi tinggi lebih mungkin ikut bootcamp **dan** memang cenderung bernilai tinggi. Efek sebenarnya dari bootcamp adalah **+3 poin**.
+
+```{r}
+library(knitr)
+
+set.seed(303)
+n_mhs <- 200
+motivasi <- rnorm(n_mhs, mean = 0, sd = 1)
+efek_bootcamp <- 3
+
+# (a) Studi observasional: mahasiswa memilih sendiri ikut atau tidak
+ikut_obs <- rbinom(n_mhs, 1, prob = plogis(1.5 * motivasi))
+nilai_obs <- 70 + 6 * motivasi + efek_bootcamp * ikut_obs + rnorm(n_mhs, 0, 4)
+beda_obs <- mean(nilai_obs[ikut_obs == 1]) - mean(nilai_obs[ikut_obs == 0])
+
+# (b) Eksperimen: peneliti mengacak siapa yang ikut
+ikut_eks <- sample(rep(c(0, 1), each = n_mhs / 2))
+nilai_eks <- 70 + 6 * motivasi + efek_bootcamp * ikut_eks + rnorm(n_mhs, 0, 4)
+beda_eks <- mean(nilai_eks[ikut_eks == 1]) - mean(nilai_eks[ikut_eks == 0])
+
+kable(data.frame(
+  Desain = c("Observasional (memilih sendiri)", "Eksperimen (diacak)", "Efek sebenarnya"),
+  Selisih_rata_nilai = round(c(beda_obs, beda_eks, efek_bootcamp), 2),
+  Rata_motivasi_ikut = round(c(mean(motivasi[ikut_obs == 1]), mean(motivasi[ikut_eks == 1]), NA), 2),
+  Rata_motivasi_tidak = round(c(mean(motivasi[ikut_obs == 0]), mean(motivasi[ikut_eks == 0]), NA), 2)
+), caption = "Studi observasional melebih-lebihkan efek bootcamp")
+```
+
+Pada studi observasional, kelompok yang ikut bootcamp memang lebih termotivasi sejak awal, sehingga selisih nilainya **jauh melebihi** efek sebenarnya. Pada eksperimen, pengacakan membuat rata-rata motivasi kedua kelompok hampir sama, sehingga selisih nilainya mendekati efek sebenarnya (+3).
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Kerangka Sampel (Sampling Frame)
+
+**Kerangka sampel** adalah **daftar nyata** unit populasi tempat sampel diambil – misalnya daftar mahasiswa aktif, daftar pelanggan di CRM, atau daftar desa dalam satu kabupaten.
+
+| Kondisi | Akibat | Contoh |
+|---|---|---|
+| Kerangka = populasi | Ideal | Daftar lengkap seluruh karyawan untuk survei internal |
+| Kerangka **kurang** dari populasi (***undercoverage***) | Sebagian populasi tidak mungkin terpilih | Survei telepon rumah tidak menjangkau warga tanpa telepon rumah (*Literary Digest*) |
+| Kerangka memuat unit di luar populasi | Unit tak relevan terpilih | Daftar pelanggan memuat akun yang sudah tidak aktif |
+
+Semua teknik *probability sampling* di bawah ini hanya **seakurat kerangka sampelnya.**
+
+### Populasi Simulasi
+
+Untuk seluruh bagian sampling, kita memakai populasi simulasi **2.000 mahasiswa** yang tersebar di 5 fakultas dan 40 kelas (masing-masing 50 mahasiswa). Variabel utama yang ingin kita duga adalah **pengeluaran bulanan** (juta rupiah).
+
+```{r}
+set.seed(2026)
+jumlah_fak <- c(Teknik = 600, Ekonomi = 500, Sains = 400, Hukum = 300, Kedokteran = 200)
+rata_fak <- c(Teknik = 2.2, Ekonomi = 2.6, Sains = 2.0, Hukum = 2.8, Kedokteran = 4.0)
+
+pop <- data.frame(id = 1:2000, fakultas = rep(names(jumlah_fak), jumlah_fak))
+pop$kelas <- paste0(substr(pop$fakultas, 1, 3), "-",
+                    ave(pop$id, pop$fakultas, FUN = function(i) ceiling(seq_along(i) / 50)))
+efek_kelas <- setNames(rnorm(length(unique(pop$kelas)), 0, 0.35), unique(pop$kelas))
+pop$pengeluaran <- round(pmax(0.5, rata_fak[pop$fakultas] + efek_kelas[pop$kelas] +
+                                rnorm(2000, 0, 0.5)), 2)
+pop$jam_kerja <- round(pmax(0, rnorm(2000, 8, 6)))    # jam kerja paruh waktu per minggu
+
+N <- nrow(pop)
+mu_pengeluaran <- mean(pop$pengeluaran)               # parameter yang ingin diduga
+head(pop)
+```
+
+```{r}
+table(pop$fakultas)
+```
+
+```{r}
+length(unique(pop$kelas))
+```
+
+```{r}
+mu_pengeluaran
+```
+
+```{r}
+boxplot(pengeluaran ~ factor(fakultas, levels = names(jumlah_fak)), data = pop,
+        col = "#c6dbef", xlab = "Fakultas", ylab = "Pengeluaran (juta Rp/bulan)",
+        main = "Pengeluaran Bulanan Berbeda Antarfakultas")
+abline(h = mu_pengeluaran, col = "firebrick", lwd = 2, lty = 2)
+```
+
+Perhatikan bahwa pengeluaran **berbeda jelas antarfakultas** (Kedokteran tertinggi). Fakta ini penting untuk memahami mengapa sebagian teknik sampling lebih unggul dari yang lain.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Probability Sampling
+
+Pada *probability sampling*, setiap unit dalam kerangka sampel memiliki **peluang terpilih yang diketahui dan lebih dari nol**, dan pemilihannya dilakukan secara **acak**. Hanya dengan cara inilah kita dapat mengukur ketidakpastian estimasi secara sah (dasar statistika inferensial).
+
+Kita akan mengambil sampel berukuran **n = 100** dengan empat teknik.
+
+```{r}
+n <- 100
+```
+
+### Simple Random Sampling (SRS)
+
+Setiap unit – dan setiap kombinasi $n$ unit – memiliki peluang terpilih yang sama. Analoginya: mengundi nama dari sebuah kotak.
+
+```{r}
+set.seed(11)
+idx_srs <- sample(1:N, size = n)       # tanpa pengembalian
+sampel_srs <- pop[idx_srs, ]
+mean(sampel_srs$pengeluaran)
+```
+
+```{r}
+table(sampel_srs$fakultas)             # komposisi fakultas terjadi secara kebetulan
+```
+
+**Kelebihan:** paling sederhana, dasar teori statistika. **Kelemahan:** butuh kerangka lengkap; komposisi sampel bisa "kebetulan" tidak seimbang (misalnya fakultas kecil kurang terwakili).
+
+### Systematic Sampling
+
+Pilih setiap unit ke-$k$ dari kerangka, dengan titik awal acak:
+
+$$k = \frac{N}{n}, \qquad \text{titik awal } r \sim \text{acak di antara } 1, \dots, k, \qquad \text{unit terpilih: } r,\ r + k,\ r + 2k, \dots$$
+
+```{r}
+set.seed(12)
+k <- N / n                  # interval = 20
+r <- sample(1:k, 1)         # titik awal acak
+idx_sis <- seq(from = r, by = k, length.out = n)
+head(idx_sis, 10)
+```
+
+```{r}
+sampel_sis <- pop[idx_sis, ]
+mean(sampel_sis$pengeluaran)
+```
+
+```{r}
+table(sampel_sis$fakultas)
+```
+
+Karena kerangka kita **terurut menurut fakultas**, *systematic sampling* otomatis menyebar ke semua fakultas secara proporsional – mirip stratified sampling.
+
+<div style="width: 85%; margin: 0 auto;">
+
+<p>
+<strong>Bahaya periodisitas.</strong> Jika kerangka memiliki pola berulang yang kebetulan sama dengan interval <em>k</em> (misalnya daftar transaksi harian yang dipilih setiap 7 hari – selalu jatuh di hari yang sama), sampel sistematik akan **bias**. Periksa urutan kerangka sebelum memakai teknik ini.
+</p>
+
+</div>
+
+### Stratified Sampling
+
+Populasi dibagi menjadi kelompok **homogen** yang disebut **strata** (di sini: fakultas), lalu diambil SRS **dari setiap strata**. Dengan **alokasi proporsional**, ukuran sampel tiap strata sebanding dengan ukurannya di populasi:
+
+$$n_h = n \times \frac{N_h}{N}$$
+
+```{r}
+alokasi <- round(n * jumlah_fak / N)
+alokasi
+```
+
+```{r}
+set.seed(13)
+idx_str <- unlist(lapply(names(alokasi), function(f)
+  sample(which(pop$fakultas == f), alokasi[[f]])))
+sampel_str <- pop[idx_str, ]
+table(sampel_str$fakultas)         # komposisi DIJAMIN sesuai populasi
+```
+
+```{r}
+mean(sampel_str$pengeluaran)
+```
+
+**Kelebihan:** menjamin setiap strata terwakili dan – jika strata berbeda satu sama lain – lebih presisi daripada SRS. **Kelemahan:** butuh informasi strata untuk seluruh kerangka.
+
+### Cluster Sampling
+
+Populasi dibagi menjadi kelompok alami yang disebut **klaster** (di sini: kelas). Beberapa klaster dipilih secara acak, lalu **semua** anggota klaster terpilih diamati.
+
+```{r}
+set.seed(14)
+kelas_terpilih <- sample(unique(pop$kelas), size = 2)    # 2 kelas x 50 = 100 mahasiswa
+kelas_terpilih
+```
+
+```{r}
+sampel_klas <- pop[pop$kelas %in% kelas_terpilih, ]
+nrow(sampel_klas)
+```
+
+```{r}
+mean(sampel_klas$pengeluaran)
+```
+
+```{r}
+table(sampel_klas$fakultas)
+```
+
+**Kelebihan:** murah dan praktis – cukup mendatangi 2 kelas, tanpa perlu daftar seluruh mahasiswa. **Kelemahan:** anggota satu klaster cenderung **mirip** satu sama lain, sehingga 100 mahasiswa dari 2 kelas membawa informasi lebih sedikit daripada 100 mahasiswa yang dipilih acak dari seluruh kampus (presisi lebih rendah).
+
+### Stratified vs Cluster: Jangan Tertukar
+
+| Aspek | Stratified | Cluster |
+|---|---|---|
+| Kelompok yang dibentuk | Strata: **homogen di dalam**, berbeda antarstrata | Klaster: idealnya **heterogen** di dalam (miniatur populasi) |
+| Yang diacak | **Unit** di dalam **setiap** strata | Klaster-nya; semua unit klaster terpilih diamati |
+| Semua kelompok terwakili? | **Ya** | Tidak, hanya klaster terpilih |
+| Tujuan utama | Meningkatkan presisi dan keterwakilan | Menghemat biaya dan waktu |
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Non-probability Sampling
+
+Pada ***non-probability sampling***, unit dipilih **tidak secara acak** – berdasarkan kemudahan, pertimbangan peneliti, atau kuota. Peluang terpilih setiap unit **tidak diketahui**, sehingga ketidakpastian estimasi **tidak dapat diukur secara sah** dan hasilnya berisiko bias.
+
+| Teknik | Cara memilih | Kapan wajar dipakai | Risiko |
+|---|---|---|---|
+| ***Convenience*** | Siapa saja yang **mudah dijangkau** | Uji coba kuesioner (*pilot*), eksplorasi awal | Hanya mewakili kelompok yang mudah dijangkau |
+| ***Purposive*** (*judgmental*) | Dipilih berdasarkan **pertimbangan/kriteria** peneliti | Mewawancarai ahli atau informan kunci | Bergantung penilaian subjektif peneliti |
+| ***Quota*** | Memenuhi kuota per kelompok, tetapi pemilihan di dalam kelompok tidak acak | Survei cepat dengan anggaran terbatas | Komposisi tampak mewakili, tetapi bias di dalam kelompok tetap ada |
+
+Kita simulasikan bahwa *convenience sampling* dilakukan di **kantin kampus**. Mahasiswa berpengeluaran tinggi lebih sering jajan di kantin, sehingga **lebih mudah dijangkau.**
+
+```{r}
+pop$peluang_kantin <- plogis(-3 + 1.1 * pop$pengeluaran)   # makin besar pengeluaran, makin sering ke kantin
+round(tapply(pop$peluang_kantin, pop$fakultas, mean)[names(jumlah_fak)], 2)
+```
+
+```{r}
+library(knitr)
+
+set.seed(15)
+# Convenience: yang kebetulan ada di kantin
+idx_conv <- sample(1:N, n, prob = pop$peluang_kantin)
+
+# Purposive: peneliti memilih hanya mahasiswa Teknik ("karena paling aktif berorganisasi")
+idx_purp <- sample(which(pop$fakultas == "Teknik"), n)
+
+# Quota: kuota per fakultas proporsional, tetapi diisi dengan siapa yang ada di kantin
+idx_quota <- unlist(lapply(names(alokasi), function(f) {
+  kandidat <- which(pop$fakultas == f)
+  sample(kandidat, alokasi[[f]], prob = pop$peluang_kantin[kandidat])
+}))
+
+kable(data.frame(
+  Teknik = c("Parameter (populasi)", "Convenience", "Purposive", "Quota"),
+  Rata_pengeluaran = round(c(mu_pengeluaran, mean(pop$pengeluaran[idx_conv]),
+                             mean(pop$pengeluaran[idx_purp]),
+                             mean(pop$pengeluaran[idx_quota])), 3)
+), caption = "Estimasi rata-rata pengeluaran dari sampel non-probabilitas (n = 100)")
+```
+
+*Convenience* dan *quota sampling* **melebih-lebihkan** pengeluaran (mahasiswa kantin lebih boros), sedangkan *purposive sampling* hanya menggambarkan mahasiswa Teknik. Perhatikan bahwa *quota sampling* sudah memiliki komposisi fakultas yang "benar", tetapi tetap bias karena **di dalam** setiap fakultas yang terpilih adalah pengunjung kantin.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Simulasi: Membandingkan Akurasi dan Presisi
+
+Satu sampel bisa saja "beruntung" atau "sial". Untuk menilai sebuah teknik secara adil, kita ulangi setiap teknik **1.000 kali** dan melihat sebaran estimasinya.
+
+- **Akurasi** (bias kecil): rata-rata estimasi mendekati parameter.
+- **Presisi** (sebaran kecil): estimasi dari sampel ke sampel tidak banyak berubah.
+
+```{r}
+est_srs <- function() mean(pop$pengeluaran[sample(1:N, n)])
+
+est_sistematik <- function() {
+  r <- sample(1:k, 1)
+  mean(pop$pengeluaran[seq(r, by = k, length.out = n)])
+}
+
+est_strata <- function() {
+  idx <- unlist(lapply(names(alokasi), function(f)
+    sample(which(pop$fakultas == f), alokasi[[f]])))
+  mean(pop$pengeluaran[idx])
+}
+
+est_klaster <- function() {
+  mean(pop$pengeluaran[pop$kelas %in% sample(unique(pop$kelas), 2)])
+}
+
+est_convenience <- function() mean(pop$pengeluaran[sample(1:N, n, prob = pop$peluang_kantin)])
+
+est_quota <- function() {
+  idx <- unlist(lapply(names(alokasi), function(f) {
+    kandidat <- which(pop$fakultas == f)
+    sample(kandidat, alokasi[[f]], prob = pop$peluang_kantin[kandidat])
+  }))
+  mean(pop$pengeluaran[idx])
+}
+```
+
+```{r}
+set.seed(2027)
+B <- 1000
+hasil_sim <- data.frame(
+  SRS         = replicate(B, est_srs()),
+  Sistematik  = replicate(B, est_sistematik()),
+  Stratified  = replicate(B, est_strata()),
+  Cluster     = replicate(B, est_klaster()),
+  Convenience = replicate(B, est_convenience()),
+  Quota       = replicate(B, est_quota())
+)
+```
+
+```{r}
+library(knitr)
+
+ringkasan_sim <- data.frame(
+  Teknik        = names(hasil_sim),
+  Rata_estimasi = colMeans(hasil_sim),
+  Bias          = colMeans(hasil_sim) - mu_pengeluaran,
+  SD_estimasi   = apply(hasil_sim, 2, sd)
+)
+rownames(ringkasan_sim) <- NULL
+
+kable(ringkasan_sim, digits = 3,
+      caption = paste0("Hasil 1.000 ulangan (parameter mu = ", round(mu_pengeluaran, 3), ")"))
+```
+
+```{r}
+par(mar = c(5, 8, 3, 1))
+boxplot(hasil_sim, horizontal = TRUE, las = 1,
+        col = c(rep("#9ecae1", 4), rep("#fdae6b", 2)),
+        xlab = "Estimasi rata-rata pengeluaran (juta Rp)",
+        main = "Sebaran Estimasi dari 1.000 Sampel (n = 100)")
+abline(v = mu_pengeluaran, col = "firebrick", lwd = 2, lty = 2)
+legend("bottomright", bty = "n", fill = c("#9ecae1", "#fdae6b"),
+       legend = c("Probability sampling", "Non-probability sampling"))
+```
+
+```{r}
+par(mar = c(5, 4, 4, 2) + 0.1)
+```
+
+**Interpretasi:**
+
+- Keempat teknik *probability sampling* **tidak bias** – kotaknya berpusat di sekitar garis merah (parameter).
+- ***Stratified*** (dan sistematik pada kerangka yang terurut per fakultas) paling **presisi**, karena variasi antarfakultas "dikunci" oleh desain.
+- ***Cluster*** paling **tidak presisi**: sampel dari 2 kelas bisa saja kebetulan dua kelas Kedokteran (sangat boros) atau dua kelas Sains (hemat).
+- ***Convenience*** dan ***quota*** **bias** – kotaknya bergeser ke kanan. Bias ini **tidak hilang** meskipun diulang ribuan kali.
+
+### Memperbesar Sampel Tidak Menyembuhkan Bias
+
+Inilah pelajaran *Literary Digest*. Bandingkan SRS kecil dengan *convenience sampling* besar:
+
+```{r}
+set.seed(2028)
+srs_kecil  <- replicate(500, mean(pop$pengeluaran[sample(1:N, 50)]))
+conv_besar <- replicate(500, mean(pop$pengeluaran[sample(1:N, 800, prob = pop$peluang_kantin)]))
+
+par(mar = c(5, 11, 3, 1))
+boxplot(list("SRS, n = 50" = srs_kecil, "Convenience, n = 800" = conv_besar),
+        horizontal = TRUE, las = 1, col = c("#9ecae1", "#fdae6b"),
+        xlab = "Estimasi rata-rata pengeluaran (juta Rp)",
+        main = "Sampel Kecil yang Acak vs Sampel Besar yang Bias")
+abline(v = mu_pengeluaran, col = "firebrick", lwd = 2, lty = 2)
+```
+
+```{r}
+par(mar = c(5, 4, 4, 2) + 0.1)
+```
+
+*Convenience sample* berukuran 800 sangat **presisi** (kotaknya sempit) tetapi **presisi di tempat yang salah**. SRS berukuran 50 kurang presisi, tetapi berpusat di nilai yang benar. Memperbesar sampel hanya mengecilkan **galat acak**, bukan **galat sistematik (bias)**.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Bias dalam Pengumpulan Data
+
+### Akurasi vs Presisi
+
+**Bias** adalah kesalahan **sistematik**: estimasi secara konsisten melenceng ke satu arah. Berbeda dengan galat acak yang "saling meniadakan" bila diulang.
+
+```{r}
+set.seed(5)
+papan_target <- function(pusat_x, pusat_y, sebaran, judul) {
+  plot(NULL, xlim = c(-3, 3), ylim = c(-3, 3), asp = 1, axes = FALSE,
+       xlab = "", ylab = "", main = judul)
+  symbols(rep(0, 3), rep(0, 3), circles = c(2.7, 1.8, 0.9), inches = FALSE,
+          add = TRUE, fg = "grey60")
+  points(0, 0, pch = 3, col = "firebrick", cex = 2, lwd = 2)
+  points(rnorm(25, pusat_x, sebaran), rnorm(25, pusat_y, sebaran),
+         pch = 16, col = rgb(0.2, 0.4, 0.7, 0.7))
+}
+
+par(mfrow = c(2, 2), mar = c(1, 1, 3, 1))
+papan_target(0,   0,   0.3, "Akurat & Presisi\n(tidak bias, sebaran kecil)")
+papan_target(0,   0,   1.0, "Akurat, Tidak Presisi\n(tidak bias, sebaran besar)")
+papan_target(1.4, 1.2, 0.3, "Tidak Akurat, Presisi\n(bias, sebaran kecil)")
+papan_target(1.2, 1.0, 1.0, "Tidak Akurat & Tidak Presisi")
+```
+
+```{r}
+par(mfrow = c(1, 1), mar = c(5, 4, 4, 2) + 0.1)
+```
+
+Tanda silang merah adalah **parameter** yang ingin diduga; titik-titik biru adalah estimasi dari sampel berulang.
+
+### Jenis-jenis Bias
+
+| Jenis Bias | Terjadi pada tahap | Penyebab | Contoh |
+|---|---|---|---|
+| **Sampling / selection bias** | Pemilihan sampel | Sebagian populasi lebih (atau tidak) mungkin terpilih | *Literary Digest*; survei di kantin |
+| ***Nonresponse bias*** | Pengumpulan | Yang **tidak menjawab** berbeda secara sistematik dari yang menjawab | Mahasiswa yang sibuk bekerja tidak sempat mengisi survei |
+| ***Response bias*** | Menjawab | Responden menjawab **tidak jujur/tidak akurat** | Melebih-lebihkan jam belajar; pertanyaan yang menggiring |
+| ***Measurement bias*** | Pengukuran |**Alat ukur** atau prosedur keliru secara sistematik | Timbangan yang tidak dikalibrasi; sensor TSS yang *drift* |
+
+#### Nonresponse Bias
+
+Survei dikirim ke 300 mahasiswa yang dipilih **acak** (desain sudah benar). Namun mahasiswa yang banyak bekerja paruh waktu lebih jarang membalas.
+
+```{r}
+set.seed(21)
+diundang <- sample(1:N, 300)
+p_membalas <- plogis(1.2 - 0.15 * pop$jam_kerja[diundang])   # makin sibuk, makin jarang membalas
+membalas <- rbinom(300, 1, p_membalas) == 1
+
+c(Tingkat_respons_persen = round(mean(membalas) * 100, 1),
+  Rata_jam_kerja_populasi = round(mean(pop$jam_kerja), 2),
+  Rata_jam_kerja_diundang = round(mean(pop$jam_kerja[diundang]), 2),
+  Rata_jam_kerja_responden = round(mean(pop$jam_kerja[diundang][membalas]), 2))
+```
+
+Sampel yang **diundang** mewakili populasi, tetapi **responden** yang membalas tidak – rata-rata jam kerja paruh waktu menjadi **terlalu rendah**. Pengacakan di awal tidak menolong jika tingkat respons rendah dan terkait dengan variabel yang diukur. Cara mengurangi: pengingat (*follow-up*), insentif, dan membandingkan karakteristik responden dengan populasi.
+
+#### Response Bias
+
+Mahasiswa diminta **melaporkan sendiri** jam belajarnya. Karena ingin terlihat rajin (*social desirability*), rata-rata mereka melebih-lebihkan sekitar 3 jam.
+
+```{r}
+set.seed(22)
+jam_sebenarnya <- round(pmax(0, rnorm(150, 12, 4)), 1)
+jam_dilaporkan <- round(jam_sebenarnya + rnorm(150, mean = 3, sd = 1.5), 1)
+
+c(Rata_sebenarnya = mean(jam_sebenarnya), Rata_dilaporkan = mean(jam_dilaporkan))
+```
+
+```{r}
+plot(jam_sebenarnya, jam_dilaporkan, pch = 16, col = rgb(0.2, 0.4, 0.7, 0.6),
+     xlab = "Jam belajar sebenarnya (log aplikasi)", ylab = "Jam belajar yang dilaporkan",
+     main = "Response Bias: Hampir Semua Titik di Atas Garis y = x")
+abline(0, 1, col = "firebrick", lwd = 2)
+```
+
+**Bias susunan kalimat pertanyaan** juga termasuk *response bias*:
+
+| Pertanyaan menggiring (hindari) | Pertanyaan netral (gunakan) |
+|---|---|
+| "Setujukah Anda bahwa aplikasi baru yang **lebih cepat** ini memudahkan Anda?" | "Bagaimana penilaian Anda terhadap kecepatan aplikasi baru?" |
+| "Berapa jam Anda **membuang waktu** di media sosial setiap hari?" | "Berapa jam rata-rata Anda menggunakan media sosial setiap hari?" |
+| "Apakah Anda puas dengan harga **dan** pelayanan kami?" (dua hal sekaligus) | Pisahkan menjadi dua pertanyaan: harga, lalu pelayanan |
+
+#### Measurement Bias
+
+Dua sensor mengukur kadar TSS (mg/L) sampel air yang sama. Sensor B belum dikalibrasi dan selalu membaca 8 mg/L lebih tinggi.
+
+```{r}
+library(knitr)
+
+set.seed(23)
+tss_sebenarnya <- 48
+sensor_A <- round(tss_sebenarnya + rnorm(20, 0, 3), 1)       # galat acak saja
+sensor_B <- round(tss_sebenarnya + 8 + rnorm(20, 0, 1), 1)   # bias +8, tetapi sangat konsisten
+
+kable(data.frame(
+  Sensor = c("A (terkalibrasi)", "B (tidak terkalibrasi)"),
+  Rata_pembacaan = c(mean(sensor_A), mean(sensor_B)),
+  SD_pembacaan = round(c(sd(sensor_A), sd(sensor_B)), 2),
+  Bias = round(c(mean(sensor_A), mean(sensor_B)) - tss_sebenarnya, 2)
+), caption = "Sensor B presisi tetapi tidak akurat")
+```
+
+Sensor B tampak "lebih baik" karena pembacaannya konsisten, padahal selalu melenceng. Jika baku mutu TSS adalah 50 mg/L, sensor B akan melaporkan **pelanggaran palsu** secara terus-menerus. Solusinya adalah kalibrasi rutin terhadap standar.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Studi Kasus Komprehensif: Merancang Survei Adopsi QRIS Pedagang Pasar
+
+**Konteks**: Dinas Koperasi dan UMKM sebuah kabupaten ingin mengetahui proporsi pedagang pasar tradisional yang sudah menerima pembayaran QRIS. Terdapat daftar resmi **1.200 pedagang** di **4 pasar**. Anggaran hanya cukup untuk mewawancarai **120 pedagang**. Diketahui pasar di pusat kota jauh lebih "digital" daripada pasar di pinggiran.
+
+```{r}
+set.seed(404)
+jml_pasar  <- c("Pasar Sentral" = 500, "Pasar Baru" = 350, "Pasar Tani" = 200, "Pasar Desa" = 150)
+adopsi_psr <- c("Pasar Sentral" = 0.70, "Pasar Baru" = 0.55, "Pasar Tani" = 0.30, "Pasar Desa" = 0.15)
+
+pedagang <- data.frame(id = sprintf("PDG-%04d", 1:1200),
+                       pasar = rep(names(jml_pasar), jml_pasar))
+pedagang$qris <- rbinom(1200, 1, adopsi_psr[pedagang$pasar])
+pedagang$blok <- paste(pedagang$pasar, ave(seq_len(1200), pedagang$pasar,
+                                           FUN = function(i) ceiling(seq_along(i) / 25)))
+
+p_populasi <- mean(pedagang$qris)     # dalam kenyataan tidak diketahui
+round(tapply(pedagang$qris, pedagang$pasar, mean)[names(jml_pasar)], 3)
+```
+
+### Langkah 1: Menentukan Komponen Survei
+
+| Komponen | Keputusan |
+|---|---|
+| Populasi | Seluruh pedagang pasar tradisional di kabupaten |
+| Kerangka sampel | Daftar resmi 1.200 pedagang di 4 pasar (periksa: apakah pedagang kaki lima tercatat?) |
+| Unit observasi | Satu pedagang |
+| Variabel utama | Menerima QRIS (Ya/Tidak) – nominal biner |
+| Metode pengumpulan | Wawancara terstruktur + **observasi** keberadaan *stiker/standee* QRIS di lapak |
+| Teknik sampling | **Stratified** menurut pasar, alokasi proporsional (karena adopsi sangat berbeda antarpasar) |
+
+### Langkah 2: Alokasi dan Pengambilan Sampel
+
+```{r}
+n_survei <- 120
+alok_pasar <- round(n_survei * jml_pasar / sum(jml_pasar))
+alok_pasar
+```
+
+```{r}
+set.seed(405)
+idx_pasar <- unlist(lapply(names(alok_pasar), function(p)
+  sample(which(pedagang$pasar == p), alok_pasar[[p]])))
+sampel_pasar <- pedagang[idx_pasar, ]
+
+head(sampel_pasar[, c("id", "pasar")], 8)    # daftar kerja untuk enumerator
+```
+
+```{r}
+p_hat_strata <- mean(sampel_pasar$qris)
+```
+
+### Langkah 3: Membandingkan dengan Desain Lain
+
+```{r}
+library(knitr)
+
+set.seed(406)
+B <- 1000
+sim_pasar <- data.frame(
+  Stratified = replicate(B, {
+    idx <- unlist(lapply(names(alok_pasar), function(p)
+      sample(which(pedagang$pasar == p), alok_pasar[[p]])))
+    mean(pedagang$qris[idx])
+  }),
+  SRS = replicate(B, mean(pedagang$qris[sample(1:1200, n_survei)])),
+  Cluster_blok = replicate(B, {
+    blok_pilih <- sample(unique(pedagang$blok), 5)    # 5 blok x 25 lapak = 125 (mendekati 120)
+    mean(pedagang$qris[pedagang$blok %in% blok_pilih])
+  }),
+  Hanya_Pasar_Sentral = replicate(B, mean(pedagang$qris[sample(which(pedagang$pasar ==
+                                                                     "Pasar Sentral"), n_survei)]))
+)
+
+kable(data.frame(
+  Desain = names(sim_pasar),
+  Rata_estimasi = round(colMeans(sim_pasar), 3),
+  Bias = round(colMeans(sim_pasar) - p_populasi, 3),
+  SD_estimasi = round(apply(sim_pasar, 2, sd), 3),
+  row.names = NULL
+), caption = paste0("Perbandingan desain survei (proporsi sebenarnya = ", round(p_populasi, 3), ")"))
+```
+
+### Pertanyaan Diskusi dan Jawaban
+
+**1. Mengapa stratified sampling menurut pasar adalah pilihan terbaik?**
+
+Karena tingkat adopsi QRIS **sangat berbeda antarpasar** (strata homogen di dalam, berbeda antarstrata). Stratifikasi menjamin setiap pasar terwakili sesuai proporsinya sehingga SD estimasinya paling kecil **di antara desain yang tidak bias.** (Desain "hanya Pasar Sentral" memang ber-SD kecil, tetapi presisi di nilai yang salah.) Hasil sampel kita: $\hat{p}$ = `r round(p_hat_strata, 3)` dibanding proporsi sebenarnya `r round(p_populasi, 3)`.
+
+**2. Mengapa survei yang hanya dilakukan di Pasar Sentral menyesatkan?**
+
+Ini contoh *purposive/convenience sampling* (pasar terbesar dan termudah dijangkau). Estimasinya sekitar 0,7, jauh di atas proporsi sebenarnya, karena Pasar Sentral adalah pasar paling digital. Kesimpulan "mayoritas pedagang sudah memakai QRIS" akan membuat pemerintah **mengabaikan** pasar pinggiran yang paling membutuhkan pendampingan.
+
+**3. Kapan cluster sampling per blok layak dipilih?**
+
+Jika biaya perjalanan antarlapak mahal atau kerangka per pedagang tidak tersedia. Harganya adalah presisi lebih rendah (SD terbesar di antara desain acak). Kompromi yang sering dipakai adalah gabungan: stratifikasi per pasar, lalu memilih blok secara acak di dalam setiap pasar (*multistage sampling*).
+
+**4. Bias apa yang masih mungkin muncul meskipun desainnya acak?**
+
+(a) *Undercoverage*: pedagang tidak resmi tidak ada dalam daftar. (b) *Nonresponse*: pedagang yang sibuk menolak diwawancarai. (c) *Response bias*: pedagang mengaku "menerima QRIS" karena merasa diawasi dinas – sebab itu wawancara dilengkapi **observasi** stiker QRIS di lapak.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Latihan Mandiri
+
+### Latihan Utama: Survei Pengguna Transportasi Umum
+
+**Konteks**: Pemerintah kota ingin memperkirakan rata-rata waktu tempuh harian (menit) penglaju. Tersedia daftar 3.000 rumah tangga di 6 kecamatan (masing-masing dibagi menjadi RW berisi 50 rumah tangga). Anggaran: 150 rumah tangga.
+
+```{r}
+set.seed(505)
+kec <- c(Pusat = 700, Utara = 600, Selatan = 550, Timur = 450, Barat = 400, Pinggiran = 300)
+rata_tempuh <- c(Pusat = 35, Utara = 50, Selatan = 55, Timur = 60, Barat = 65, Pinggiran = 95)
+
+rt <- data.frame(id = 1:3000, kecamatan = rep(names(kec), kec))
+rt$rw <- paste(rt$kecamatan, ave(rt$id, rt$kecamatan, FUN = function(i) ceiling(seq_along(i) / 50)))
+rt$waktu_tempuh <- round(pmax(5, rnorm(3000, rata_tempuh[rt$kecamatan], 12)))
+
+mu_tempuh <- mean(rt$waktu_tempuh)
+```
+
+#### Tugas 1: Ambil SRS berukuran 150 dan hitung rata-rata waktu tempuhnya
+
+```{r}
+set.seed(1)
+mean(rt$waktu_tempuh[sample(1:3000, 150)])
+```
+
+#### Tugas 2: Ambil systematic sample berukuran 150
+
+```{r}
+set.seed(2)
+k_rt <- 3000 / 150
+awal <- sample(1:k_rt, 1)
+mean(rt$waktu_tempuh[seq(awal, by = k_rt, length.out = 150)])
+```
+
+#### Tugas 3: Ambil stratified sample proporsional menurut kecamatan
+
+```{r}
+alok_rt <- round(150 * kec / sum(kec))
+alok_rt
+```
+
+```{r}
+set.seed(3)
+idx_rt <- unlist(lapply(names(alok_rt), function(kc)
+  sample(which(rt$kecamatan == kc), alok_rt[[kc]])))
+mean(rt$waktu_tempuh[idx_rt])
+```
+
+#### Tugas 4: Ambil cluster sample dengan memilih 3 RW secara acak
+
+```{r}
+set.seed(4)
+rw_pilih <- sample(unique(rt$rw), 3)
+rw_pilih
+```
+
+```{r}
+mean(rt$waktu_tempuh[rt$rw %in% rw_pilih])
+```
+
+#### Tugas 5: Bandingkan keempat teknik dengan simulasi 500 ulangan
+
+```{r}
+set.seed(5)
+sim_rt <- data.frame(
+  SRS = replicate(500, mean(rt$waktu_tempuh[sample(1:3000, 150)])),
+  Sistematik = replicate(500, {
+    a <- sample(1:k_rt, 1); mean(rt$waktu_tempuh[seq(a, by = k_rt, length.out = 150)])
+  }),
+  Stratified = replicate(500, {
+    idx <- unlist(lapply(names(alok_rt), function(kc)
+      sample(which(rt$kecamatan == kc), alok_rt[[kc]])))
+    mean(rt$waktu_tempuh[idx])
+  }),
+  Cluster = replicate(500, mean(rt$waktu_tempuh[rt$rw %in% sample(unique(rt$rw), 3)]))
+)
+
+round(rbind(Bias = colMeans(sim_rt) - mu_tempuh, SD = apply(sim_rt, 2, sd)), 2)
+```
+
+```{r}
+boxplot(sim_rt, col = "#c7e9c0", ylab = "Estimasi rata-rata waktu tempuh (menit)",
+        main = "Perbandingan Teknik Sampling (500 ulangan)")
+abline(h = mu_tempuh, col = "firebrick", lwd = 2, lty = 2)
+```
+
+**Jawaban:** Keempat teknik tidak bias (bias mendekati 0). *Stratified* dan sistematik (kerangka terurut per kecamatan) memiliki SD terkecil karena waktu tempuh sangat berbeda antarkecamatan. *Cluster* 3 RW memiliki SD terbesar – jika kebetulan terpilih RW di Pinggiran, estimasinya melonjak.
+
+#### Tugas 6 (Tantangan): Bias survei di halte pusat kota
+
+Petugas hanya mewawancarai penglaju di halte kecamatan **Pusat**. Simulasikan estimasinya dan jelaskan arah biasnya.
+
+```{r}
+set.seed(6)
+est_halte <- replicate(500, mean(rt$waktu_tempuh[sample(which(rt$kecamatan == "Pusat"), 150)]))
+
+c(Rata_estimasi = mean(est_halte), Parameter = mu_tempuh, Bias = mean(est_halte) - mu_tempuh)
+```
+
+**Jawaban:** Estimasi jauh **di bawah** parameter (bias negatif) karena warga pusat kota tinggal dekat dengan tempat aktivitasnya. Kebijakan yang didasarkan pada angka ini akan **meremehkan** beban perjalanan warga pinggiran – persis kelompok yang paling membutuhkan layanan transportasi.
+
+### Latihan Tambahan (Self-Check)
+
+Kerjakan soal-soal berikut secara mandiri sebelum melihat kunci jawaban pada komentar kode.
+
+**Soal A.** Tentukan teknik sampling: (1) Memilih setiap pelanggan ke-50 dari daftar CRM mulai dari nomor acak 17. (2) Membagi karyawan per departemen lalu mengambil 10% secara acak dari tiap departemen. (3) Mengundi 5 sekolah dari 80 sekolah, lalu mensurvei semua guru di 5 sekolah itu. (4) Menyebar kuesioner melalui grup WhatsApp angkatan. (5) Mewawancarai 8 kepala desa yang dianggap paling memahami konflik lahan. (6) Mengisi 50 responden laki-laki dan 50 perempuan dari siapa pun yang lewat di mal.
+
+```{r}
+# Kunci jawaban:
+# (1) Systematic (2) Stratified (proporsional) (3) Cluster
+# (4) Convenience (5) Purposive (6) Quota
+```
+
+**Soal B.** Sebuah aplikasi meminta pengguna memberi rating setelah transaksi. Hanya 4% pengguna yang memberi rating, dan rata-ratanya 4,8 dari 5. Bias apa yang paling mungkin? Mengapa?
+
+```{r}
+# Kunci jawaban:
+# Nonresponse bias (juga disebut voluntary response bias): pengguna yang memberi rating
+# sukarela cenderung yang sangat puas (atau sangat kecewa), tidak mewakili 96% lainnya.
+# Rating 4,8 kemungkinan besar terlalu tinggi dibanding kepuasan seluruh pengguna.
+```
+
+**Soal C.** Dari populasi `pop` pada praktikum ini, ambil stratified sample berukuran 200 dengan alokasi proporsional menurut fakultas, lalu bandingkan rata-rata pengeluarannya dengan parameter.
+
+```{r}
+# Kunci jawaban:
+alok200 <- round(200 * jumlah_fak / N)     # 60, 50, 40, 30, 20
+idx200 <- unlist(lapply(names(alok200), function(f)
+  sample(which(pop$fakultas == f), alok200[[f]])))
+
+c(Estimasi = mean(pop$pengeluaran[idx200]), Parameter = mu_pengeluaran)
+# Estimasi akan sangat dekat dengan parameter (selisih umumnya < 0,05 juta).
+```
+
+**Soal D.** Sebuah studi menemukan bahwa pengguna yang berlangganan fitur premium berbelanja 40% lebih banyak. Manajer menyimpulkan: "Fitur premium membuat pengguna berbelanja lebih banyak." Kritik kesimpulan ini dan usulkan desain yang lebih baik.
+
+```{r}
+# Kunci jawaban:
+# Studi ini observasional: pengguna MEMILIH SENDIRI berlangganan premium. Pengguna yang
+# memang sudah gemar berbelanja lebih mungkin berlangganan (confounding / self-selection).
+# Desain lebih baik: eksperimen (uji A/B) -- acak sebagian pengguna untuk menerima uji coba
+# premium gratis, lalu bandingkan belanja kelompok perlakuan dan kontrol.
+```
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Kesalahan Umum dalam Pengumpulan dan Sampling Data
+
+1. **Mengira sampel besar pasti akurat** – sampel besar yang bias tetap bias (*Literary Digest*).
+2. **Menyamakan "acak" dengan "sembarangan"** – memilih "siapa saja yang lewat" adalah *convenience sampling*, bukan *random sampling*.
+3. **Tertukar antara stratified dan cluster** – *stratified* mengambil **sebagian unit dari setiap kelompok**; *cluster* mengambil **semua unit dari sebagian kelompok**.
+4. **Mengabaikan kualitas kerangka sampel** – unit yang tidak ada dalam daftar tidak akan pernah terpilih.
+5. **Memakai systematic sampling pada daftar yang berpola periodik** – sampel dapat selalu jatuh pada pola yang sama.
+6. **Menganggap quota sampling setara dengan stratified sampling** – komposisinya sama, tetapi pemilihan di dalam kuota tidak acak.
+7. **Mengabaikan tingkat respons** – sampel acak dengan tingkat respons rendah dapat mengalami *nonresponse bias*.
+8. **Menyimpulkan sebab-akibat dari studi observasional** – gunakan eksperimen dengan pengacakan bila memungkinkan.
+9. **Menulis pertanyaan yang menggiring atau bermakna ganda** – merusak data sebelum dianalisis.
+10. **Menganggap alat ukur yang konsisten pasti benar** – presisi tidak sama dengan akurasi; kalibrasi alat secara rutin.
+11. **Tidak mendokumentasikan metode sampling** – pembaca tidak dapat menilai sejauh mana hasil dapat digeneralisasi.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Cheat Sheet: Fungsi R yang Digunakan
+
+| Fungsi | Kegunaan |
+|---|---|
+| `sample(x, size)` | *Simple random sampling* tanpa pengembalian |
+| `sample(x, size, prob = p)` | Pemilihan dengan peluang tidak sama (simulasi bias/*convenience*) |
+| `sample(rep(c(0, 1), each = m))` | Pengacakan perlakuan dalam eksperimen |
+| `seq(from = r, by = k, length.out = n)` | Indeks *systematic sampling* |
+| `which(kondisi)` | Indeks unit yang memenuhi kondisi (memilih strata) |
+| `lapply(daftar, fungsi)` + `unlist()` | Mengambil sampel dari setiap strata lalu menggabungkannya |
+| `x %in% daftar` | Memilih semua unit anggota klaster terpilih |
+| `unique(x)` | Daftar klaster/kategori unik |
+| `round(n * N_h / N)` | Alokasi proporsional *stratified sampling* |
+| `replicate(B, ekspresi)` | Mengulang pengambilan sampel untuk simulasi |
+| `colMeans(df)`, `apply(df, 2, sd)` | Rata-rata dan SD setiap kolom hasil simulasi |
+| `tapply(x, g, mean)` | Rata-rata per kelompok |
+| `ave(x, g, FUN)` | Menghitung nilai per kelompok dengan panjang tetap (membuat nomor klaster) |
+| `rbinom(n, 1, p)` | Membangkitkan data biner Ya/Tidak |
+| `plogis(z)` | Mengubah skor menjadi peluang 0–1 (untuk simulasi) |
+| `set.seed(k)` | Membuat hasil acak dapat direproduksi |
+| `boxplot(list/df, horizontal = TRUE)` | Membandingkan sebaran estimasi antarmetode |
+| `symbols(..., circles = ...)` | Menggambar lingkaran (papan target) |
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Glosarium Istilah
+
+| Istilah | Definisi Singkat |
+|:--------|:-----------------|
+| **Observasi** | Pengumpulan data dengan mencatat langsung tanpa bertanya |
+| **Survei** | Pengumpulan data dengan pertanyaan terstruktur kepada banyak responden |
+| **Wawancara** | Tanya jawab langsung antara peneliti dan responden |
+| **Eksperimen** | Studi di mana peneliti memberi perlakuan secara acak lalu mengukur dampaknya |
+| **Studi Observasional** | Studi tanpa pemberian perlakuan oleh peneliti |
+| **Random Assignment** | Pengacakan subjek ke kelompok perlakuan/kontrol |
+| **Variabel Pengganggu (Confounder)** | Variabel yang memengaruhi perlakuan sekaligus hasil |
+| **Kerangka Sampel** | Daftar unit populasi tempat sampel diambil |
+| **Undercoverage** | Sebagian populasi tidak tercakup dalam kerangka sampel |
+| **Probability Sampling** | Pemilihan acak dengan peluang terpilih yang diketahui |
+| **Simple Random Sampling** | Setiap unit memiliki peluang terpilih yang sama |
+| **Systematic Sampling** | Memilih setiap unit ke-$k$ dari titik awal acak |
+| **Stratified Sampling** | SRS di dalam setiap strata (kelompok homogen) |
+| **Cluster Sampling** | Memilih klaster secara acak lalu mengamati seluruh anggotanya |
+| **Alokasi Proporsional** | Ukuran sampel tiap strata sebanding ukuran strata di populasi |
+| **Non-probability Sampling** | Pemilihan tidak acak; peluang terpilih tidak diketahui |
+| **Convenience / Purposive / Quota Sampling** | Memilih yang mudah dijangkau / berdasarkan pertimbangan / memenuhi kuota |
+| **Bias** | Kesalahan sistematik yang membuat estimasi melenceng ke satu arah |
+| **Akurasi / Presisi** | Kedekatan rata-rata estimasi dengan parameter / kecilnya sebaran estimasi |
+| **Sampling Bias** | Bias akibat cara pemilihan sampel |
+| **Nonresponse Bias** | Bias karena yang tidak menjawab berbeda dari yang menjawab |
+| **Response Bias** | Bias karena jawaban responden tidak akurat atau tidak jujur |
+| **Measurement Bias** | Bias akibat alat atau prosedur pengukuran yang keliru |
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Rangkuman dan Kesimpulan
+
+<div style="width: 85%; margin: 0 auto;">
+
+<p>
+1. <strong>Cara data dikumpulkan menentukan kesimpulan yang boleh ditarik.</strong> Hanya <strong>eksperimen</strong> dengan pengacakan yang kuat untuk menyimpulkan sebab-akibat; studi observasional rentan <em>confounding</em>.
+</p>
+<p>
+2. <strong>Kerangka sampel</strong> harus mencakup populasi; <em>undercoverage</em> tidak dapat diperbaiki oleh teknik sampling apa pun.
+</p>
+<p>
+3. <strong><em>Probability sampling</em></strong> (simple random, systematic, stratified, cluster) menghasilkan estimasi tidak bias dan memungkinkan pengukuran ketidakpastian. <em>Stratified</em> unggul dalam presisi; <em>cluster</em> unggul dalam efisiensi biaya.
+</p>
+<p>
+4. <strong><em>Non-probability sampling</em></strong> berguna untuk eksplorasi, tetapi hasilnya tidak dapat digeneralisasi secara sah.
+</p>
+<p>
+5. <strong>Bias</strong> adalah galat sistematik yang <strong>tidak hilang dengan memperbesar sampel</strong>. Waspadai <em>sampling bias</em>, <em>nonresponse bias</em>, <em>response bias</em>, dan <em>measurement bias</em> di setiap tahap.
+</p>
+<p>
+6. <strong>Akurasi dan presisi berbeda</strong>: alat atau sampel yang konsisten belum tentu benar.
+</p>
+</div>
+<p>
+<strong>Jembatan ke sesi berikutnya:</strong> setelah data terkumpul dengan benar, Pertemuan 4 membahas cara <strong>menyajikannya</strong> – tabel frekuensi, frekuensi relatif dan kumulatif, serta visualisasi (diagram batang, diagram lingkaran, histogram, <em>stem-and-leaf</em>) beserta prinsip visualisasi yang jujur.
+</p>
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Referensi Pendukung
+
+<div style="width: 85%; margin: 0 auto;">
+
+<p>
+Materi ini merangkum topik pengumpulan data dan teknik sampling (<em>data collection and sampling methods</em>) yang umum dibahas pada buku teks pengantar statistika bisnis/data science. Mahasiswa disarankan melengkapi pemahaman dengan merujuk pada:
+</p>
+
+<ul>
+  <li>Modul/slide perkuliahan "Introduction to Statistics (SDT-1102)" – Pertemuan 3: Pengumpulan dan Sampling Data.</li>
+  <li>Squire, P. (1988). Why the 1936 Literary Digest Poll Failed. <em>Public Opinion Quarterly</em>, 52(1), 125–133.</li>
+  <li>Lohr, S. L. <em>Sampling: Design and Analysis</em>. CRC Press (bab pendahuluan, stratified, dan cluster sampling).</li>
+  <li>Dokumentasi resmi R: <code>?sample</code>, <code>?seq</code>, <code>?replicate</code>, <code>?tapply</code>, <code>?ave</code> (dapat diakses langsung di R/RStudio).</li>
+</ul>
+
+</div>

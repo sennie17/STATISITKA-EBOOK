@@ -15,6 +15,11 @@ book:
   downloads: [pdf]
   chapters:
     - index.qmd
+    - chapters/bab-1.qmd
+    - chapters/bab-2.qmd
+    - chapters/bab-3.qmd
+    - chapters/bab-4.qmd
+    - chapters/bab-5.qmd
     - chapters/bab-9.qmd
     - chapters/bab-10.qmd
     - references/referensi.qmd

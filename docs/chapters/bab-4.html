@@ -1,0 +1,2486 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="id" xml:lang="id"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.11.9">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="description" content="Buku praktikum pengantar statistika yang memuat kumpulan materi dan penggunaan data menggunakan R, mulai dari statistika deskriptif hingga dasar-dasar inferensi.">
+
+<title>4&nbsp; Bab 4: Penyajian dan Visualisasi Data – PRAKTIKUM PENGANTAR STATISTIKA</title>
+<style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: 1.5em;}
+div.column{flex: auto;}
+@media screen {
+div.columns{gap: min(4vw, 1.5em);}
+div.column{overflow-x: auto;}
+}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../">
+<link href="../chapters/bab-5.html" rel="next">
+<link href="../chapters/bab-3.html" rel="prev">
+<script src="../site_libs/quarto-html/quarto.js" type="module"></script>
+<script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
+<script src="../site_libs/quarto-html/scrollable-regions/scrollable-regions.js" type="module"></script>
+<script src="../site_libs/quarto-html/popper.min.js"></script>
+<script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-63b5708e65d6cd79cd7618c58d0c21e7.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../site_libs/bootstrap/bootstrap-8575377b15774f46c10fa1d7752ca172.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<script id="quarto-search-options" type="application/json">{
+  "location": "sidebar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "start",
+  "type": "textbox",
+  "limit": 50,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
+  "show-item-context": false,
+  "language": {
+    "search-no-results-text": "Tidak ada hasil",
+    "search-matching-documents-text": "dokumen cocok",
+    "search-copy-link-title": "Salin tautan untuk mencari",
+    "search-hide-matches-text": "Sembunyikan kecocokan lainnya",
+    "search-more-match-text": "kecocokan lainnya di dokumen ini",
+    "search-more-matches-text": "kecocokan lainnya di dokumen ini",
+    "search-clear-button-title": "Hapus",
+    "search-text-placeholder": "Cari di buku…",
+    "search-detached-cancel-button-title": "Batal",
+    "search-submit-button-title": "Kirim",
+    "search-label": "Mencari"
+  }
+}</script>
+<style>html{ scroll-behavior: smooth; }</style>
+<meta name="author" content="Jesen">
+
+  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@4/tex-chtml.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
+<link rel="stylesheet" href="../assets/style.css">
+</head>
+
+<body class="nav-sidebar floating quarto-light"><a id="quarto-skip-link" class="visually-hidden-focusable" href="#quarto-document-content">Skip to main content</a>
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+  <nav class="quarto-secondary-nav" aria-label="Bilah alat">
+    <div class="container-fluid d-flex">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" role="button" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alihkan bilah sisi" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+        <i class="bi bi-layout-text-sidebar-reverse"></i>
+      </button>
+        <nav class="quarto-page-breadcrumbs" aria-label="Jalur"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../chapters/bab-4.html"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bab 4: Penyajian dan Visualisasi Data</span></a></li></ol></nav>
+        <a class="flex-grow-1" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
+      <button type="button" class="btn quarto-search-button" aria-label="Mencari" onclick="window.quartoOpenSearch();">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </nav>
+</header>
+<!-- content -->
+<div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto" aria-label="Situs web">
+    <div class="pt-lg-2 mt-2 text-left sidebar-header">
+    <div class="sidebar-title mb-0 py-0">
+      <a href="../">PRAKTIKUM PENGANTAR STATISTIKA</a> 
+        <div class="sidebar-tools-main">
+    <a href="https://github.com/sennie17/STATISITKA-EBOOK.git" title="Kode Sumber" class="quarto-navigation-tool px-1" aria-label="Kode Sumber"><i class="bi bi-github"></i></a>
+    <a href="../PRAKTIKUM-PENGANTAR-STATISTIKA.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+</div>
+    </div>
+      </div>
+        <div class="mt-2 flex-shrink-0 align-items-center">
+        <div class="sidebar-search">
+        <div id="quarto-search" class="" title="Mencari"></div>
+        </div>
+        </div>
+    <div class="sidebar-menu-container"> 
+    <ul class="list-unstyled mt-1">
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../index.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Kata Pengantar</span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/bab-1.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">1</span>&nbsp; <span class="chapter-title">Bab 1: Konsep Dasar Statistika dan Data</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/bab-2.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Bab 2: Jenis Data dan Skala Pengukuran</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/bab-3.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Bab 3: Pengumpulan dan Sampling Data</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/bab-4.html" class="sidebar-item-text sidebar-link active">
+ <span class="menu-text"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bab 4: Penyajian dan Visualisasi Data</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/bab-5.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Bab 5: Ukuran Pemusatan dan Sebaran</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/bab-9.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Bab 9: Sampling Distribution dan Estimasi</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../chapters/bab-10.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Bab 10: Konsep dan Uji Hipotesis</span></span></a>
+  </div>
+</li>
+        <li class="sidebar-item">
+  <div class="sidebar-item-container"> 
+  <a href="../references/referensi.html" class="sidebar-item-text sidebar-link">
+ <span class="menu-text">Referensi</span></a>
+  </div>
+</li>
+    </ul>
+    </div>
+</nav>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+        <nav id="TOC" role="doc-toc" aria-labelledby="toc-title" class="toc-active">
+    <h2 id="toc-title">Daftar Isi</h2>
+   
+  <ul>
+  <li><a href="#data-yang-dipakai" id="toc-data-yang-dipakai" class="nav-link active" data-scroll-target="#data-yang-dipakai"><span class="header-section-number">4.1</span> Data yang Dipakai</a></li>
+  <li><a href="#tabel-frekuensi-data-kategorik" id="toc-tabel-frekuensi-data-kategorik" class="nav-link" data-scroll-target="#tabel-frekuensi-data-kategorik"><span class="header-section-number">4.2</span> Tabel Frekuensi Data Kategorik</a>
+  <ul class="collapse">
+  <li><a href="#frekuensi-frekuensi-relatif-dan-persentase" id="toc-frekuensi-frekuensi-relatif-dan-persentase" class="nav-link" data-scroll-target="#frekuensi-frekuensi-relatif-dan-persentase"><span class="header-section-number">4.2.1</span> Frekuensi, Frekuensi Relatif, dan Persentase</a></li>
+  <li><a href="#tabel-silang-tabel-kontingensi" id="toc-tabel-silang-tabel-kontingensi" class="nav-link" data-scroll-target="#tabel-silang-tabel-kontingensi"><span class="header-section-number">4.2.2</span> Tabel Silang (Tabel Kontingensi)</a></li>
+  </ul></li>
+  <li><a href="#tabel-frekuensi-data-numerik" id="toc-tabel-frekuensi-data-numerik" class="nav-link" data-scroll-target="#tabel-frekuensi-data-numerik"><span class="header-section-number">4.3</span> Tabel Frekuensi Data Numerik</a>
+  <ul class="collapse">
+  <li><a href="#langkah-demi-langkah-nilai-ujian" id="toc-langkah-demi-langkah-nilai-ujian" class="nav-link" data-scroll-target="#langkah-demi-langkah-nilai-ujian"><span class="header-section-number">4.3.1</span> Langkah demi Langkah: Nilai Ujian</a></li>
+  <li><a href="#kelas-lebar-sama-dengan-hist" id="toc-kelas-lebar-sama-dengan-hist" class="nav-link" data-scroll-target="#kelas-lebar-sama-dengan-hist"><span class="header-section-number">4.3.2</span> Kelas Lebar Sama dengan <code>hist()</code></a></li>
+  <li><a href="#data-yang-sudah-terkelompok-pendapatan-mingguan" id="toc-data-yang-sudah-terkelompok-pendapatan-mingguan" class="nav-link" data-scroll-target="#data-yang-sudah-terkelompok-pendapatan-mingguan"><span class="header-section-number">4.3.3</span> Data yang Sudah Terkelompok: Pendapatan Mingguan</a></li>
+  </ul></li>
+  <li><a href="#visualisasi-data-kategorik" id="toc-visualisasi-data-kategorik" class="nav-link" data-scroll-target="#visualisasi-data-kategorik"><span class="header-section-number">4.4</span> Visualisasi Data Kategorik</a>
+  <ul class="collapse">
+  <li><a href="#diagram-batang-bar-chart" id="toc-diagram-batang-bar-chart" class="nav-link" data-scroll-target="#diagram-batang-bar-chart"><span class="header-section-number">4.4.1</span> Diagram Batang (Bar Chart)</a></li>
+  <li><a href="#diagram-batang-berkelompok-dan-bertumpuk" id="toc-diagram-batang-berkelompok-dan-bertumpuk" class="nav-link" data-scroll-target="#diagram-batang-berkelompok-dan-bertumpuk"><span class="header-section-number">4.4.2</span> Diagram Batang Berkelompok dan Bertumpuk</a></li>
+  <li><a href="#diagram-pareto" id="toc-diagram-pareto" class="nav-link" data-scroll-target="#diagram-pareto"><span class="header-section-number">4.4.3</span> Diagram Pareto</a></li>
+  <li><a href="#diagram-lingkaran-pie-chart" id="toc-diagram-lingkaran-pie-chart" class="nav-link" data-scroll-target="#diagram-lingkaran-pie-chart"><span class="header-section-number">4.4.4</span> Diagram Lingkaran (Pie Chart)</a></li>
+  </ul></li>
+  <li><a href="#visualisasi-data-numerik" id="toc-visualisasi-data-numerik" class="nav-link" data-scroll-target="#visualisasi-data-numerik"><span class="header-section-number">4.5</span> Visualisasi Data Numerik</a>
+  <ul class="collapse">
+  <li><a href="#histogram" id="toc-histogram" class="nav-link" data-scroll-target="#histogram"><span class="header-section-number">4.5.1</span> Histogram</a></li>
+  <li><a href="#histogram-dari-data-terkelompok" id="toc-histogram-dari-data-terkelompok" class="nav-link" data-scroll-target="#histogram-dari-data-terkelompok"><span class="header-section-number">4.5.2</span> Histogram dari Data Terkelompok</a></li>
+  <li><a href="#poligon-frekuensi" id="toc-poligon-frekuensi" class="nav-link" data-scroll-target="#poligon-frekuensi"><span class="header-section-number">4.5.3</span> Poligon Frekuensi</a></li>
+  <li><a href="#ogive-kurva-frekuensi-kumulatif" id="toc-ogive-kurva-frekuensi-kumulatif" class="nav-link" data-scroll-target="#ogive-kurva-frekuensi-kumulatif"><span class="header-section-number">4.5.4</span> Ogive (Kurva Frekuensi Kumulatif)</a></li>
+  <li><a href="#diagram-batang-daun-stem-and-leaf" id="toc-diagram-batang-daun-stem-and-leaf" class="nav-link" data-scroll-target="#diagram-batang-daun-stem-and-leaf"><span class="header-section-number">4.5.5</span> Diagram Batang-Daun (Stem-and-Leaf)</a></li>
+  <li><a href="#memilih-grafik-yang-tepat" id="toc-memilih-grafik-yang-tepat" class="nav-link" data-scroll-target="#memilih-grafik-yang-tepat"><span class="header-section-number">4.5.6</span> Memilih Grafik yang Tepat</a></li>
+  </ul></li>
+  <li><a href="#prinsip-visualisasi-yang-jujur" id="toc-prinsip-visualisasi-yang-jujur" class="nav-link" data-scroll-target="#prinsip-visualisasi-yang-jujur"><span class="header-section-number">4.6</span> Prinsip Visualisasi yang Jujur</a>
+  <ul class="collapse">
+  <li><a href="#prinsip-1-skala-jangan-memotong-sumbu-diagram-batang" id="toc-prinsip-1-skala-jangan-memotong-sumbu-diagram-batang" class="nav-link" data-scroll-target="#prinsip-1-skala-jangan-memotong-sumbu-diagram-batang"><span class="header-section-number">4.6.1</span> Prinsip 1 – Skala: Jangan Memotong Sumbu Diagram Batang</a></li>
+  <li><a href="#prinsip-2-label-grafik-harus-dapat-berdiri-sendiri" id="toc-prinsip-2-label-grafik-harus-dapat-berdiri-sendiri" class="nav-link" data-scroll-target="#prinsip-2-label-grafik-harus-dapat-berdiri-sendiri"><span class="header-section-number">4.6.2</span> Prinsip 2 – Label: Grafik Harus Dapat Berdiri Sendiri</a></li>
+  <li><a href="#prinsip-3-bin-lebar-kelas-mengubah-cerita" id="toc-prinsip-3-bin-lebar-kelas-mengubah-cerita" class="nav-link" data-scroll-target="#prinsip-3-bin-lebar-kelas-mengubah-cerita"><span class="header-section-number">4.6.3</span> Prinsip 3 – Bin: Lebar Kelas Mengubah Cerita</a></li>
+  <li><a href="#prinsip-4-interpretasi-ceritakan-bentuk-pusat-sebaran-dan-keanehan" id="toc-prinsip-4-interpretasi-ceritakan-bentuk-pusat-sebaran-dan-keanehan" class="nav-link" data-scroll-target="#prinsip-4-interpretasi-ceritakan-bentuk-pusat-sebaran-dan-keanehan"><span class="header-section-number">4.6.4</span> Prinsip 4 – Interpretasi: Ceritakan Bentuk, Pusat, Sebaran, dan Keanehan</a></li>
+  <li><a href="#grafik-menyesatkan-lainnya" id="toc-grafik-menyesatkan-lainnya" class="nav-link" data-scroll-target="#grafik-menyesatkan-lainnya"><span class="header-section-number">4.6.5</span> Grafik Menyesatkan Lainnya</a></li>
+  </ul></li>
+  <li><a href="#studi-kasus-komprehensif-waktu-pengiriman-paket" id="toc-studi-kasus-komprehensif-waktu-pengiriman-paket" class="nav-link" data-scroll-target="#studi-kasus-komprehensif-waktu-pengiriman-paket"><span class="header-section-number">4.7</span> Studi Kasus Komprehensif: Waktu Pengiriman Paket</a>
+  <ul class="collapse">
+  <li><a href="#langkah-1-komposisi-layanan" id="toc-langkah-1-komposisi-layanan" class="nav-link" data-scroll-target="#langkah-1-komposisi-layanan"><span class="header-section-number">4.7.1</span> Langkah 1: Komposisi Layanan</a></li>
+  <li><a href="#langkah-2-tabel-distribusi-frekuensi-waktu-pengiriman" id="toc-langkah-2-tabel-distribusi-frekuensi-waktu-pengiriman" class="nav-link" data-scroll-target="#langkah-2-tabel-distribusi-frekuensi-waktu-pengiriman"><span class="header-section-number">4.7.2</span> Langkah 2: Tabel Distribusi Frekuensi Waktu Pengiriman</a></li>
+  <li><a href="#langkah-3-histogram-dan-ogive" id="toc-langkah-3-histogram-dan-ogive" class="nav-link" data-scroll-target="#langkah-3-histogram-dan-ogive"><span class="header-section-number">4.7.3</span> Langkah 3: Histogram dan Ogive</a></li>
+  <li><a href="#langkah-4-histogram-per-layanan" id="toc-langkah-4-histogram-per-layanan" class="nav-link" data-scroll-target="#langkah-4-histogram-per-layanan"><span class="header-section-number">4.7.4</span> Langkah 4: Histogram per Layanan</a></li>
+  <li><a href="#pertanyaan-diskusi-dan-jawaban" id="toc-pertanyaan-diskusi-dan-jawaban" class="nav-link" data-scroll-target="#pertanyaan-diskusi-dan-jawaban"><span class="header-section-number">4.7.5</span> Pertanyaan Diskusi dan Jawaban</a></li>
+  </ul></li>
+  <li><a href="#latihan-mandiri" id="toc-latihan-mandiri" class="nav-link" data-scroll-target="#latihan-mandiri"><span class="header-section-number">4.8</span> Latihan Mandiri</a>
+  <ul class="collapse">
+  <li><a href="#latihan-utama-exercise-2.14-kepemilikan-kartu-kredit" id="toc-latihan-utama-exercise-2.14-kepemilikan-kartu-kredit" class="nav-link" data-scroll-target="#latihan-utama-exercise-2.14-kepemilikan-kartu-kredit"><span class="header-section-number">4.8.1</span> Latihan Utama (Exercise 2.14): Kepemilikan Kartu Kredit</a></li>
+  <li><a href="#latihan-tambahan-self-check" id="toc-latihan-tambahan-self-check" class="nav-link" data-scroll-target="#latihan-tambahan-self-check"><span class="header-section-number">4.8.2</span> Latihan Tambahan (Self-Check)</a></li>
+  </ul></li>
+  <li><a href="#kesalahan-umum-dalam-penyajian-dan-visualisasi-data" id="toc-kesalahan-umum-dalam-penyajian-dan-visualisasi-data" class="nav-link" data-scroll-target="#kesalahan-umum-dalam-penyajian-dan-visualisasi-data"><span class="header-section-number">4.9</span> Kesalahan Umum dalam Penyajian dan Visualisasi Data</a></li>
+  <li><a href="#cheat-sheet-fungsi-r-yang-digunakan" id="toc-cheat-sheet-fungsi-r-yang-digunakan" class="nav-link" data-scroll-target="#cheat-sheet-fungsi-r-yang-digunakan"><span class="header-section-number">4.10</span> Cheat Sheet: Fungsi R yang Digunakan</a></li>
+  <li><a href="#glosarium-istilah" id="toc-glosarium-istilah" class="nav-link" data-scroll-target="#glosarium-istilah"><span class="header-section-number">4.11</span> Glosarium Istilah</a></li>
+  <li><a href="#rangkuman-dan-kesimpulan" id="toc-rangkuman-dan-kesimpulan" class="nav-link" data-scroll-target="#rangkuman-dan-kesimpulan"><span class="header-section-number">4.12</span> Rangkuman dan Kesimpulan</a></li>
+  <li><a href="#referensi-pendukung" id="toc-referensi-pendukung" class="nav-link" data-scroll-target="#referensi-pendukung"><span class="header-section-number">4.13</span> Referensi Pendukung</a></li>
+  </ul>
+<div class="toc-actions"><ul><li><a href="https://github.com/sennie17/STATISITKA-EBOOK.git/edit/main/chapters/bab-4.qmd" class="toc-action"><i class="bi bi-github"></i>Sunting laman ini</a></li><li><a href="https://github.com/sennie17/STATISITKA-EBOOK.git/issues/new" class="toc-action"><i class="bi empty"></i>Laporkan isu</a></li></ul></div></nav>
+    </div>
+<!-- main -->
+<main class="content" id="quarto-document-content" tabindex="-1">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Bab 4: Penyajian dan Visualisasi Data</span></h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    
+  
+    
+  </div>
+  
+
+
+</header>
+
+
+<style>
+table thead tr th,
+table > thead > tr > th {
+  text-align: center !important;
+}
+</style>
+<section id="data-yang-dipakai" class="level2" data-number="4.1">
+<h2 data-number="4.1" class="anchored" data-anchor-id="data-yang-dipakai"><span class="header-section-number">4.1</span> Data yang Dipakai</h2>
+<p>Tiga dataset dipakai sepanjang praktikum. Dataset nilai ujian dan pendapatan mingguan akan <strong>dipakai lagi</strong> pada Pertemuan 5 (ukuran pemusatan dan penyebaran), jadi pastikan Anda memahaminya.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># 1. Kategorik: metode pembayaran 60 transaksi sebuah kedai kopi</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">404</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>metode <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"QRIS"</span>, <span class="st">"Tunai"</span>, <span class="st">"Debit"</span>, <span class="st">"E-Wallet"</span>, <span class="st">"Kartu Kredit"</span>), <span class="dv">60</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>                 <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.38</span>, <span class="fl">0.22</span>, <span class="fl">0.18</span>, <span class="fl">0.15</span>, <span class="fl">0.07</span>))</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>waktu  <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Pagi"</span>, <span class="st">"Siang"</span>, <span class="st">"Malam"</span>), <span class="dv">60</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># 2. Numerik: nilai ujian Statistika 30 mahasiswa</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>nilai_ujian <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">78</span>, <span class="dv">65</span>, <span class="dv">82</span>, <span class="dv">90</span>, <span class="dv">74</span>, <span class="dv">68</span>, <span class="dv">95</span>, <span class="dv">88</span>, <span class="dv">72</span>, <span class="dv">80</span>,</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">91</span>, <span class="dv">77</span>, <span class="dv">63</span>, <span class="dv">85</span>, <span class="dv">79</span>, <span class="dv">92</span>, <span class="dv">70</span>, <span class="dv">84</span>, <span class="dv">76</span>, <span class="dv">89</span>,</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>                 <span class="dv">81</span>, <span class="dv">67</span>, <span class="dv">93</span>, <span class="dv">75</span>, <span class="dv">86</span>, <span class="dv">71</span>, <span class="dv">94</span>, <span class="dv">83</span>, <span class="dv">69</span>, <span class="dv">87</span>)</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a><span class="co"># 3. Numerik terkelompok: pendapatan mingguan (USD) 100 karyawan</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>kelas_p <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"801-1000"</span>, <span class="st">"1001-1200"</span>, <span class="st">"1201-1400"</span>, <span class="st">"1401-1600"</span>, <span class="st">"1601-1800"</span>, <span class="st">"1801-2000"</span>)</span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>f_p     <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">9</span>, <span class="dv">22</span>, <span class="dv">39</span>, <span class="dv">15</span>, <span class="dv">9</span>, <span class="dv">6</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+<section id="tabel-frekuensi-data-kategorik" class="level2" data-number="4.2">
+<h2 data-number="4.2" class="anchored" data-anchor-id="tabel-frekuensi-data-kategorik"><span class="header-section-number">4.2</span> Tabel Frekuensi Data Kategorik</h2>
+<section id="frekuensi-frekuensi-relatif-dan-persentase" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="frekuensi-frekuensi-relatif-dan-persentase"><span class="header-section-number">4.2.1</span> Frekuensi, Frekuensi Relatif, dan Persentase</h3>
+<table class="caption-top table">
+<thead>
+<tr class="header">
+<th>Kolom</th>
+<th>Rumus</th>
+<th>Arti</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Frekuensi (<span class="math inline">\(f\)</span>)</td>
+<td>hitung</td>
+<td>Banyaknya data pada kategori</td>
+</tr>
+<tr class="even">
+<td>Frekuensi relatif</td>
+<td><span class="math inline">\(\dfrac{f}{n}\)</span></td>
+<td>Proporsi (0 sampai 1)</td>
+</tr>
+<tr class="odd">
+<td>Persentase</td>
+<td><span class="math inline">\(\dfrac{f}{n} \times 100\%\)</span></td>
+<td>Proporsi dalam persen</td>
+</tr>
+</tbody>
+</table>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>f_metode <span class="ot">&lt;-</span> <span class="fu">table</span>(metode)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>f_metode <span class="ot">&lt;-</span> <span class="fu">sort</span>(f_metode, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)   <span class="co"># urutkan dari yang terbanyak</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>tabel_metode <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Metode      =</span> <span class="fu">names</span>(f_metode),</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">f           =</span> <span class="fu">as.numeric</span>(f_metode),</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">f_relatif   =</span> <span class="fu">round</span>(<span class="fu">as.numeric</span>(<span class="fu">prop.table</span>(f_metode)), <span class="dv">3</span>),</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Persen      =</span> <span class="fu">round</span>(<span class="fu">as.numeric</span>(<span class="fu">prop.table</span>(f_metode)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>tabel_metode <span class="ot">&lt;-</span> <span class="fu">rbind</span>(tabel_metode,</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>                      <span class="fu">data.frame</span>(<span class="at">Metode =</span> <span class="st">"Total"</span>, <span class="at">f =</span> <span class="fu">sum</span>(tabel_metode<span class="sc">$</span>f),</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                                 <span class="at">f_relatif =</span> <span class="dv">1</span>, <span class="at">Persen =</span> <span class="dv">100</span>))</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(tabel_metode, <span class="at">caption =</span> <span class="st">"Distribusi Frekuensi Metode Pembayaran (n = 60)"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Distribusi Frekuensi Metode Pembayaran (n = 60)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Metode</th>
+<th style="text-align: right;">f</th>
+<th style="text-align: right;">f_relatif</th>
+<th style="text-align: right;">Persen</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">QRIS</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">0.35</td>
+<td style="text-align: right;">35</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Tunai</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">0.25</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Debit</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">E-Wallet</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">0.15</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Kartu Kredit</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0.10</td>
+<td style="text-align: right;">10</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Total</td>
+<td style="text-align: right;">60</td>
+<td style="text-align: right;">1.00</td>
+<td style="text-align: right;">100</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div style="width: 85%; margin: 0 auto;">
+<p>
+<strong>Frekuensi kumulatif untuk data nominal?</strong> Kumulatif hanya bermakna jika kategori memiliki <strong>urutan</strong> (ordinal atau numerik). Pada data nominal seperti metode pembayaran, kumulatif baru bermakna setelah diurutkan dari terbanyak – dan itu pun hanya untuk analisis Pareto (lihat bagian visualisasi).
+</p>
+</div>
+</section>
+<section id="tabel-silang-tabel-kontingensi" class="level3" data-number="4.2.2">
+<h3 data-number="4.2.2" class="anchored" data-anchor-id="tabel-silang-tabel-kontingensi"><span class="header-section-number">4.2.2</span> Tabel Silang (Tabel Kontingensi)</h3>
+<p>Untuk melihat hubungan <strong>dua</strong> variabel kategorik, gunakan tabel silang.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>silang <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="at">Waktu =</span> <span class="fu">factor</span>(waktu, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Pagi"</span>, <span class="st">"Siang"</span>, <span class="st">"Malam"</span>)),</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>                <span class="at">Metode =</span> <span class="fu">factor</span>(metode, <span class="at">levels =</span> <span class="fu">names</span>(f_metode)))</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">addmargins</span>(silang)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       Metode
+Waktu   QRIS Tunai Debit E-Wallet Kartu Kredit Sum
+  Pagi     5     3     3        4            3  18
+  Siang    8     6     3        4            2  23
+  Malam    8     6     3        1            1  19
+  Sum     21    15     9        9            6  60</code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Persentase per baris: komposisi metode pembayaran di setiap waktu</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(<span class="fu">prop.table</span>(silang, <span class="at">margin =</span> <span class="dv">1</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       Metode
+Waktu   QRIS Tunai Debit E-Wallet Kartu Kredit
+  Pagi  27.8  16.7  16.7     22.2         16.7
+  Siang 34.8  26.1  13.0     17.4          8.7
+  Malam 42.1  31.6  15.8      5.3          5.3</code></pre>
+</div>
+</div>
+<p>Persentase <strong>per baris</strong> menjawab “di waktu tertentu, metode apa yang dominan?”; persentase <strong>per kolom</strong> (<code>margin = 2</code>) menjawab “transaksi QRIS paling banyak terjadi pada waktu apa?”. Pilih arah persentase sesuai pertanyaan.</p>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+</section>
+<section id="tabel-frekuensi-data-numerik" class="level2" data-number="4.3">
+<h2 data-number="4.3" class="anchored" data-anchor-id="tabel-frekuensi-data-numerik"><span class="header-section-number">4.3</span> Tabel Frekuensi Data Numerik</h2>
+<p>Data numerik dengan banyak nilai berbeda perlu <strong>dikelompokkan</strong> ke dalam kelas (interval). Langkah-langkahnya:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Langkah</th>
+<th>Keterangan</th>
+<th>Rumus</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>1</td>
+<td>Hitung rentang</td>
+<td><span class="math inline">\(R = x_{\max} - x_{\min}\)</span></td>
+</tr>
+<tr class="even">
+<td>2</td>
+<td>Tentukan banyak kelas (Aturan Sturges)</td>
+<td><span class="math inline">\(k = 1 + 3{,}322 \log_{10} n\)</span> (dibulatkan)</td>
+</tr>
+<tr class="odd">
+<td>3</td>
+<td>Tentukan lebar kelas</td>
+<td><span class="math inline">\(w = \dfrac{R}{k}\)</span> (dibulatkan <strong>ke atas</strong>)</td>
+</tr>
+<tr class="even">
+<td>4</td>
+<td>Tentukan batas kelas</td>
+<td>Mulai dari <span class="math inline">\(x_{\min}\)</span> (atau sedikit di bawahnya)</td>
+</tr>
+<tr class="odd">
+<td>5</td>
+<td>Tentukan batas nyata</td>
+<td>Batas bawah <span class="math inline">\(-0{,}5\)</span> satuan; batas atas <span class="math inline">\(+0{,}5\)</span> satuan</td>
+</tr>
+<tr class="even">
+<td>6</td>
+<td>Hitung titik tengah</td>
+<td><span class="math inline">\(m = \dfrac{\text{batas bawah} + \text{batas atas}}{2}\)</span></td>
+</tr>
+<tr class="odd">
+<td>7</td>
+<td>Hitung frekuensi tiap kelas</td>
+<td>Turus / <code>cut()</code> + <code>table()</code></td>
+</tr>
+</tbody>
+</table>
+<section id="langkah-demi-langkah-nilai-ujian" class="level3" data-number="4.3.1">
+<h3 data-number="4.3.1" class="anchored" data-anchor-id="langkah-demi-langkah-nilai-ujian"><span class="header-section-number">4.3.1</span> Langkah demi Langkah: Nilai Ujian</h3>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>n <span class="ot">&lt;-</span> <span class="fu">length</span>(nilai_ujian)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>R <span class="ot">&lt;-</span> <span class="fu">max</span>(nilai_ujian) <span class="sc">-</span> <span class="fu">min</span>(nilai_ujian)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>k_sturges <span class="ot">&lt;-</span> <span class="dv">1</span> <span class="sc">+</span> <span class="fl">3.322</span> <span class="sc">*</span> <span class="fu">log10</span>(n)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>k <span class="ot">&lt;-</span> <span class="fu">round</span>(k_sturges)</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>w <span class="ot">&lt;-</span> <span class="fu">ceiling</span>(R <span class="sc">/</span> k)</span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">n =</span> n, <span class="at">Min =</span> <span class="fu">min</span>(nilai_ujian), <span class="at">Maks =</span> <span class="fu">max</span>(nilai_ujian), <span class="at">Rentang =</span> R,</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">k_Sturges =</span> <span class="fu">round</span>(k_sturges, <span class="dv">3</span>), <span class="at">k =</span> k, <span class="at">R_per_k =</span> <span class="fu">round</span>(R <span class="sc">/</span> k, <span class="dv">3</span>), <span class="at">Lebar_w =</span> w)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>        n       Min      Maks   Rentang k_Sturges         k   R_per_k   Lebar_w 
+   30.000    63.000    95.000    32.000     5.907     6.000     5.333     6.000 </code></pre>
+</div>
+</div>
+<p>Diperoleh <span class="math inline">\(k = 1 + 3{,}322 \log_{10} 30 \approx 5{,}91 \to\)</span> <strong>6 kelas</strong>, dan lebar kelas <span class="math inline">\(w = 32/6 \approx 5{,}33 \to\)</span> <strong>6</strong> (dibulatkan ke atas agar seluruh data tertampung).</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>batas_bawah <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">min</span>(nilai_ujian), <span class="at">by =</span> w, <span class="at">length.out =</span> k)     <span class="co"># 63, 69, ..., 93</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>batas_atas  <span class="ot">&lt;-</span> batas_bawah <span class="sc">+</span> w <span class="sc">-</span> <span class="dv">1</span>                                <span class="co"># 68, 74, ..., 98</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>batas_nyata_u <span class="ot">&lt;-</span> <span class="fu">c</span>(batas_bawah <span class="sc">-</span> <span class="fl">0.5</span>, <span class="fu">max</span>(batas_atas) <span class="sc">+</span> <span class="fl">0.5</span>)      <span class="co"># 62.5, 68.5, ..., 98.5</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>f_ujian <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">table</span>(<span class="fu">cut</span>(nilai_ujian, <span class="at">breaks =</span> batas_nyata_u)))</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>tabel_ujian <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Kelas        =</span> <span class="fu">paste0</span>(batas_bawah, <span class="st">"-"</span>, batas_atas),</span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">Batas_Nyata  =</span> <span class="fu">paste0</span>(batas_bawah <span class="sc">-</span> <span class="fl">0.5</span>, <span class="st">"-"</span>, batas_atas <span class="sc">+</span> <span class="fl">0.5</span>),</span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">Titik_Tengah =</span> (batas_bawah <span class="sc">+</span> batas_atas) <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">f            =</span> f_ujian,</span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">f_Relatif    =</span> <span class="fu">round</span>(f_ujian <span class="sc">/</span> n, <span class="dv">3</span>),</span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">Persen       =</span> <span class="fu">round</span>(f_ujian <span class="sc">/</span> n <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>),</span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">F_Kumulatif  =</span> <span class="fu">cumsum</span>(f_ujian),</span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  <span class="at">Persen_Kum   =</span> <span class="fu">round</span>(<span class="fu">cumsum</span>(f_ujian) <span class="sc">/</span> n <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(tabel_ujian, <span class="at">caption =</span> <span class="st">"Distribusi Frekuensi Nilai Ujian Statistika (n = 30)"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Distribusi Frekuensi Nilai Ujian Statistika (n = 30)</caption>
+<colgroup>
+<col style="width: 8%">
+<col style="width: 16%">
+<col style="width: 17%">
+<col style="width: 4%">
+<col style="width: 13%">
+<col style="width: 9%">
+<col style="width: 16%">
+<col style="width: 14%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Kelas</th>
+<th style="text-align: left;">Batas_Nyata</th>
+<th style="text-align: right;">Titik_Tengah</th>
+<th style="text-align: right;">f</th>
+<th style="text-align: right;">f_Relatif</th>
+<th style="text-align: right;">Persen</th>
+<th style="text-align: right;">F_Kumulatif</th>
+<th style="text-align: right;">Persen_Kum</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">63-68</td>
+<td style="text-align: left;">62.5-68.5</td>
+<td style="text-align: right;">65.5</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">0.133</td>
+<td style="text-align: right;">13.3</td>
+<td style="text-align: right;">4</td>
+<td style="text-align: right;">13.3</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">69-74</td>
+<td style="text-align: left;">68.5-74.5</td>
+<td style="text-align: right;">71.5</td>
+<td style="text-align: right;">5</td>
+<td style="text-align: right;">0.167</td>
+<td style="text-align: right;">16.7</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">30.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">75-80</td>
+<td style="text-align: left;">74.5-80.5</td>
+<td style="text-align: right;">77.5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0.200</td>
+<td style="text-align: right;">20.0</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">50.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">81-86</td>
+<td style="text-align: left;">80.5-86.5</td>
+<td style="text-align: right;">83.5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0.200</td>
+<td style="text-align: right;">20.0</td>
+<td style="text-align: right;">21</td>
+<td style="text-align: right;">70.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">87-92</td>
+<td style="text-align: left;">86.5-92.5</td>
+<td style="text-align: right;">89.5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">0.200</td>
+<td style="text-align: right;">20.0</td>
+<td style="text-align: right;">27</td>
+<td style="text-align: right;">90.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">93-98</td>
+<td style="text-align: left;">92.5-98.5</td>
+<td style="text-align: right;">95.5</td>
+<td style="text-align: right;">3</td>
+<td style="text-align: right;">0.100</td>
+<td style="text-align: right;">10.0</td>
+<td style="text-align: right;">30</td>
+<td style="text-align: right;">100.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p><strong>Mengapa batas nyata?</strong> Nilai ujian dicatat sebagai bilangan bulat. Batas nyata (<span class="math inline">\(\pm 0{,}5\)</span>) menutup “celah” antara kelas 63–68 dan 69–74 sehingga setiap kemungkinan nilai (misalnya 68,7 bila dibulatkan) punya tempat yang jelas, dan batang histogram saling menempel tanpa celah.</p>
+<p><strong>Cara membaca:</strong></p>
+<ul>
+<li>Kelas dengan frekuensi terbanyak adalah kelas 75-80, 81-86, 87-92 (masing-masing 6 mahasiswa).</li>
+<li>50% mahasiswa bernilai 80 atau kurang (frekuensi kumulatif relatif kelas ketiga).</li>
+<li>Hanya 3 mahasiswa (10%) berada di kelas tertinggi 93-98.</li>
+</ul>
+<div style="width: 85%; margin: 0 auto;">
+<p>
+<strong>Konvensi interval di R.</strong> <code>cut()</code> secara bawaan memakai interval <strong>tertutup kanan</strong> <code>(a, b]</code>. Karena batas nyata berakhir di ,5 dan data berupa bilangan bulat, tidak ada data yang jatuh tepat di batas, sehingga konvensi ini tidak menjadi masalah.
+</p>
+</div>
+</section>
+<section id="kelas-lebar-sama-dengan-hist" class="level3" data-number="4.3.2">
+<h3 data-number="4.3.2" class="anchored" data-anchor-id="kelas-lebar-sama-dengan-hist"><span class="header-section-number">4.3.2</span> Kelas Lebar Sama dengan <code>hist()</code></h3>
+<p>Fungsi <code>hist()</code> juga menghitung frekuensi kelas jika diberi argumen <code>plot = FALSE</code>:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>h <span class="ot">&lt;-</span> <span class="fu">hist</span>(nilai_ujian, <span class="at">breaks =</span> batas_nyata_u, <span class="at">plot =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">dari =</span> <span class="fu">head</span>(h<span class="sc">$</span>breaks, <span class="sc">-</span><span class="dv">1</span>), <span class="at">sampai =</span> <span class="fu">tail</span>(h<span class="sc">$</span>breaks, <span class="sc">-</span><span class="dv">1</span>),</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">titik_tengah =</span> h<span class="sc">$</span>mids, <span class="at">f =</span> h<span class="sc">$</span>counts)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  dari sampai titik_tengah f
+1 62.5   68.5         65.5 4
+2 68.5   74.5         71.5 5
+3 74.5   80.5         77.5 6
+4 80.5   86.5         83.5 6
+5 86.5   92.5         89.5 6
+6 92.5   98.5         95.5 3</code></pre>
+</div>
+</div>
+</section>
+<section id="data-yang-sudah-terkelompok-pendapatan-mingguan" class="level3" data-number="4.3.3">
+<h3 data-number="4.3.3" class="anchored" data-anchor-id="data-yang-sudah-terkelompok-pendapatan-mingguan"><span class="header-section-number">4.3.3</span> Data yang Sudah Terkelompok: Pendapatan Mingguan</h3>
+<p>Sering kali kita hanya menerima <strong>tabel jadi</strong> tanpa data mentah. Kita tetap dapat melengkapinya dengan kolom relatif dan kumulatif.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>batas_nyata_p <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fl">800.5</span>, <span class="at">by =</span> <span class="dv">200</span>, <span class="at">length.out =</span> <span class="dv">7</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>L_p <span class="ot">&lt;-</span> <span class="fu">head</span>(batas_nyata_p, <span class="sc">-</span><span class="dv">1</span>); U_p <span class="ot">&lt;-</span> <span class="fu">tail</span>(batas_nyata_p, <span class="sc">-</span><span class="dv">1</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>n_p <span class="ot">&lt;-</span> <span class="fu">sum</span>(f_p)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a>tabel_p <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Kelas          =</span> kelas_p,</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Batas_Nyata    =</span> <span class="fu">paste0</span>(L_p, <span class="st">"-"</span>, U_p),</span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">Titik_Tengah   =</span> (L_p <span class="sc">+</span> U_p) <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">f              =</span> f_p,</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="at">Persen         =</span> f_p <span class="sc">/</span> n_p <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>  <span class="at">F_Kum_Kurang   =</span> <span class="fu">cumsum</span>(f_p),                    <span class="co"># "kurang dari" batas nyata atas</span></span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">F_Kum_Lebih    =</span> <span class="fu">rev</span>(<span class="fu">cumsum</span>(<span class="fu">rev</span>(f_p)))           <span class="co"># "lebih dari" batas nyata bawah</span></span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(tabel_p, <span class="at">caption =</span> <span class="st">"Pendapatan Mingguan 100 Karyawan (USD)"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Pendapatan Mingguan 100 Karyawan (USD)</caption>
+<colgroup>
+<col style="width: 13%">
+<col style="width: 19%">
+<col style="width: 18%">
+<col style="width: 4%">
+<col style="width: 9%">
+<col style="width: 18%">
+<col style="width: 16%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Kelas</th>
+<th style="text-align: left;">Batas_Nyata</th>
+<th style="text-align: right;">Titik_Tengah</th>
+<th style="text-align: right;">f</th>
+<th style="text-align: right;">Persen</th>
+<th style="text-align: right;">F_Kum_Kurang</th>
+<th style="text-align: right;">F_Kum_Lebih</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">801-1000</td>
+<td style="text-align: left;">800.5-1000.5</td>
+<td style="text-align: right;">900.5</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">100</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1001-1200</td>
+<td style="text-align: left;">1000.5-1200.5</td>
+<td style="text-align: right;">1100.5</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">31</td>
+<td style="text-align: right;">91</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1201-1400</td>
+<td style="text-align: left;">1200.5-1400.5</td>
+<td style="text-align: right;">1300.5</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">39</td>
+<td style="text-align: right;">70</td>
+<td style="text-align: right;">69</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1401-1600</td>
+<td style="text-align: left;">1400.5-1600.5</td>
+<td style="text-align: right;">1500.5</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">85</td>
+<td style="text-align: right;">30</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">1601-1800</td>
+<td style="text-align: left;">1600.5-1800.5</td>
+<td style="text-align: right;">1700.5</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">9</td>
+<td style="text-align: right;">94</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">1801-2000</td>
+<td style="text-align: left;">1800.5-2000.5</td>
+<td style="text-align: right;">1900.5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">100</td>
+<td style="text-align: right;">6</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<p>Kumulatif <strong>“kurang dari”</strong> menjawab: “berapa karyawan berpendapatan di bawah 1.400,5 USD?” (70 orang). Kumulatif <strong>“lebih dari”</strong> menjawab: “berapa karyawan berpendapatan di atas 1.400,5 USD?” (30 orang).</p>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+</section>
+<section id="visualisasi-data-kategorik" class="level2" data-number="4.4">
+<h2 data-number="4.4" class="anchored" data-anchor-id="visualisasi-data-kategorik"><span class="header-section-number">4.4</span> Visualisasi Data Kategorik</h2>
+<section id="diagram-batang-bar-chart" class="level3" data-number="4.4.1">
+<h3 data-number="4.4.1" class="anchored" data-anchor-id="diagram-batang-bar-chart"><span class="header-section-number">4.4.1</span> Diagram Batang (Bar Chart)</h3>
+<p>Diagram batang menampilkan frekuensi tiap kategori sebagai batang <strong>terpisah</strong> (ada celah antarbatang, karena kategori tidak bersambung).</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>bp <span class="ot">&lt;-</span> <span class="fu">barplot</span>(f_metode, <span class="at">col =</span> <span class="st">"#4C72B0"</span>, <span class="at">border =</span> <span class="cn">NA</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">max</span>(f_metode) <span class="sc">*</span> <span class="fl">1.2</span>),</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>              <span class="at">main =</span> <span class="st">"Metode Pembayaran di Kedai Kopi (n = 60 transaksi)"</span>,</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>              <span class="at">xlab =</span> <span class="st">"Metode Pembayaran"</span>, <span class="at">ylab =</span> <span class="st">"Jumlah Transaksi"</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(bp, f_metode, <span class="at">labels =</span> f_metode, <span class="at">pos =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-9-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Untuk nama kategori yang panjang atau banyak kategori, diagram batang <strong>horizontal</strong> lebih mudah dibaca:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">8</span>, <span class="dv">3</span>, <span class="dv">2</span>))</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(<span class="fu">rev</span>(<span class="fu">prop.table</span>(f_metode) <span class="sc">*</span> <span class="dv">100</span>), <span class="at">horiz =</span> <span class="cn">TRUE</span>, <span class="at">las =</span> <span class="dv">1</span>, <span class="at">col =</span> <span class="st">"#4C72B0"</span>, <span class="at">border =</span> <span class="cn">NA</span>,</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>        <span class="at">xlab =</span> <span class="st">"Persentase Transaksi (%)"</span>, <span class="at">main =</span> <span class="st">"Komposisi Metode Pembayaran"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-10-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">2</span>) <span class="sc">+</span> <span class="fl">0.1</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="diagram-batang-berkelompok-dan-bertumpuk" class="level3" data-number="4.4.2">
+<h3 data-number="4.4.2" class="anchored" data-anchor-id="diagram-batang-berkelompok-dan-bertumpuk"><span class="header-section-number">4.4.2</span> Diagram Batang Berkelompok dan Bertumpuk</h3>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>warna_waktu <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"#fdd49e"</span>, <span class="st">"#fc8d59"</span>, <span class="st">"#b30000"</span>)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(silang, <span class="at">beside =</span> <span class="cn">TRUE</span>, <span class="at">col =</span> warna_waktu, <span class="at">border =</span> <span class="cn">NA</span>, <span class="at">las =</span> <span class="dv">2</span>, <span class="at">cex.names =</span> <span class="fl">0.75</span>,</span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"Berkelompok (beside = TRUE)"</span>, <span class="at">ylab =</span> <span class="st">"Jumlah Transaksi"</span>)</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="fu">legend</span>(<span class="st">"topright"</span>, <span class="at">legend =</span> <span class="fu">rownames</span>(silang), <span class="at">fill =</span> warna_waktu, <span class="at">bty =</span> <span class="st">"n"</span>, <span class="at">cex =</span> <span class="fl">0.8</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(<span class="fu">prop.table</span>(silang, <span class="at">margin =</span> <span class="dv">2</span>) <span class="sc">*</span> <span class="dv">100</span>, <span class="at">col =</span> warna_waktu, <span class="at">border =</span> <span class="cn">NA</span>, <span class="at">las =</span> <span class="dv">2</span>,</span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">cex.names =</span> <span class="fl">0.75</span>, <span class="at">main =</span> <span class="st">"Bertumpuk 100%"</span>, <span class="at">ylab =</span> <span class="st">"Persentase (%)"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-11-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Diagram <strong>berkelompok</strong> baik untuk membandingkan frekuensi absolut; diagram <strong>bertumpuk 100%</strong> baik untuk membandingkan <strong>komposisi</strong> antarkategori.</p>
+</section>
+<section id="diagram-pareto" class="level3" data-number="4.4.3">
+<h3 data-number="4.4.3" class="anchored" data-anchor-id="diagram-pareto"><span class="header-section-number">4.4.3</span> Diagram Pareto</h3>
+<p>Diagram Pareto adalah diagram batang yang diurutkan dari frekuensi terbesar, ditambah garis <strong>persentase kumulatif</strong>. Ia dipakai untuk menemukan “sedikit penyebab yang menyumbang sebagian besar masalah” (prinsip 80/20), misalnya jenis keluhan pelanggan.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>keluhan <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Pengiriman terlambat"</span> <span class="ot">=</span> <span class="dv">48</span>, <span class="st">"Barang rusak"</span> <span class="ot">=</span> <span class="dv">27</span>, <span class="st">"Salah kirim"</span> <span class="ot">=</span> <span class="dv">14</span>,</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>             <span class="st">"Refund lama"</span> <span class="ot">=</span> <span class="dv">7</span>, <span class="st">"CS tidak responsif"</span> <span class="ot">=</span> <span class="dv">5</span>, <span class="st">"Lainnya"</span> <span class="ot">=</span> <span class="dv">4</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>kum_persen <span class="ot">&lt;-</span> <span class="fu">cumsum</span>(keluhan) <span class="sc">/</span> <span class="fu">sum</span>(keluhan) <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">4</span>, <span class="dv">3</span>, <span class="dv">4</span>))</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>bp <span class="ot">&lt;-</span> <span class="fu">barplot</span>(keluhan, <span class="at">col =</span> <span class="st">"#DD8452"</span>, <span class="at">border =</span> <span class="cn">NA</span>, <span class="at">las =</span> <span class="dv">2</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">sum</span>(keluhan)),</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>              <span class="at">ylab =</span> <span class="st">"Jumlah Keluhan"</span>, <span class="at">main =</span> <span class="st">"Diagram Pareto Keluhan Pelanggan"</span>)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(bp, kum_persen <span class="sc">/</span> <span class="dv">100</span> <span class="sc">*</span> <span class="fu">sum</span>(keluhan), <span class="at">type =</span> <span class="st">"b"</span>, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">4</span>, <span class="at">at =</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="fu">sum</span>(keluhan), <span class="at">length.out =</span> <span class="dv">5</span>), <span class="at">labels =</span> <span class="fu">paste0</span>(<span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">100</span>, <span class="dv">25</span>), <span class="st">"%"</span>))</span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="fl">0.8</span> <span class="sc">*</span> <span class="fu">sum</span>(keluhan), <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"grey40"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-12-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mar =</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">4</span>, <span class="dv">4</span>, <span class="dv">2</span>) <span class="sc">+</span> <span class="fl">0.1</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">round</span>(kum_persen, <span class="dv">1</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Pengiriman terlambat         Barang rusak          Salah kirim 
+                45.7                 71.4                 84.8 
+         Refund lama   CS tidak responsif              Lainnya 
+                91.4                 96.2                100.0 </code></pre>
+</div>
+</div>
+<p>Dua jenis keluhan teratas sudah menyumbang 71.4% dari seluruh keluhan – prioritas perbaikan yang jelas.</p>
+</section>
+<section id="diagram-lingkaran-pie-chart" class="level3" data-number="4.4.4">
+<h3 data-number="4.4.4" class="anchored" data-anchor-id="diagram-lingkaran-pie-chart"><span class="header-section-number">4.4.4</span> Diagram Lingkaran (Pie Chart)</h3>
+<p>Diagram lingkaran menunjukkan <strong>bagian dari keseluruhan</strong> (total harus 100%).</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>label_pie <span class="ot">&lt;-</span> <span class="fu">paste0</span>(<span class="fu">names</span>(f_metode), <span class="st">"</span><span class="sc">\n</span><span class="st">"</span>, <span class="fu">round</span>(<span class="fu">prop.table</span>(f_metode) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>), <span class="st">"%"</span>)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a><span class="fu">pie</span>(f_metode, <span class="at">labels =</span> label_pie, <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"#4C72B0"</span>, <span class="st">"#DD8452"</span>, <span class="st">"#55A868"</span>, <span class="st">"#C44E52"</span>, <span class="st">"#8172B3"</span>),</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">border =</span> <span class="st">"white"</span>, <span class="at">main =</span> <span class="st">"Komposisi Metode Pembayaran"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-14-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p><strong>Kapan diagram lingkaran boleh dipakai?</strong> Hanya jika (1) kategorinya sedikit (sekitar 2–5), (2) proporsinya berbeda cukup jelas, dan (3) pesannya adalah “bagian dari keseluruhan”. Mata manusia lebih pandai membandingkan <strong>panjang</strong> daripada <strong>sudut</strong>, sehingga untuk perbandingan yang teliti, diagram batang hampir selalu lebih baik.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>mirip <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="at">A =</span> <span class="dv">21</span>, <span class="at">B =</span> <span class="dv">19</span>, <span class="at">C =</span> <span class="dv">20</span>, <span class="at">D =</span> <span class="dv">22</span>, <span class="at">E =</span> <span class="dv">18</span>)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="fu">pie</span>(mirip, <span class="at">col =</span> <span class="fu">hcl.colors</span>(<span class="dv">5</span>, <span class="st">"Set 2"</span>), <span class="at">main =</span> <span class="st">"Mana yang terbesar?"</span>)</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(mirip, <span class="at">col =</span> <span class="fu">hcl.colors</span>(<span class="dv">5</span>, <span class="st">"Set 2"</span>), <span class="at">border =</span> <span class="cn">NA</span>, <span class="at">main =</span> <span class="st">"Sekarang jelas: D"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-15-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+</section>
+<section id="visualisasi-data-numerik" class="level2" data-number="4.5">
+<h2 data-number="4.5" class="anchored" data-anchor-id="visualisasi-data-numerik"><span class="header-section-number">4.5</span> Visualisasi Data Numerik</h2>
+<section id="histogram" class="level3" data-number="4.5.1">
+<h3 data-number="4.5.1" class="anchored" data-anchor-id="histogram"><span class="header-section-number">4.5.1</span> Histogram</h3>
+<p>Histogram menampilkan distribusi data numerik yang <strong>dikelompokkan</strong>. Berbeda dengan diagram batang, batang histogram <strong>saling menempel</strong> karena kelasnya bersambung (sumbu-x adalah skala numerik).</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(nilai_ujian, <span class="at">breaks =</span> batas_nyata_u, <span class="at">col =</span> <span class="st">"#4C72B0"</span>, <span class="at">border =</span> <span class="st">"white"</span>,</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xaxt =</span> <span class="st">"n"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">7</span>),</span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Histogram Nilai Ujian Statistika (n = 30)"</span>, <span class="at">xlab =</span> <span class="st">"Nilai Ujian"</span>, <span class="at">ylab =</span> <span class="st">"Frekuensi"</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">at =</span> batas_nyata_u)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-16-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Aspek</th>
+<th>Diagram Batang</th>
+<th>Histogram</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Jenis data</td>
+<td>Kategorik (atau diskrit dengan sedikit nilai)</td>
+<td>Numerik kontinu (atau diskrit dengan banyak nilai)</td>
+</tr>
+<tr class="even">
+<td>Sumbu-x</td>
+<td>Kategori (urutan boleh diubah)</td>
+<td>Skala numerik (urutan tetap)</td>
+</tr>
+<tr class="odd">
+<td>Celah antarbatang</td>
+<td>Ada</td>
+<td>Tidak ada</td>
+</tr>
+<tr class="even">
+<td>Lebar batang</td>
+<td>Tidak bermakna</td>
+<td>Mewakili lebar kelas</td>
+</tr>
+</tbody>
+</table>
+</section>
+<section id="histogram-dari-data-terkelompok" class="level3" data-number="4.5.2">
+<h3 data-number="4.5.2" class="anchored" data-anchor-id="histogram-dari-data-terkelompok"><span class="header-section-number">4.5.2</span> Histogram dari Data Terkelompok</h3>
+<p>Jika hanya tabel yang tersedia, histogram digambar dari batas nyata dan frekuensinya:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cn">NULL</span>, <span class="at">xlim =</span> <span class="fu">range</span>(batas_nyata_p), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">45</span>), <span class="at">xaxt =</span> <span class="st">"n"</span>,</span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Pendapatan Mingguan (USD)"</span>, <span class="at">ylab =</span> <span class="st">"Frekuensi"</span>,</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Histogram Pendapatan Mingguan 100 Karyawan"</span>)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rect</span>(L_p, <span class="dv">0</span>, U_p, f_p, <span class="at">col =</span> <span class="st">"#9ecae1"</span>, <span class="at">border =</span> <span class="st">"white"</span>)</span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">at =</span> batas_nyata_p, <span class="at">labels =</span> batas_nyata_p)</span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>((L_p <span class="sc">+</span> U_p) <span class="sc">/</span> <span class="dv">2</span>, f_p, <span class="at">labels =</span> f_p, <span class="at">pos =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-17-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Distribusi pendapatan <strong>menjulur ke kanan</strong>: puncak di kelas 1201–1400, dengan ekor panjang ke arah pendapatan tinggi.</p>
+</section>
+<section id="poligon-frekuensi" class="level3" data-number="4.5.3">
+<h3 data-number="4.5.3" class="anchored" data-anchor-id="poligon-frekuensi"><span class="header-section-number">4.5.3</span> Poligon Frekuensi</h3>
+<p>Poligon frekuensi menghubungkan <strong>titik tengah</strong> puncak tiap kelas dengan garis. Ditambahkan satu kelas kosong di kedua ujung agar poligon “menapak” di sumbu-x. Poligon berguna untuk <strong>membandingkan</strong> beberapa distribusi dalam satu grafik.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>m_u <span class="ot">&lt;-</span> (<span class="fu">head</span>(batas_nyata_u, <span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span> <span class="fu">tail</span>(batas_nyata_u, <span class="sc">-</span><span class="dv">1</span>)) <span class="sc">/</span> <span class="dv">2</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>x_pol <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">min</span>(m_u) <span class="sc">-</span> w, m_u, <span class="fu">max</span>(m_u) <span class="sc">+</span> w)</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a>y_pol <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, f_ujian, <span class="dv">0</span>)</span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(nilai_ujian, <span class="at">breaks =</span> batas_nyata_u, <span class="at">col =</span> <span class="st">"grey90"</span>, <span class="at">border =</span> <span class="st">"white"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">7</span>),</span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlim =</span> <span class="fu">range</span>(x_pol), <span class="at">main =</span> <span class="st">"Poligon Frekuensi Nilai Ujian"</span>, <span class="at">xlab =</span> <span class="st">"Nilai Ujian"</span>,</span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>     <span class="at">ylab =</span> <span class="st">"Frekuensi"</span>)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(x_pol, y_pol, <span class="at">type =</span> <span class="st">"b"</span>, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> <span class="st">"firebrick"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-18-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="ogive-kurva-frekuensi-kumulatif" class="level3" data-number="4.5.4">
+<h3 data-number="4.5.4" class="anchored" data-anchor-id="ogive-kurva-frekuensi-kumulatif"><span class="header-section-number">4.5.4</span> Ogive (Kurva Frekuensi Kumulatif)</h3>
+<p>Ogive memplot <strong>frekuensi kumulatif</strong> terhadap <strong>batas nyata atas</strong> tiap kelas (dimulai dari batas nyata bawah kelas pertama dengan kumulatif 0). Ogive memudahkan menjawab “berapa persen data di bawah nilai tertentu?” dan menaksir median secara grafis.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>x_ogive <span class="ot">&lt;-</span> batas_nyata_p</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>y_ogive <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">cumsum</span>(f_p)) <span class="sc">/</span> n_p <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(x_ogive, y_ogive, <span class="at">type =</span> <span class="st">"b"</span>, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">lwd =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"#4C72B0"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>),</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">xaxt =</span> <span class="st">"n"</span>, <span class="at">xlab =</span> <span class="st">"Pendapatan Mingguan (USD)"</span>, <span class="at">ylab =</span> <span class="st">"Persentase Kumulatif (%)"</span>,</span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Ogive 'Kurang Dari' Pendapatan Mingguan"</span>)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">at =</span> batas_nyata_p)</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="dv">50</span>, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"grey40"</span>)</span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>median_grafis <span class="ot">&lt;-</span> <span class="fu">approx</span>(y_ogive, x_ogive, <span class="at">xout =</span> <span class="dv">50</span>)<span class="sc">$</span>y</span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">v =</span> median_grafis, <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"firebrick"</span>)</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(median_grafis, <span class="dv">8</span>, <span class="at">labels =</span> <span class="fu">paste0</span>(<span class="st">"~"</span>, <span class="fu">round</span>(median_grafis)), <span class="at">pos =</span> <span class="dv">4</span>, <span class="at">col =</span> <span class="st">"firebrick"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-19-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Garis 50% memotong ogive di sekitar <strong>1298 USD</strong> – inilah taksiran median secara grafis. Pada Pertemuan 5 kita akan menghitung median data terkelompok secara aljabar dan mendapatkan angka yang sama.</p>
+</section>
+<section id="diagram-batang-daun-stem-and-leaf" class="level3" data-number="4.5.5">
+<h3 data-number="4.5.5" class="anchored" data-anchor-id="diagram-batang-daun-stem-and-leaf"><span class="header-section-number">4.5.5</span> Diagram Batang-Daun (Stem-and-Leaf)</h3>
+<p>Diagram batang-daun memecah setiap nilai menjadi <strong>batang</strong> (digit depan) dan <strong>daun</strong> (digit terakhir). Kelebihannya: bentuk distribusi terlihat seperti histogram, tetapi <strong>nilai asli tetap terbaca</strong>. Cocok untuk data berukuran kecil–sedang.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stem</span>(nilai_ujian)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  The decimal point is 1 digit(s) to the right of the |
+
+  6 | 3
+  6 | 5789
+  7 | 0124
+  7 | 56789
+  8 | 01234
+  8 | 56789
+  9 | 01234
+  9 | 5</code></pre>
+</div>
+</div>
+<p>Baca baris <code>7 | 0124</code> sebagai nilai 70, 71, 72, 74. Perhatikan bahwa R otomatis memecah setiap batang menjadi <strong>dua baris</strong> (daun 0–4 dan daun 5–9) agar bentuk distribusi lebih terlihat. Argumen <code>scale</code> mengatur tingkat pemecahan tersebut; <code>scale = 0.5</code> menghasilkan satu baris per puluhan:</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stem</span>(nilai_ujian, <span class="at">scale =</span> <span class="fl">0.5</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  The decimal point is 1 digit(s) to the right of the |
+
+  6 | 35789
+  7 | 012456789
+  8 | 0123456789
+  9 | 012345</code></pre>
+</div>
+</div>
+<p>Versi satu baris per puluhan lebih ringkas, tetapi bentuk distribusinya menjadi kurang terlihat – mirip histogram dengan kelas yang terlalu lebar.</p>
+</section>
+<section id="memilih-grafik-yang-tepat" class="level3" data-number="4.5.6">
+<h3 data-number="4.5.6" class="anchored" data-anchor-id="memilih-grafik-yang-tepat"><span class="header-section-number">4.5.6</span> Memilih Grafik yang Tepat</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Tujuan / Jenis Data</th>
+<th>Grafik yang disarankan</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Frekuensi kategori (nominal/ordinal)</td>
+<td>Diagram batang (horizontal bila label panjang)</td>
+</tr>
+<tr class="even">
+<td>Bagian dari keseluruhan, sedikit kategori</td>
+<td>Diagram lingkaran atau batang bertumpuk 100%</td>
+</tr>
+<tr class="odd">
+<td>Prioritas masalah</td>
+<td>Diagram Pareto</td>
+</tr>
+<tr class="even">
+<td>Hubungan dua variabel kategorik</td>
+<td>Batang berkelompok / bertumpuk; tabel silang</td>
+</tr>
+<tr class="odd">
+<td>Distribusi numerik (n besar)</td>
+<td>Histogram</td>
+</tr>
+<tr class="even">
+<td>Distribusi numerik (n kecil)</td>
+<td><em>Stem-and-leaf</em>, diagram titik (<code>stripchart</code>)</td>
+</tr>
+<tr class="odd">
+<td>Membandingkan beberapa distribusi</td>
+<td>Poligon frekuensi, <em>boxplot</em> (Pertemuan 6)</td>
+</tr>
+<tr class="even">
+<td>Persentase di bawah suatu nilai</td>
+<td>Ogive</td>
+</tr>
+</tbody>
+</table>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+</section>
+<section id="prinsip-visualisasi-yang-jujur" class="level2" data-number="4.6">
+<h2 data-number="4.6" class="anchored" data-anchor-id="prinsip-visualisasi-yang-jujur"><span class="header-section-number">4.6</span> Prinsip Visualisasi yang Jujur</h2>
+<section id="prinsip-1-skala-jangan-memotong-sumbu-diagram-batang" class="level3" data-number="4.6.1">
+<h3 data-number="4.6.1" class="anchored" data-anchor-id="prinsip-1-skala-jangan-memotong-sumbu-diagram-batang"><span class="header-section-number">4.6.1</span> Prinsip 1 – Skala: Jangan Memotong Sumbu Diagram Batang</h3>
+<p>Panjang batang harus <strong>sebanding</strong> dengan nilainya. Jika sumbu-y tidak dimulai dari nol, perbedaan kecil tampak raksasa.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>pangsa <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"Aplikasi A"</span> <span class="ot">=</span> <span class="dv">41</span>, <span class="st">"Aplikasi B"</span> <span class="ot">=</span> <span class="dv">43</span>)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(pangsa, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">40</span>, <span class="fl">43.5</span>), <span class="at">xpd =</span> <span class="cn">FALSE</span>, <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"grey60"</span>, <span class="st">"#C44E52"</span>),</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"MENYESATKAN: sumbu mulai dari 40"</span>, <span class="at">ylab =</span> <span class="st">"Pangsa pasar (%)"</span>)</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a><span class="fu">box</span>()</span>
+<span id="cb33-6"><a href="#cb33-6" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(pangsa, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">50</span>), <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"grey60"</span>, <span class="st">"#C44E52"</span>),</span>
+<span id="cb33-7"><a href="#cb33-7" aria-hidden="true" tabindex="-1"></a>        <span class="at">main =</span> <span class="st">"JUJUR: sumbu mulai dari 0"</span>, <span class="at">ylab =</span> <span class="st">"Pangsa pasar (%)"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-22-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Grafik kiri membuat Aplikasi B tampak “tiga kali” lebih besar, padahal selisihnya hanya 2 poin persentase. <strong>Diagram garis</strong> untuk tren boleh tidak dimulai dari nol (yang dibaca adalah perubahan), tetapi <strong>diagram batang wajib dimulai dari nol</strong>.</p>
+</section>
+<section id="prinsip-2-label-grafik-harus-dapat-berdiri-sendiri" class="level3" data-number="4.6.2">
+<h3 data-number="4.6.2" class="anchored" data-anchor-id="prinsip-2-label-grafik-harus-dapat-berdiri-sendiri"><span class="header-section-number">4.6.2</span> Prinsip 2 – Label: Grafik Harus Dapat Berdiri Sendiri</h3>
+<p>Setiap grafik minimal memuat: <strong>judul</strong> yang informatif, <strong>label sumbu beserta satuan</strong>, <strong>legenda</strong> bila ada lebih dari satu kelompok, serta <strong>sumber data dan</strong> <span class="math inline">\(n\)</span>.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(nilai_ujian, <span class="at">breaks =</span> batas_nyata_u, <span class="at">main =</span> <span class="st">""</span>, <span class="at">xlab =</span> <span class="st">""</span>, <span class="at">ylab =</span> <span class="st">""</span>)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(nilai_ujian, <span class="at">breaks =</span> batas_nyata_u, <span class="at">col =</span> <span class="st">"#4C72B0"</span>, <span class="at">border =</span> <span class="st">"white"</span>,</span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Nilai Ujian Statistika Kelas A</span><span class="sc">\n</span><span class="st">(n = 30, Semester Ganjil)"</span>,</span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Nilai Ujian (skala 0-100)"</span>, <span class="at">ylab =</span> <span class="st">"Jumlah Mahasiswa"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-23-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="prinsip-3-bin-lebar-kelas-mengubah-cerita" class="level3" data-number="4.6.3">
+<h3 data-number="4.6.3" class="anchored" data-anchor-id="prinsip-3-bin-lebar-kelas-mengubah-cerita"><span class="header-section-number">4.6.3</span> Prinsip 3 – Bin: Lebar Kelas Mengubah Cerita</h3>
+<p>Bentuk histogram sangat bergantung pada banyak kelas (<em>bin</em>). Terlalu sedikit kelas menyembunyikan pola; terlalu banyak kelas membuat grafik “bergerigi” oleh kebetulan.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">7</span>)</span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a>waktu_layanan <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="fu">rnorm</span>(<span class="dv">120</span>, <span class="dv">8</span>, <span class="fl">1.5</span>), <span class="fu">rnorm</span>(<span class="dv">80</span>, <span class="dv">15</span>, <span class="dv">2</span>))   <span class="co"># dua jenis layanan tercampur</span></span>
+<span id="cb37-3"><a href="#cb37-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb37-4"><a href="#cb37-4" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>))</span>
+<span id="cb37-5"><a href="#cb37-5" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(waktu_layanan, <span class="at">breaks =</span> <span class="dv">3</span>,  <span class="at">col =</span> <span class="st">"#9ecae1"</span>, <span class="at">border =</span> <span class="st">"white"</span>, <span class="at">main =</span> <span class="st">"Terlalu sedikit (~3 kelas)"</span>,</span>
+<span id="cb37-6"><a href="#cb37-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Waktu layanan (menit)"</span>)</span>
+<span id="cb37-7"><a href="#cb37-7" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(waktu_layanan, <span class="at">breaks =</span> <span class="fu">nclass.Sturges</span>(waktu_layanan), <span class="at">col =</span> <span class="st">"#4C72B0"</span>, <span class="at">border =</span> <span class="st">"white"</span>,</span>
+<span id="cb37-8"><a href="#cb37-8" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="fu">paste0</span>(<span class="st">"Sturges ("</span>, <span class="fu">nclass.Sturges</span>(waktu_layanan), <span class="st">" kelas)"</span>), <span class="at">xlab =</span> <span class="st">"Waktu layanan (menit)"</span>)</span>
+<span id="cb37-9"><a href="#cb37-9" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(waktu_layanan, <span class="at">breaks =</span> <span class="dv">60</span>, <span class="at">col =</span> <span class="st">"#9ecae1"</span>, <span class="at">border =</span> <span class="st">"white"</span>, <span class="at">main =</span> <span class="st">"Terlalu banyak (~60 kelas)"</span>,</span>
+<span id="cb37-10"><a href="#cb37-10" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Waktu layanan (menit)"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-24-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p>Dengan 3 kelas, dua puncak (dua jenis layanan) <strong>tidak terlihat</strong>. Dengan 60 kelas, grafik penuh “gigi” acak. Aturan Sturges adalah titik awal yang baik untuk <span class="math inline">\(n\)</span> kecil–sedang, tetapi <strong>selalu coba beberapa pilihan</strong> dan laporkan yang paling jujur menggambarkan data. Untuk <span class="math inline">\(n\)</span> besar, aturan lain seperti Freedman–Diaconis (<code>nclass.FD()</code>) sering lebih baik.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">Sturges =</span> <span class="fu">nclass.Sturges</span>(waktu_layanan), <span class="at">Scott =</span> <span class="fu">nclass.scott</span>(waktu_layanan),</span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Freedman_Diaconis =</span> <span class="fu">nclass.FD</span>(waktu_layanan))</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          Sturges             Scott Freedman_Diaconis 
+                9                 7                 7 </code></pre>
+</div>
+</div>
+</section>
+<section id="prinsip-4-interpretasi-ceritakan-bentuk-pusat-sebaran-dan-keanehan" class="level3" data-number="4.6.4">
+<h3 data-number="4.6.4" class="anchored" data-anchor-id="prinsip-4-interpretasi-ceritakan-bentuk-pusat-sebaran-dan-keanehan"><span class="header-section-number">4.6.4</span> Prinsip 4 – Interpretasi: Ceritakan Bentuk, Pusat, Sebaran, dan Keanehan</h3>
+<p>Saat membaca histogram, biasakan menjawab empat hal:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Aspek</th>
+<th>Pertanyaan</th>
+<th>Contoh untuk nilai ujian</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Bentuk</strong></td>
+<td>Simetris, menjulur kanan/kiri, satu atau dua puncak?</td>
+<td>Relatif simetris, satu puncak lebar</td>
+</tr>
+<tr class="even">
+<td><strong>Pusat</strong></td>
+<td>Di sekitar nilai berapa data berkumpul?</td>
+<td>Sekitar 80</td>
+</tr>
+<tr class="odd">
+<td><strong>Sebaran</strong></td>
+<td>Dari berapa sampai berapa? Rapat atau menyebar?</td>
+<td>63 sampai 95, cukup merata</td>
+</tr>
+<tr class="even">
+<td><strong>Keanehan</strong></td>
+<td>Ada celah, nilai ekstrem (outlier)?</td>
+<td>Tidak tampak outlier</td>
+</tr>
+</tbody>
+</table>
+<p>Ukuran pusat dan sebaran secara numerik dibahas pada Pertemuan 5; bentuk distribusi dan outlier secara formal pada Pertemuan 6.</p>
+</section>
+<section id="grafik-menyesatkan-lainnya" class="level3" data-number="4.6.5">
+<h3 data-number="4.6.5" class="anchored" data-anchor-id="grafik-menyesatkan-lainnya"><span class="header-section-number">4.6.5</span> Grafik Menyesatkan Lainnya</h3>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 33%">
+<col style="width: 33%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Praktik menyesatkan</th>
+<th>Mengapa menyesatkan</th>
+<th>Perbaikan</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Diagram lingkaran dengan total <span class="math inline">\(\neq\)</span> 100%</td>
+<td>Irisan tidak mewakili bagian dari keseluruhan</td>
+<td>Gunakan diagram batang</td>
+</tr>
+<tr class="even">
+<td>Efek 3D, bayangan, gambar ikon yang diperbesar dua dimensi</td>
+<td>Luas/volume melebih-lebihkan perbedaan</td>
+<td>Gunakan grafik 2D sederhana</td>
+</tr>
+<tr class="odd">
+<td>Lebar kelas histogram tidak sama tanpa penyesuaian</td>
+<td>Kelas lebar tampak lebih “penting”</td>
+<td>Gunakan lebar sama, atau plot <strong>kepadatan</strong> (<code>freq = FALSE</code>)</td>
+</tr>
+<tr class="even">
+<td>Memilih rentang waktu yang menguntungkan (<em>cherry picking</em>)</td>
+<td>Tren sesaat disajikan sebagai tren umum</td>
+<td>Tampilkan periode yang utuh</td>
+</tr>
+<tr class="odd">
+<td>Dua sumbu-y dengan skala berbeda</td>
+<td>Korelasi palsu tampak meyakinkan</td>
+<td>Pisahkan menjadi dua grafik</td>
+</tr>
+</tbody>
+</table>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+</section>
+<section id="studi-kasus-komprehensif-waktu-pengiriman-paket" class="level2" data-number="4.7">
+<h2 data-number="4.7" class="anchored" data-anchor-id="studi-kasus-komprehensif-waktu-pengiriman-paket"><span class="header-section-number">4.7</span> Studi Kasus Komprehensif: Waktu Pengiriman Paket</h2>
+<p><strong>Konteks:</strong> Sebuah layanan logistik mencatat waktu pengiriman (jam, dari pemesanan hingga diterima) untuk 80 paket di wilayah Bekasi. Manajer meminta laporan distribusi waktu pengiriman beserta komposisi layanan yang dipakai.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">2026</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>layanan <span class="ot">&lt;-</span> <span class="fu">sample</span>(<span class="fu">c</span>(<span class="st">"Reguler"</span>, <span class="st">"Ekspres"</span>, <span class="st">"Same Day"</span>), <span class="dv">80</span>, <span class="at">replace =</span> <span class="cn">TRUE</span>, <span class="at">prob =</span> <span class="fu">c</span>(<span class="fl">0.55</span>, <span class="fl">0.30</span>, <span class="fl">0.15</span>))</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>jam_kirim <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">ifelse</span>(layanan <span class="sc">==</span> <span class="st">"Same Day"</span>, <span class="fu">rnorm</span>(<span class="dv">80</span>, <span class="dv">6</span>, <span class="fl">1.5</span>),</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>                   <span class="fu">ifelse</span>(layanan <span class="sc">==</span> <span class="st">"Ekspres"</span>, <span class="fu">rnorm</span>(<span class="dv">80</span>, <span class="dv">22</span>, <span class="dv">4</span>), <span class="fu">rnorm</span>(<span class="dv">80</span>, <span class="dv">46</span>, <span class="dv">9</span>))), <span class="dv">1</span>)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>jam_kirim <span class="ot">&lt;-</span> <span class="fu">pmax</span>(jam_kirim, <span class="dv">2</span>)</span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="fu">summary</span>(jam_kirim)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>   Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+   3.10   22.38   38.90   34.92   48.62   65.50 </code></pre>
+</div>
+</div>
+<section id="langkah-1-komposisi-layanan" class="level3" data-number="4.7.1">
+<h3 data-number="4.7.1" class="anchored" data-anchor-id="langkah-1-komposisi-layanan"><span class="header-section-number">4.7.1</span> Langkah 1: Komposisi Layanan</h3>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>f_layanan <span class="ot">&lt;-</span> <span class="fu">table</span>(<span class="fu">factor</span>(layanan, <span class="at">levels =</span> <span class="fu">c</span>(<span class="st">"Same Day"</span>, <span class="st">"Ekspres"</span>, <span class="st">"Reguler"</span>)))</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(<span class="fu">data.frame</span>(<span class="at">Layanan =</span> <span class="fu">names</span>(f_layanan), <span class="at">f =</span> <span class="fu">as.numeric</span>(f_layanan),</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>                 <span class="at">Persen =</span> <span class="fu">round</span>(<span class="fu">as.numeric</span>(<span class="fu">prop.table</span>(f_layanan)) <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>)),</span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>      <span class="at">caption =</span> <span class="st">"Komposisi Layanan Pengiriman (n = 80)"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Komposisi Layanan Pengiriman (n = 80)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Layanan</th>
+<th style="text-align: right;">f</th>
+<th style="text-align: right;">Persen</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">Same Day</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">15</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">Ekspres</td>
+<td style="text-align: right;">20</td>
+<td style="text-align: right;">25</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">Reguler</td>
+<td style="text-align: right;">48</td>
+<td style="text-align: right;">60</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="fu">barplot</span>(f_layanan, <span class="at">col =</span> <span class="fu">c</span>(<span class="st">"#55A868"</span>, <span class="st">"#DD8452"</span>, <span class="st">"#4C72B0"</span>), <span class="at">border =</span> <span class="cn">NA</span>,</span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>        <span class="at">ylab =</span> <span class="st">"Jumlah Paket"</span>, <span class="at">main =</span> <span class="st">"Jumlah Paket per Jenis Layanan"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-28-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="langkah-2-tabel-distribusi-frekuensi-waktu-pengiriman" class="level3" data-number="4.7.2">
+<h3 data-number="4.7.2" class="anchored" data-anchor-id="langkah-2-tabel-distribusi-frekuensi-waktu-pengiriman"><span class="header-section-number">4.7.2</span> Langkah 2: Tabel Distribusi Frekuensi Waktu Pengiriman</h3>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>n_kirim <span class="ot">&lt;-</span> <span class="fu">length</span>(jam_kirim)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>k_kirim <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="dv">1</span> <span class="sc">+</span> <span class="fl">3.322</span> <span class="sc">*</span> <span class="fu">log10</span>(n_kirim))</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>w_kirim <span class="ot">&lt;-</span> <span class="fu">ceiling</span>((<span class="fu">max</span>(jam_kirim) <span class="sc">-</span> <span class="fu">min</span>(jam_kirim)) <span class="sc">/</span> k_kirim)</span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>batas_kirim <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="fu">floor</span>(<span class="fu">min</span>(jam_kirim)), <span class="at">by =</span> w_kirim, <span class="at">length.out =</span> k_kirim <span class="sc">+</span> <span class="dv">1</span>)</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a><span class="fu">c</span>(<span class="at">k =</span> k_kirim, <span class="at">lebar =</span> w_kirim)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>    k lebar 
+    7     9 </code></pre>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a>f_kirim <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">table</span>(<span class="fu">cut</span>(jam_kirim, <span class="at">breaks =</span> batas_kirim, <span class="at">right =</span> <span class="cn">FALSE</span>)))</span>
+<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a>tabel_kirim <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">Interval_jam =</span> <span class="fu">paste0</span>(<span class="st">"["</span>, <span class="fu">head</span>(batas_kirim, <span class="sc">-</span><span class="dv">1</span>), <span class="st">", "</span>, <span class="fu">tail</span>(batas_kirim, <span class="sc">-</span><span class="dv">1</span>), <span class="st">")"</span>),</span>
+<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">Titik_Tengah =</span> (<span class="fu">head</span>(batas_kirim, <span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span> <span class="fu">tail</span>(batas_kirim, <span class="sc">-</span><span class="dv">1</span>)) <span class="sc">/</span> <span class="dv">2</span>,</span>
+<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">f            =</span> f_kirim,</span>
+<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">Persen       =</span> <span class="fu">round</span>(f_kirim <span class="sc">/</span> n_kirim <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>),</span>
+<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Persen_Kum   =</span> <span class="fu">round</span>(<span class="fu">cumsum</span>(f_kirim) <span class="sc">/</span> n_kirim <span class="sc">*</span> <span class="dv">100</span>, <span class="dv">1</span>)</span>
+<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(tabel_kirim, <span class="at">caption =</span> <span class="st">"Distribusi Frekuensi Waktu Pengiriman (jam)"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Distribusi Frekuensi Waktu Pengiriman (jam)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Interval_jam</th>
+<th style="text-align: right;">Titik_Tengah</th>
+<th style="text-align: right;">f</th>
+<th style="text-align: right;">Persen</th>
+<th style="text-align: right;">Persen_Kum</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">[3, 12)</td>
+<td style="text-align: right;">7.5</td>
+<td style="text-align: right;">12</td>
+<td style="text-align: right;">15.0</td>
+<td style="text-align: right;">15.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">[12, 21)</td>
+<td style="text-align: right;">16.5</td>
+<td style="text-align: right;">6</td>
+<td style="text-align: right;">7.5</td>
+<td style="text-align: right;">22.5</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">[21, 30)</td>
+<td style="text-align: right;">25.5</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">17.5</td>
+<td style="text-align: right;">40.0</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">[30, 39)</td>
+<td style="text-align: right;">34.5</td>
+<td style="text-align: right;">8</td>
+<td style="text-align: right;">10.0</td>
+<td style="text-align: right;">50.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">[39, 48)</td>
+<td style="text-align: right;">43.5</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">22.5</td>
+<td style="text-align: right;">72.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">[48, 57)</td>
+<td style="text-align: right;">52.5</td>
+<td style="text-align: right;">15</td>
+<td style="text-align: right;">18.8</td>
+<td style="text-align: right;">91.2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">[57, 66)</td>
+<td style="text-align: right;">61.5</td>
+<td style="text-align: right;">7</td>
+<td style="text-align: right;">8.8</td>
+<td style="text-align: right;">100.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(f_kirim) <span class="sc">==</span> n_kirim   <span class="co"># pastikan semua data tertampung</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] TRUE</code></pre>
+</div>
+</div>
+<p>Karena data kontinu dengan satu desimal, kita memakai interval <strong>setengah terbuka</strong> <code>[a, b)</code> (<code>right = FALSE</code>), sehingga nilai yang tepat berada di batas masuk ke kelas di atasnya.</p>
+</section>
+<section id="langkah-3-histogram-dan-ogive" class="level3" data-number="4.7.3">
+<h3 data-number="4.7.3" class="anchored" data-anchor-id="langkah-3-histogram-dan-ogive"><span class="header-section-number">4.7.3</span> Langkah 3: Histogram dan Ogive</h3>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>))</span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="fu">hist</span>(jam_kirim, <span class="at">breaks =</span> batas_kirim, <span class="at">right =</span> <span class="cn">FALSE</span>, <span class="at">col =</span> <span class="st">"#4C72B0"</span>, <span class="at">border =</span> <span class="st">"white"</span>,</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Histogram Waktu Pengiriman"</span>, <span class="at">xlab =</span> <span class="st">"Waktu pengiriman (jam)"</span>, <span class="at">ylab =</span> <span class="st">"Jumlah Paket"</span>)</span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(batas_kirim, <span class="fu">c</span>(<span class="dv">0</span>, <span class="fu">cumsum</span>(f_kirim)) <span class="sc">/</span> n_kirim <span class="sc">*</span> <span class="dv">100</span>, <span class="at">type =</span> <span class="st">"b"</span>, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">lwd =</span> <span class="dv">2</span>,</span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"#DD8452"</span>, <span class="at">xlab =</span> <span class="st">"Waktu pengiriman (jam)"</span>, <span class="at">ylab =</span> <span class="st">"Persentase kumulatif (%)"</span>,</span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Ogive Waktu Pengiriman"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">100</span>))</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a><span class="fu">abline</span>(<span class="at">h =</span> <span class="fu">c</span>(<span class="dv">50</span>, <span class="dv">90</span>), <span class="at">lty =</span> <span class="dv">2</span>, <span class="at">col =</span> <span class="st">"grey50"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-32-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="langkah-4-histogram-per-layanan" class="level3" data-number="4.7.4">
+<h3 data-number="4.7.4" class="anchored" data-anchor-id="langkah-4-histogram-per-layanan"><span class="header-section-number">4.7.4</span> Langkah 4: Histogram per Layanan</h3>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">3</span>))</span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (lay <span class="cf">in</span> <span class="fu">c</span>(<span class="st">"Same Day"</span>, <span class="st">"Ekspres"</span>, <span class="st">"Reguler"</span>)) {</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">hist</span>(jam_kirim[layanan <span class="sc">==</span> lay], <span class="at">breaks =</span> batas_kirim, <span class="at">right =</span> <span class="cn">FALSE</span>,</span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>       <span class="at">col =</span> <span class="st">"#9ecae1"</span>, <span class="at">border =</span> <span class="st">"white"</span>, <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">25</span>),</span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>       <span class="at">main =</span> lay, <span class="at">xlab =</span> <span class="st">"Waktu pengiriman (jam)"</span>, <span class="at">ylab =</span> <span class="st">"Jumlah Paket"</span>)</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-33-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a><span class="fu">par</span>(<span class="at">mfrow =</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>))</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+</section>
+<section id="pertanyaan-diskusi-dan-jawaban" class="level3" data-number="4.7.5">
+<h3 data-number="4.7.5" class="anchored" data-anchor-id="pertanyaan-diskusi-dan-jawaban"><span class="header-section-number">4.7.5</span> Pertanyaan Diskusi dan Jawaban</h3>
+<p><strong>1. Bagaimana bentuk distribusi waktu pengiriman secara keseluruhan?</strong></p>
+<p>Distribusinya <strong>tidak satu puncak</strong>: ada kelompok paket yang tiba dalam hitungan jam, kelompok sekitar satu hari, dan kelompok terbesar sekitar dua hari. Histogram per layanan menjelaskan penyebabnya – data sebenarnya <strong>campuran tiga layanan</strong> dengan waktu yang sangat berbeda.</p>
+<p><strong>2. Mengapa melaporkan “rata-rata waktu pengiriman” saja tidak tepat?</strong></p>
+<p>Karena distribusinya campuran. Satu angka rata-rata (34,9 jam) tidak mewakili pelanggan <em>Same Day</em> maupun Reguler. Laporan yang tepat memisahkan distribusi <strong>per layanan</strong>.</p>
+<p><strong>3. Informasi apa yang dapat dibaca dari ogive?</strong></p>
+<p>Misalnya, persentase paket yang tiba <strong>kurang dari 24 jam</strong> dapat dibaca langsung dari ogive atau dihitung: 30% paket. Garis 90% menunjukkan batas waktu yang dipenuhi oleh 90% pengiriman – berguna untuk menetapkan janji layanan (SLA).</p>
+<p><strong>4. Grafik apa yang paling tepat untuk rapat manajemen?</strong></p>
+<p>Diagram batang komposisi layanan (kategorik) dan histogram <strong>per layanan</strong> (numerik), masing-masing dengan judul, satuan, dan <span class="math inline">\(n\)</span>. Diagram lingkaran boleh dipakai untuk komposisi karena hanya ada tiga kategori.</p>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+</section>
+<section id="latihan-mandiri" class="level2" data-number="4.8">
+<h2 data-number="4.8" class="anchored" data-anchor-id="latihan-mandiri"><span class="header-section-number">4.8</span> Latihan Mandiri</h2>
+<section id="latihan-utama-exercise-2.14-kepemilikan-kartu-kredit" class="level3" data-number="4.8.1">
+<h3 data-number="4.8.1" class="anchored" data-anchor-id="latihan-utama-exercise-2.14-kepemilikan-kartu-kredit"><span class="header-section-number">4.8.1</span> Latihan Utama (Exercise 2.14): Kepemilikan Kartu Kredit</h3>
+<p><strong>Konteks:</strong> Sebuah sampel acak dari 80 orang dewasa ditanya mengenai jumlah kartu kredit yang mereka miliki. Hasilnya disajikan dalam tabel berikut (data ini dilanjutkan pada Pertemuan 5).</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a>kelas_kk     <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="st">"0 to 3"</span>, <span class="st">"4 to 7"</span>, <span class="st">"8 to 11"</span>, <span class="st">"12 or more"</span>)</span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>frekuensi_kk <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">18</span>, <span class="dv">26</span>, <span class="dv">22</span>, <span class="dv">14</span>)</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>n_kk <span class="ot">&lt;-</span> <span class="fu">sum</span>(frekuensi_kk)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<section id="tugas-1-lengkapi-tabel-dengan-frekuensi-relatif-persentase-dan-frekuensi-kumulatif" class="level4">
+<h4 class="anchored" data-anchor-id="tugas-1-lengkapi-tabel-dengan-frekuensi-relatif-persentase-dan-frekuensi-kumulatif">Tugas 1: Lengkapi tabel dengan frekuensi relatif, persentase, dan frekuensi kumulatif</h4>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>tabel_kk <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Kelas       =</span> kelas_kk,</span>
+<span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">f           =</span> frekuensi_kk,</span>
+<span id="cb55-4"><a href="#cb55-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">f_Relatif   =</span> frekuensi_kk <span class="sc">/</span> n_kk,</span>
+<span id="cb55-5"><a href="#cb55-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">Persen      =</span> frekuensi_kk <span class="sc">/</span> n_kk <span class="sc">*</span> <span class="dv">100</span>,</span>
+<span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">F_Kumulatif =</span> <span class="fu">cumsum</span>(frekuensi_kk),</span>
+<span id="cb55-7"><a href="#cb55-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">Persen_Kum  =</span> <span class="fu">cumsum</span>(frekuensi_kk) <span class="sc">/</span> n_kk <span class="sc">*</span> <span class="dv">100</span></span>
+<span id="cb55-8"><a href="#cb55-8" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb55-9"><a href="#cb55-9" aria-hidden="true" tabindex="-1"></a><span class="fu">kable</span>(tabel_kk, <span class="at">digits =</span> <span class="dv">3</span>, <span class="at">caption =</span> <span class="st">"Distribusi Kepemilikan Kartu Kredit (n = 80)"</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<table class="caption-top table table-sm table-striped small">
+<caption>Distribusi Kepemilikan Kartu Kredit (n = 80)</caption>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Kelas</th>
+<th style="text-align: right;">f</th>
+<th style="text-align: right;">f_Relatif</th>
+<th style="text-align: right;">Persen</th>
+<th style="text-align: right;">F_Kumulatif</th>
+<th style="text-align: right;">Persen_Kum</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">0 to 3</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">0.225</td>
+<td style="text-align: right;">22.5</td>
+<td style="text-align: right;">18</td>
+<td style="text-align: right;">22.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">4 to 7</td>
+<td style="text-align: right;">26</td>
+<td style="text-align: right;">0.325</td>
+<td style="text-align: right;">32.5</td>
+<td style="text-align: right;">44</td>
+<td style="text-align: right;">55.0</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">8 to 11</td>
+<td style="text-align: right;">22</td>
+<td style="text-align: right;">0.275</td>
+<td style="text-align: right;">27.5</td>
+<td style="text-align: right;">66</td>
+<td style="text-align: right;">82.5</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">12 or more</td>
+<td style="text-align: right;">14</td>
+<td style="text-align: right;">0.175</td>
+<td style="text-align: right;">17.5</td>
+<td style="text-align: right;">80</td>
+<td style="text-align: right;">100.0</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+<section id="tugas-2-berapa-persen-responden-yang-memiliki-8-kartu-atau-lebih" class="level4">
+<h4 class="anchored" data-anchor-id="tugas-2-berapa-persen-responden-yang-memiliki-8-kartu-atau-lebih">Tugas 2: Berapa persen responden yang memiliki 8 kartu atau lebih?</h4>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(frekuensi_kk[<span class="dv">3</span><span class="sc">:</span><span class="dv">4</span>]) <span class="sc">/</span> n_kk <span class="sc">*</span> <span class="dv">100</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 45</code></pre>
+</div>
+</div>
+<p><strong>Jawaban:</strong> 45% responden (22 + 14 = 36 orang) memiliki 8 kartu kredit atau lebih.</p>
+</section>
+<section id="tugas-3-tentukan-batas-nyata-dan-titik-tengah-kelas" class="level4">
+<h4 class="anchored" data-anchor-id="tugas-3-tentukan-batas-nyata-dan-titik-tengah-kelas">Tugas 3: Tentukan batas nyata dan titik tengah kelas</h4>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>batas_nyata_kk <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">0.5</span>, <span class="fl">3.5</span>, <span class="fl">7.5</span>, <span class="fl">11.5</span>, <span class="fl">15.5</span>)   <span class="co"># kelas terbuka diasumsikan lebar 4</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a><span class="fu">data.frame</span>(<span class="at">Kelas =</span> kelas_kk,</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">Batas_Nyata =</span> <span class="fu">paste0</span>(<span class="fu">head</span>(batas_nyata_kk, <span class="sc">-</span><span class="dv">1</span>), <span class="st">" - "</span>, <span class="fu">tail</span>(batas_nyata_kk, <span class="sc">-</span><span class="dv">1</span>)),</span>
+<span id="cb58-4"><a href="#cb58-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">Titik_Tengah =</span> (<span class="fu">head</span>(batas_nyata_kk, <span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span> <span class="fu">tail</span>(batas_nyata_kk, <span class="sc">-</span><span class="dv">1</span>)) <span class="sc">/</span> <span class="dv">2</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>       Kelas Batas_Nyata Titik_Tengah
+1     0 to 3  -0.5 - 3.5          1.5
+2     4 to 7   3.5 - 7.5          5.5
+3    8 to 11  7.5 - 11.5          9.5
+4 12 or more 11.5 - 15.5         13.5</code></pre>
+</div>
+</div>
+<p><strong>Catatan:</strong> kelas “12 or more” adalah <strong>kelas terbuka</strong> (tidak punya batas atas). Untuk menggambar histogram atau menghitung titik tengah, kita <strong>harus berasumsi</strong> – di sini lebarnya disamakan dengan kelas lain (12–15). Asumsi ini wajib dinyatakan.</p>
+</section>
+<section id="tugas-4-gambar-histogram-dan-poligon-frekuensinya" class="level4">
+<h4 class="anchored" data-anchor-id="tugas-4-gambar-histogram-dan-poligon-frekuensinya">Tugas 4: Gambar histogram dan poligon frekuensinya</h4>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>m_kk <span class="ot">&lt;-</span> (<span class="fu">head</span>(batas_nyata_kk, <span class="sc">-</span><span class="dv">1</span>) <span class="sc">+</span> <span class="fu">tail</span>(batas_nyata_kk, <span class="sc">-</span><span class="dv">1</span>)) <span class="sc">/</span> <span class="dv">2</span></span>
+<span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a><span class="fu">plot</span>(<span class="cn">NULL</span>, <span class="at">xlim =</span> <span class="fu">c</span>(<span class="sc">-</span><span class="fl">4.5</span>, <span class="fl">19.5</span>), <span class="at">ylim =</span> <span class="fu">c</span>(<span class="dv">0</span>, <span class="dv">30</span>), <span class="at">xaxt =</span> <span class="st">"n"</span>,</span>
+<span id="cb60-3"><a href="#cb60-3" aria-hidden="true" tabindex="-1"></a>     <span class="at">xlab =</span> <span class="st">"Jumlah Kartu Kredit"</span>, <span class="at">ylab =</span> <span class="st">"Frekuensi (f)"</span>,</span>
+<span id="cb60-4"><a href="#cb60-4" aria-hidden="true" tabindex="-1"></a>     <span class="at">main =</span> <span class="st">"Distribusi Kepemilikan Kartu Kredit (n = 80)"</span>)</span>
+<span id="cb60-5"><a href="#cb60-5" aria-hidden="true" tabindex="-1"></a><span class="fu">rect</span>(<span class="fu">head</span>(batas_nyata_kk, <span class="sc">-</span><span class="dv">1</span>), <span class="dv">0</span>, <span class="fu">tail</span>(batas_nyata_kk, <span class="sc">-</span><span class="dv">1</span>), frekuensi_kk,</span>
+<span id="cb60-6"><a href="#cb60-6" aria-hidden="true" tabindex="-1"></a>     <span class="at">col =</span> <span class="st">"#6C5B7B"</span>, <span class="at">border =</span> <span class="st">"white"</span>)</span>
+<span id="cb60-7"><a href="#cb60-7" aria-hidden="true" tabindex="-1"></a><span class="fu">lines</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="fl">2.5</span>, m_kk, <span class="fl">17.5</span>), <span class="fu">c</span>(<span class="dv">0</span>, frekuensi_kk, <span class="dv">0</span>), <span class="at">type =</span> <span class="st">"b"</span>, <span class="at">pch =</span> <span class="dv">16</span>, <span class="at">col =</span> <span class="st">"#F8B195"</span>, <span class="at">lwd =</span> <span class="dv">2</span>)</span>
+<span id="cb60-8"><a href="#cb60-8" aria-hidden="true" tabindex="-1"></a><span class="fu">axis</span>(<span class="dv">1</span>, <span class="at">at =</span> batas_nyata_kk)</span>
+<span id="cb60-9"><a href="#cb60-9" aria-hidden="true" tabindex="-1"></a><span class="fu">text</span>(m_kk, frekuensi_kk, frekuensi_kk, <span class="at">pos =</span> <span class="dv">3</span>)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="bab-4_files/figure-html/unnamed-chunk-38-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" style="width:100.0%"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="tugas-5-interpretasikan-distribusinya" class="level4">
+<h4 class="anchored" data-anchor-id="tugas-5-interpretasikan-distribusinya">Tugas 5: Interpretasikan distribusinya</h4>
+<p><strong>Jawaban:</strong> Kelas dengan frekuensi terbanyak adalah <strong>4 to 7</strong> (26 orang, 32,5%). Frekuensi naik dari kelas pertama ke kelas kedua lalu turun perlahan, sehingga distribusinya <strong>sedikit menjulur ke kanan</strong>. Sebanyak 44 responden (55%, dari frekuensi kumulatif kelas kedua) memiliki 7 kartu atau kurang. Ukuran pusat dan sebarannya dihitung pada Pertemuan 5.</p>
+</section>
+<section id="tugas-6-tantangan-diagram-batang-atau-histogram" class="level4">
+<h4 class="anchored" data-anchor-id="tugas-6-tantangan-diagram-batang-atau-histogram">Tugas 6 (Tantangan): Diagram batang atau histogram?</h4>
+<p>Jumlah kartu kredit adalah data <strong>diskrit</strong>. Apakah lebih tepat digambarkan dengan diagram batang atau histogram? Jelaskan.</p>
+<p><strong>Jawaban:</strong> Jika data mentah tersedia dengan sedikit nilai berbeda (misalnya 0–15), <strong>diagram batang per nilai</strong> paling informatif. Namun karena data sudah dikelompokkan menjadi interval <strong>bersambung</strong> (0–3, 4–7, …), <strong>histogram</strong> dengan batas nyata tepat dipakai – batasnya menempel karena setiap bilangan bulat pasti masuk satu kelas. Yang penting: kelas terbuka “12 or more” diberi catatan asumsi.</p>
+</section>
+</section>
+<section id="latihan-tambahan-self-check" class="level3" data-number="4.8.2">
+<h3 data-number="4.8.2" class="anchored" data-anchor-id="latihan-tambahan-self-check"><span class="header-section-number">4.8.2</span> Latihan Tambahan (Self-Check)</h3>
+<p>Kerjakan soal-soal berikut secara mandiri sebelum melihat kunci jawaban pada komentar kode.</p>
+<p><strong>Soal A.</strong> Data usia (tahun) 25 peserta pelatihan: 23, 31, 27, 45, 38, 29, 34, 41, 26, 36, 52, 30, 28, 33, 47, 39, 24, 35, 43, 32, 37, 29, 48, 31, 40. Susun tabel distribusi frekuensi dengan Aturan Sturges, lengkap dengan batas nyata, titik tengah, frekuensi relatif, dan kumulatif.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb61"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb61-1"><a href="#cb61-1" aria-hidden="true" tabindex="-1"></a>usia <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">23</span>, <span class="dv">31</span>, <span class="dv">27</span>, <span class="dv">45</span>, <span class="dv">38</span>, <span class="dv">29</span>, <span class="dv">34</span>, <span class="dv">41</span>, <span class="dv">26</span>, <span class="dv">36</span>, <span class="dv">52</span>, <span class="dv">30</span>, <span class="dv">28</span>, <span class="dv">33</span>, <span class="dv">47</span>, <span class="dv">39</span>, <span class="dv">24</span>, <span class="dv">35</span>, <span class="dv">43</span>,</span>
+<span id="cb61-2"><a href="#cb61-2" aria-hidden="true" tabindex="-1"></a>          <span class="dv">32</span>, <span class="dv">37</span>, <span class="dv">29</span>, <span class="dv">48</span>, <span class="dv">31</span>, <span class="dv">40</span>)</span>
+<span id="cb61-3"><a href="#cb61-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Kunci jawaban:</span></span>
+<span id="cb61-4"><a href="#cb61-4" aria-hidden="true" tabindex="-1"></a><span class="co"># k = 1 + 3.322 log10(25) = 5.64 -&gt; 6 kelas; R = 52 - 23 = 29; w = 29/6 = 4.83 -&gt; 5</span></span>
+<span id="cb61-5"><a href="#cb61-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Kelas: 23-27, 28-32, 33-37, 38-42, 43-47, 48-52</span></span>
+<span id="cb61-6"><a href="#cb61-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Batas nyata: 22.5, 27.5, 32.5, 37.5, 42.5, 47.5, 52.5</span></span>
+<span id="cb61-7"><a href="#cb61-7" aria-hidden="true" tabindex="-1"></a><span class="fu">table</span>(<span class="fu">cut</span>(usia, <span class="at">breaks =</span> <span class="fu">seq</span>(<span class="fl">22.5</span>, <span class="fl">52.5</span>, <span class="at">by =</span> <span class="dv">5</span>)))</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+(22.5,27.5] (27.5,32.5] (32.5,37.5] (37.5,42.5] (42.5,47.5] (47.5,52.5] 
+          4           7           5           4           3           2 </code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a><span class="co"># f = 4, 7, 5, 4, 3, 2 (total 25); titik tengah = 25, 30, 35, 40, 45, 50</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Soal B.</strong> Buat diagram batang-daun untuk data usia pada Soal A, lalu tentukan usia yang paling sering muncul.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb64"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1"><a href="#cb64-1" aria-hidden="true" tabindex="-1"></a><span class="fu">stem</span>(usia)</span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+  The decimal point is 1 digit(s) to the right of the |
+
+  2 | 3467899
+  3 | 01123456789
+  4 | 013578
+  5 | 2</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb66"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><a href="#cb66-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Kunci jawaban: batang 2, 3, 4, 5. Usia 29 dan 31 masing-masing muncul dua kali</span></span>
+<span id="cb66-2"><a href="#cb66-2" aria-hidden="true" tabindex="-1"></a><span class="co"># (terlihat sebagai daun "99" pada batang 2 dan "11" pada batang 3).</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Soal C.</strong> Sebuah media menampilkan diagram batang penjualan dua merek dengan sumbu-y dari 950 sampai 1.000 unit (Merek A = 960, Merek B = 990). Jelaskan mengapa grafik itu menyesatkan dan hitung perbandingan panjang batang yang tampak vs yang seharusnya.</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Kunci jawaban:</span></span>
+<span id="cb67-2"><a href="#cb67-2" aria-hidden="true" tabindex="-1"></a>(<span class="dv">990</span> <span class="sc">-</span> <span class="dv">950</span>) <span class="sc">/</span> (<span class="dv">960</span> <span class="sc">-</span> <span class="dv">950</span>)   <span class="co"># tampak: batang B = 4 kali batang A</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 4</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="dv">990</span> <span class="sc">/</span> <span class="dv">960</span>                   <span class="co"># seharusnya: B hanya ~1.03 kali A (lebih besar 3%)</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1.03125</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Diagram batang harus dimulai dari 0 agar panjang batang sebanding dengan nilainya.</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+</div>
+<p><strong>Soal D.</strong> Dari tabel pendapatan mingguan pada praktikum ini, berapa persen karyawan yang berpendapatan lebih dari 1.600,5 USD? Kelas mana yang memuat median?</p>
+<div class="cell" data-layout-align="center">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb72"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><a href="#cb72-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Kunci jawaban:</span></span>
+<span id="cb72-2"><a href="#cb72-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(f_p[<span class="dv">5</span><span class="sc">:</span><span class="dv">6</span>]) <span class="sc">/</span> <span class="fu">sum</span>(f_p) <span class="sc">*</span> <span class="dv">100</span>   <span class="co"># (9 + 6) / 100 = 15%</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 15</code></pre>
+</div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb74"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><a href="#cb74-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cumsum</span>(f_p)                      <span class="co"># 9, 31, 70, ... -&gt; posisi median ke-50 berada di kelas 1201-1400</span></span></code></pre></div><button title="Salin ke Papan Klip" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]   9  31  70  85  94 100</code></pre>
+</div>
+</div>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+</section>
+<section id="kesalahan-umum-dalam-penyajian-dan-visualisasi-data" class="level2" data-number="4.9">
+<h2 data-number="4.9" class="anchored" data-anchor-id="kesalahan-umum-dalam-penyajian-dan-visualisasi-data"><span class="header-section-number">4.9</span> Kesalahan Umum dalam Penyajian dan Visualisasi Data</h2>
+<ol type="1">
+<li><strong>Memakai histogram untuk data kategorik</strong> (atau diagram batang dengan batang menempel untuk kategori) – pilih grafik sesuai jenis data.</li>
+<li><strong>Memotong sumbu-y diagram batang</strong> – perbedaan kecil tampak sangat besar.</li>
+<li><strong>Diagram lingkaran dengan terlalu banyak irisan</strong> atau total yang bukan 100%.</li>
+<li><strong>Grafik tanpa judul, label sumbu, satuan, atau</strong> <span class="math inline">\(n\)</span> – pembaca tidak dapat menafsirkan.</li>
+<li><strong>Memilih banyak kelas asal-asalan</strong> – terlalu sedikit menyembunyikan pola, terlalu banyak menimbulkan pola palsu.</li>
+<li><strong>Lebar kelas dibulatkan ke bawah</strong> sehingga data terbesar tidak tertampung – lebar kelas dibulatkan <strong>ke atas</strong>.</li>
+<li><strong>Kelas yang tumpang tindih atau berlubang</strong> (misalnya 60–70 dan 70–80) – satu nilai tidak boleh masuk dua kelas; gunakan batas nyata atau interval setengah terbuka yang konsisten.</li>
+<li><strong>Menghitung frekuensi kumulatif untuk data nominal tanpa urutan yang bermakna.</strong></li>
+<li><strong>Tidak menyatakan asumsi kelas terbuka</strong> (“12 or more”) saat menggambar histogram atau menghitung titik tengah.</li>
+<li><strong>Mengurutkan kategori ordinal menurut abjad</strong> – urutan harus mengikuti tingkatannya.</li>
+<li><strong>Membandingkan persentase tabel silang ke arah yang salah</strong> – pilih persentase baris atau kolom sesuai pertanyaan.</li>
+<li><strong>Efek 3D dan dekorasi berlebihan</strong> yang mendistorsi proporsi.</li>
+</ol>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+<section id="cheat-sheet-fungsi-r-yang-digunakan" class="level2" data-number="4.10">
+<h2 data-number="4.10" class="anchored" data-anchor-id="cheat-sheet-fungsi-r-yang-digunakan"><span class="header-section-number">4.10</span> Cheat Sheet: Fungsi R yang Digunakan</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 50%">
+<col style="width: 50%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Fungsi</th>
+<th>Kegunaan</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>table(x)</code></td>
+<td>Frekuensi tiap kategori/nilai</td>
+</tr>
+<tr class="even">
+<td><code>prop.table(tabel, margin)</code></td>
+<td>Frekuensi relatif; <code>margin = 1</code> per baris, 2 per kolom</td>
+</tr>
+<tr class="odd">
+<td><code>addmargins(tabel)</code></td>
+<td>Menambahkan total baris dan kolom</td>
+</tr>
+<tr class="even">
+<td><code>sort(tabel, decreasing = TRUE)</code></td>
+<td>Mengurutkan frekuensi (untuk Pareto)</td>
+</tr>
+<tr class="odd">
+<td><code>cumsum(f)</code></td>
+<td>Frekuensi kumulatif</td>
+</tr>
+<tr class="even">
+<td><code>rev(cumsum(rev(f)))</code></td>
+<td>Frekuensi kumulatif “lebih dari”</td>
+</tr>
+<tr class="odd">
+<td><code>log10(n)</code>, <code>ceiling(x)</code>, <code>round(x)</code></td>
+<td>Perhitungan Aturan Sturges dan lebar kelas</td>
+</tr>
+<tr class="even">
+<td><code>nclass.Sturges(x)</code>, <code>nclass.FD(x)</code>, <code>nclass.scott(x)</code></td>
+<td>Banyak kelas menurut berbagai aturan</td>
+</tr>
+<tr class="odd">
+<td><code>seq(from, by, length.out)</code></td>
+<td>Membuat batas kelas</td>
+</tr>
+<tr class="even">
+<td><code>cut(x, breaks, right = TRUE/FALSE)</code></td>
+<td>Mengelompokkan data ke kelas</td>
+</tr>
+<tr class="odd">
+<td><code>hist(x, breaks, plot = FALSE)</code></td>
+<td>Menghitung frekuensi kelas tanpa menggambar</td>
+</tr>
+<tr class="even">
+<td><code>barplot(f, horiz, beside)</code></td>
+<td>Diagram batang (horizontal, berkelompok, bertumpuk)</td>
+</tr>
+<tr class="odd">
+<td><code>pie(f, labels)</code></td>
+<td>Diagram lingkaran</td>
+</tr>
+<tr class="even">
+<td><code>hist(x, breaks)</code></td>
+<td>Histogram</td>
+</tr>
+<tr class="odd">
+<td><code>rect(x1, y1, x2, y2)</code></td>
+<td>Menggambar histogram dari data terkelompok</td>
+</tr>
+<tr class="even">
+<td><code>lines(x, y, type = "b")</code></td>
+<td>Poligon frekuensi / ogive / garis kumulatif Pareto</td>
+</tr>
+<tr class="odd">
+<td><code>approx(x, y, xout)</code></td>
+<td>Interpolasi linear (menaksir median dari ogive)</td>
+</tr>
+<tr class="even">
+<td><code>stem(x, scale)</code></td>
+<td>Diagram batang-daun</td>
+</tr>
+<tr class="odd">
+<td><code>axis()</code>, <code>text()</code>, <code>legend()</code>, <code>abline()</code></td>
+<td>Melengkapi grafik dengan sumbu, label, legenda, garis bantu</td>
+</tr>
+<tr class="even">
+<td><code>par(mfrow = c(r, c))</code>, <code>par(mar = ...)</code></td>
+<td>Mengatur tata letak dan margin grafik</td>
+</tr>
+</tbody>
+</table>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+<section id="glosarium-istilah" class="level2" data-number="4.11">
+<h2 data-number="4.11" class="anchored" data-anchor-id="glosarium-istilah"><span class="header-section-number">4.11</span> Glosarium Istilah</h2>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 33%">
+<col style="width: 66%">
+</colgroup>
+<thead>
+<tr class="header">
+<th style="text-align: left;">Istilah</th>
+<th style="text-align: left;">Definisi Singkat</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;"><strong>Distribusi Frekuensi</strong></td>
+<td style="text-align: left;">Tabel yang menunjukkan banyaknya data pada setiap kategori atau kelas</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Frekuensi Relatif</strong></td>
+<td style="text-align: left;">Frekuensi dibagi banyaknya data (<span class="math inline">\(f/n\)</span>)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Frekuensi Kumulatif</strong></td>
+<td style="text-align: left;">Jumlah frekuensi hingga kelas tertentu</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Tabel Silang</strong></td>
+<td style="text-align: left;">Tabel frekuensi dua variabel kategorik sekaligus</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Aturan Sturges</strong></td>
+<td style="text-align: left;">Aturan menentukan banyak kelas: <span class="math inline">\(k = 1 + 3{,}322 \log_{10} n\)</span></td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Lebar Kelas</strong></td>
+<td style="text-align: left;">Selisih batas nyata atas dan bawah sebuah kelas</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Batas Kelas</strong></td>
+<td style="text-align: left;">Nilai terkecil dan terbesar yang tercantum pada sebuah kelas</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Batas Nyata</strong></td>
+<td style="text-align: left;">Batas kelas yang diperluas setengah satuan agar kelas bersambung</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Titik Tengah Kelas</strong></td>
+<td style="text-align: left;">Rata-rata batas bawah dan atas kelas; wakil nilai kelas</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Kelas Terbuka</strong></td>
+<td style="text-align: left;">Kelas tanpa batas bawah atau batas atas (misalnya “12 or more”)</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Diagram Batang</strong></td>
+<td style="text-align: left;">Grafik batang terpisah untuk frekuensi data kategorik</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Diagram Pareto</strong></td>
+<td style="text-align: left;">Diagram batang terurut dengan garis persentase kumulatif</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Diagram Lingkaran</strong></td>
+<td style="text-align: left;">Grafik irisan lingkaran yang menunjukkan bagian dari keseluruhan</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Histogram</strong></td>
+<td style="text-align: left;">Grafik batang bersambung untuk distribusi data numerik</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Poligon Frekuensi</strong></td>
+<td style="text-align: left;">Garis yang menghubungkan titik tengah puncak kelas histogram</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Ogive</strong></td>
+<td style="text-align: left;">Kurva frekuensi kumulatif terhadap batas nyata atas</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;"><strong>Stem-and-Leaf</strong></td>
+<td style="text-align: left;">Diagram yang memecah nilai menjadi batang dan daun sambil mempertahankan nilai asli</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;"><strong>Bin</strong></td>
+<td style="text-align: left;">Istilah lain untuk kelas/interval pada histogram</td>
+</tr>
+</tbody>
+</table>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+<section id="rangkuman-dan-kesimpulan" class="level2" data-number="4.12">
+<h2 data-number="4.12" class="anchored" data-anchor-id="rangkuman-dan-kesimpulan"><span class="header-section-number">4.12</span> Rangkuman dan Kesimpulan</h2>
+<div style="width: 85%; margin: 0 auto;">
+<p>
+</p><ol type="1">
+<li><strong>Tabel distribusi frekuensi</strong> meringkas data menjadi frekuensi, frekuensi relatif, dan frekuensi kumulatif. Tabel silang meringkas hubungan dua variabel kategorik.</li>
+</ol>
+<p></p>
+<p>
+</p><ol start="2" type="1">
+<li><strong>Data numerik dikelompokkan</strong> dengan Aturan Sturges, lebar kelas yang dibulatkan ke atas, <strong>batas nyata</strong> agar kelas bersambung, dan <strong>titik tengah</strong> sebagai wakil kelas.</li>
+</ol>
+<p></p>
+<p>
+</p><ol start="3" type="1">
+<li><strong>Jenis data menentukan grafik</strong>: diagram batang/lingkaran/Pareto untuk kategorik; histogram, poligon, ogive, dan <em>stem-and-leaf</em> untuk numerik.</li>
+</ol>
+<p></p>
+<p>
+</p><ol start="4" type="1">
+<li><strong>Visualisasi yang jujur</strong> memulai sumbu diagram batang dari nol, memberi label lengkap, memilih <em>bin</em> dengan cermat, dan menghindari dekorasi yang mendistorsi.</li>
+</ol>
+<p></p>
+<p>
+</p><ol start="5" type="1">
+<li><strong>Membaca grafik</strong> berarti menceritakan <strong>bentuk, pusat, sebaran, dan keanehan</strong> data.</li>
+</ol>
+<p></p>
+</div>
+<p>
+<strong>Jembatan ke sesi berikutnya:</strong> Pertemuan 5 mengubah kesan visual “pusat di sekitar 80” dan “sebaran dari 63 sampai 95” menjadi <strong>angka yang tepat</strong> – mean, median, modus, rentang, varians, simpangan baku, dan koefisien variasi – termasuk perhitungannya dari tabel data terkelompok yang telah kita susun hari ini.
+</p>
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+</section>
+<section id="referensi-pendukung" class="level2" data-number="4.13">
+<h2 data-number="4.13" class="anchored" data-anchor-id="referensi-pendukung"><span class="header-section-number">4.13</span> Referensi Pendukung</h2>
+<div style="width: 85%; margin: 0 auto;">
+<p>
+Materi ini merangkum topik penyajian data dan visualisasi (<em>organizing and visualizing data</em>) yang umum dibahas pada bab awal buku teks pengantar statistika bisnis/data science. Mahasiswa disarankan melengkapi pemahaman dengan merujuk pada:
+</p>
+<ul>
+<li>
+Modul/slide perkuliahan “Introduction to Statistics (SDT-1102)” – Pertemuan 4: Penyajian dan Visualisasi Data.
+</li>
+<li>
+Tufte, E. R. <em>The Visual Display of Quantitative Information</em>. Graphics Press.
+</li>
+<li>
+Huff, D. <em>How to Lie with Statistics</em>. W. W. Norton (bab tentang grafik yang menyesatkan).
+</li>
+<li>
+Dokumentasi resmi R: <code>?table</code>, <code>?cut</code>, <code>?hist</code>, <code>?barplot</code>, <code>?pie</code>, <code>?stem</code>, <code>?nclass.Sturges</code> (dapat diakses langsung di R/RStudio).
+</li>
+</ul>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+  window.document.addEventListener("DOMContentLoaded", function (event) {
+    const icon = "";
+    const anchorJS = new window.AnchorJS();
+    anchorJS.options = {
+      placement: 'right',
+      icon: icon
+    };
+    anchorJS.add('.anchored');
+    const isCodeAnnotation = (el) => {
+      for (const clz of el.classList) {
+        if (clz.startsWith('code-annotation-')) {                     
+          return true;
+        }
+      }
+      return false;
+    }
+    const onCopySuccess = function(e) {
+      // button target
+      const button = e.trigger;
+      // don't keep focus
+      button.blur();
+      // flash "checked"
+      button.classList.add('code-copy-button-checked');
+      var currentTitle = button.getAttribute("title");
+      button.setAttribute("title", "Disalin!");
+      let tooltip;
+      if (window.bootstrap) {
+        button.setAttribute("data-bs-toggle", "tooltip");
+        button.setAttribute("data-bs-placement", "left");
+        button.setAttribute("data-bs-title", "Disalin!");
+        tooltip = new bootstrap.Tooltip(button, 
+          { trigger: "manual", 
+            customClass: "code-copy-button-tooltip",
+            offset: [0, -8]});
+        tooltip.show();    
+      }
+      setTimeout(function() {
+        if (tooltip) {
+          tooltip.hide();
+          button.removeAttribute("data-bs-title");
+          button.removeAttribute("data-bs-toggle");
+          button.removeAttribute("data-bs-placement");
+        }
+        button.setAttribute("title", currentTitle);
+        button.classList.remove('code-copy-button-checked');
+      }, 1000);
+      // clear code selection
+      e.clearSelection();
+    }
+    const getTextToCopy = function(trigger) {
+      const outerScaffold = trigger.parentElement.cloneNode(true);
+      const codeEl = outerScaffold.querySelector('code');
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+    const clipboard = new window.ClipboardJS('.code-copy-button:not([data-in-quarto-modal])', {
+      text: getTextToCopy
+    });
+    clipboard.on('success', onCopySuccess);
+    if (window.document.getElementById('quarto-embedded-source-code-modal')) {
+      const clipboardModal = new window.ClipboardJS('.code-copy-button[data-in-quarto-modal]', {
+        text: getTextToCopy,
+        container: window.document.getElementById('quarto-embedded-source-code-modal')
+      });
+      clipboardModal.on('success', onCopySuccess);
+    }
+      var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
+      var mailtoRegex = new RegExp(/^mailto:/);
+        var filterRegex = new RegExp('/' + window.location.host + '/');
+      const newWindowLabel = "(opens in a new tab)";
+      const newWindowNoteId = "quarto-ext-newwindow-label";
+      // Links reference one hidden label through aria-describedby, so the
+      // announcement never changes their accessible name.
+      var describeNewWindow = (link) => {
+        if (!window.document.getElementById(newWindowNoteId)) {
+          var newWindowNote = window.document.createElement("span");
+          newWindowNote.id = newWindowNoteId;
+          newWindowNote.hidden = true;
+          newWindowNote.textContent = newWindowLabel;
+          window.document.body.appendChild(newWindowNote);
+        }
+        var describedBy = (link.getAttribute("aria-describedby") || "").split(/\s+/).filter(Boolean);
+        if (!describedBy.includes(newWindowNoteId)) {
+          describedBy.push(newWindowNoteId);
+          link.setAttribute("aria-describedby", describedBy.join(" "));
+        }
+      }
+      var isInternal = (href) => {
+          return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
+      }
+      // Inspect non-navigation links and adorn them if external
+      window.quartoDecorateExternalLinks = function (root) {
+     var links = (root || window.document).querySelectorAll('a[href]:not(.nav-link):not(.navbar-brand):not(.toc-action):not(.sidebar-link):not(.sidebar-item-toggle):not(.pagination-link):not(.no-external):not([aria-hidden]):not(.dropdown-item):not(.quarto-navigation-tool):not(.about-link)');
+      for (var i=0; i<links.length; i++) {
+        const link = links[i];
+        if (!isInternal(link.href)) {
+          // undo the damage that might have been done by quarto-nav.js in the case of
+          // links that we want to consider external
+          if (link.dataset.originalHref !== undefined) {
+            link.href = link.dataset.originalHref;
+          }
+            // target, if specified
+            link.setAttribute("target", "_blank");
+            if (link.getAttribute("rel") === null) {
+              link.setAttribute("rel", "noopener");
+            }
+            describeNewWindow(link);
+          if (!link.classList.contains('no-external-icon')) {
+          }
+        }
+      }
+      };
+      window.quartoDecorateExternalLinks(window.document);
+    // Esc closes the popup (WCAG 1.4.13) and focus leaving both trigger and
+    // popup closes it (WCAG 2.4.11); tippy handles neither for interactive popups.
+    const hideOnEscAndFocusOut = {
+      name: 'hideOnEscAndFocusOut',
+      defaultValue: true,
+      fn(instance) {
+        const dismiss = () => {
+          // A show scheduled by the trigger delay would otherwise reopen it
+          instance.clearDelayTimeouts();
+          instance.hide();
+        };
+        const onKeyDown = (event) => {
+          if (event.key !== 'Escape') {
+            return;
+          }
+          // Keep Esc from also reaching page handlers (e.g. reveal.js overview),
+          // except an open reveal.js slide menu, which Esc should close too.
+          // The menu handles keys only when its keyboard option is on.
+          const menuHandlesEsc = window.Reveal?.getPlugin?.('menu')?.isOpen() &&
+            window.Reveal.getConfig().menu?.keyboard !== false;
+          if (!menuHandlesEsc) {
+            event.stopPropagation();
+          }
+          if (instance.popper.contains(window.document.activeElement)) {
+            // Disabled while refocusing so the focus trigger does not reopen it
+            instance.disable();
+            instance.reference.focus();
+            instance.enable();
+          }
+          dismiss();
+        };
+        const onFocusOut = (event) => {
+          const target = event.relatedTarget;
+          if (target && !instance.reference.contains(target) &&
+              !instance.popper.contains(target)) {
+            dismiss();
+          }
+        };
+        // On the trigger too: a click trigger (code-annotations: select) has no
+        // blur handling. Attached for the instance's lifetime so leaving the
+        // trigger also cancels a show still pending on the trigger delay.
+        instance.reference.addEventListener('focusout', onFocusOut);
+        return {
+          onShow() {
+            window.document.addEventListener('keydown', onKeyDown, true);
+            instance.popper.addEventListener('focusout', onFocusOut);
+          },
+          onHide() {
+            window.document.removeEventListener('keydown', onKeyDown, true);
+            instance.popper.removeEventListener('focusout', onFocusOut);
+          },
+          onDestroy() {
+            instance.reference.removeEventListener('focusout', onFocusOut);
+          },
+        };
+      },
+    };
+    function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
+      const config = {
+        allowHTML: true,
+        maxWidth: 500,
+        delay: 100,
+        arrow: false,
+        appendTo: function(el) {
+            return el.parentElement;
+        },
+        interactive: true,
+        interactiveBorder: 10,
+        theme: 'quarto',
+        placement: 'bottom-start',
+        plugins: [hideOnEscAndFocusOut],
+      };
+      if (contentFn) {
+        config.content = contentFn;
+      }
+      if (onTriggerFn) {
+        config.onTrigger = onTriggerFn;
+      }
+      if (onUntriggerFn) {
+        config.onUntrigger = onUntriggerFn;
+      }
+      window.tippy(el, config); 
+    }
+    const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+    for (var i=0; i<noterefs.length; i++) {
+      const ref = noterefs[i];
+      tippyHover(ref, function() {
+        // use id or data attribute instead here
+        let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+        try { href = new URL(href).hash; } catch {}
+        const id = href.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note) {
+          return note.innerHTML;
+        } else {
+          return "";
+        }
+      });
+    }
+    const xrefs = window.document.querySelectorAll('a.quarto-xref');
+    const processXRef = (id, note) => {
+      // Strip column container classes
+      const stripColumnClz = (el) => {
+        el.classList.remove("page-full", "page-columns");
+        if (el.children) {
+          for (const child of el.children) {
+            stripColumnClz(child);
+          }
+        }
+      }
+      stripColumnClz(note)
+      if (id === null || id.startsWith('sec-')) {
+        // Special case sections, only their first couple elements
+        const container = document.createElement("div");
+        if (note.children && note.children.length > 2) {
+          container.appendChild(note.children[0].cloneNode(true));
+          for (let i = 1; i < note.children.length; i++) {
+            const child = note.children[i];
+            if (child.tagName === "P" && child.innerText === "") {
+              continue;
+            } else {
+              container.appendChild(child.cloneNode(true));
+              break;
+            }
+          }
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(container);
+          }
+          return container.innerHTML
+        } else {
+          if (window.Quarto?.typesetMath) {
+            window.Quarto.typesetMath(note);
+          }
+          return note.innerHTML;
+        }
+      } else {
+        // Remove any anchor links if they are present
+        const anchorLink = note.querySelector('a.anchorjs-link');
+        if (anchorLink) {
+          anchorLink.remove();
+        }
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
+        if (note.classList.contains("callout")) {
+          return note.outerHTML;
+        } else {
+          return note.innerHTML;
+        }
+      }
+    }
+    for (var i=0; i<xrefs.length; i++) {
+      const xref = xrefs[i];
+      tippyHover(xref, undefined, function(instance) {
+        instance.disable();
+        let url = xref.getAttribute('href');
+        let hash = undefined; 
+        if (url.startsWith('#')) {
+          hash = url;
+        } else {
+          try { hash = new URL(url).hash; } catch {}
+        }
+        if (hash) {
+          const id = hash.replace(/^#\/?/, "");
+          const note = window.document.getElementById(id);
+          if (note !== null) {
+            try {
+              const html = processXRef(id, note.cloneNode(true));
+              instance.setContent(html);
+            } finally {
+              instance.enable();
+              instance.show();
+            }
+          } else {
+            // See if we can fetch this
+            fetch(url.split('#')[0])
+            .then(res => res.text())
+            .then(html => {
+              const parser = new DOMParser();
+              const htmlDoc = parser.parseFromString(html, "text/html");
+              const note = htmlDoc.getElementById(id);
+              if (note !== null) {
+                const html = processXRef(id, note);
+                instance.setContent(html);
+              } 
+            }).finally(() => {
+              instance.enable();
+              instance.show();
+            });
+          }
+        } else {
+          // See if we can fetch a full url (with no hash to target)
+          // This is a special case and we should probably do some content thinning / targeting
+          fetch(url)
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.querySelector('main.content');
+            if (note !== null) {
+              // This should only happen for chapter cross references
+              // (since there is no id in the URL)
+              // remove the first header
+              if (note.children.length > 0 && note.children[0].tagName === "HEADER") {
+                note.children[0].remove();
+              }
+              const html = processXRef(null, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }, function(instance) {
+      });
+    }
+        let selectedAnnoteEl;
+        const selectorForAnnotation = ( cell, annotation) => {
+          let cellAttr = 'data-code-cell="' + cell + '"';
+          let lineAttr = 'data-code-annotation="' +  annotation + '"';
+          const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+          return selector;
+        }
+        const selectCodeLines = (annoteEl) => {
+          const doc = window.document;
+          const targetCell = annoteEl.getAttribute("data-target-cell");
+          const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+          const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+          const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+          const lineIds = lines.map((line) => {
+            return targetCell + "-" + line;
+          })
+          // Each band is positioned against its own containing block, which is
+          // not the offsetParent of the lines, so place it from client rects.
+          const placeBand = (band, firstEl, lastEl, codeBlock) => {
+            const container = band.offsetParent;
+            if (container === null) {
+              return;
+            }
+            const containerRect = container.getBoundingClientRect();
+            // Reveal.js scales slides with a transform, so convert client
+            // pixels back to the CSS pixels of the container.
+            const scale = containerRect.height / container.offsetHeight || 1;
+            const firstRect = firstEl.getBoundingClientRect();
+            const lastRect = lastEl.getBoundingClientRect();
+            const top = (firstRect.top - containerRect.top) / scale - container.clientTop + container.scrollTop;
+            const height = (lastRect.bottom - firstRect.top) / scale;
+            band.style.top = top - 2 + "px";
+            band.style.height = height + 4 + "px";
+            if (codeBlock) {
+              // Without the copy button wrapper, the containing block is wider
+              // than the code block, so span the code block explicitly.
+              const blockRect = codeBlock.getBoundingClientRect();
+              band.style.left = (blockRect.left - containerRect.left) / scale - container.clientLeft + container.scrollLeft + "px";
+              band.style.width = blockRect.width / scale + "px";
+            }
+          };
+          if (lineIds.length > 0) {
+            const el = window.document.getElementById(lineIds[0]);
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const parent = el.parentElement.parentElement;
+            // cook up a div (if necessary) and position it
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            placeBand(div, el, lastEl, parent.closest("div.sourceCode") || parent);
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            placeBand(gutterDiv, el, lastEl);
+            selectedAnnoteEl = annoteEl;
+          }
+        };
+        const unselectCodeLines = () => {
+          const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+          elementsIds.forEach((elId) => {
+            const div = window.document.getElementById(elId);
+            if (div) {
+              div.remove();
+            }
+          });
+          selectedAnnoteEl = undefined;
+        };
+          // Handle positioning of the toggle
+      window.addEventListener(
+        "resize",
+        throttle(() => {
+          elRect = undefined;
+          if (selectedAnnoteEl) {
+            selectCodeLines(selectedAnnoteEl);
+          }
+        }, 10)
+      );
+      function throttle(fn, ms) {
+      let throttle = false;
+      let timer;
+        return (...args) => {
+          if(!throttle) { // first call gets through
+              fn.apply(this, args);
+              throttle = true;
+          } else { // all the others get throttled
+              if(timer) clearTimeout(timer); // cancel #2
+              timer = setTimeout(() => {
+                fn.apply(this, args);
+                timer = throttle = false;
+              }, ms);
+          }
+        };
+      }
+        // Attach click handler to the DT
+        const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+        for (const annoteDlNode of annoteDls) {
+          annoteDlNode.addEventListener('click', (event) => {
+            const clickedEl = event.target;
+            if (clickedEl !== selectedAnnoteEl) {
+              unselectCodeLines();
+              const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+              if (activeEl) {
+                activeEl.classList.remove('code-annotation-active');
+              }
+              selectCodeLines(clickedEl);
+              clickedEl.classList.add('code-annotation-active');
+            } else {
+              // Unselect the line
+              unselectCodeLines();
+              clickedEl.classList.remove('code-annotation-active');
+            }
+          });
+        }
+    const findCites = (el) => {
+      const parentEl = el.parentElement;
+      if (parentEl) {
+        const cites = parentEl.dataset.cites;
+        if (cites) {
+          return {
+            el,
+            cites: cites.split(' ')
+          };
+        } else {
+          return findCites(el.parentElement)
+        }
+      } else {
+        return undefined;
+      }
+    };
+    var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+    for (var i=0; i<bibliorefs.length; i++) {
+      const ref = bibliorefs[i];
+      const citeInfo = findCites(ref);
+      if (citeInfo) {
+        tippyHover(citeInfo.el, function() {
+          var popup = window.document.createElement('div');
+          citeInfo.cites.forEach(function(cite) {
+            var citeDiv = window.document.createElement('div');
+            citeDiv.classList.add('hanging-indent');
+            citeDiv.classList.add('csl-entry');
+            var biblioDiv = window.document.getElementById('ref-' + cite);
+            if (biblioDiv) {
+              citeDiv.innerHTML = biblioDiv.innerHTML;
+            }
+            popup.appendChild(citeDiv);
+          });
+          return popup.innerHTML;
+        });
+      }
+    }
+  });
+  </script>
+  <script type="application/javascript">
+  window.quartoScrollableRegionsLabels = {"code":"Kode yang dapat digulir","output":"Keluaran yang dapat digulir"};
+  </script>
+<nav class="page-navigation" aria-label="Halaman">
+  <div class="nav-page nav-page-previous">
+      <a href="../chapters/bab-3.html" class="pagination-link" aria-label="Bab 3: Pengumpulan dan Sampling Data">
+        <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">3</span>&nbsp; <span class="chapter-title">Bab 3: Pengumpulan dan Sampling Data</span></span>
+      </a>          
+  </div>
+  <div class="nav-page nav-page-next">
+      <a href="../chapters/bab-5.html" class="pagination-link" aria-label="Bab 5: Ukuran Pemusatan dan Sebaran">
+        <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Bab 5: Ukuran Pemusatan dan Sebaran</span></span> <i class="bi bi-arrow-right-short"></i>
+      </a>
+  </div>
+</nav>
+</div> <!-- /content -->
+
+
+
+
+<footer class="footer"><div class="nav-footer"><div class="nav-footer-center"><div class="toc-actions d-sm-block d-md-none"><ul><li><a href="https://github.com/sennie17/STATISITKA-EBOOK.git/edit/main/chapters/bab-4.qmd" class="toc-action"><i class="bi bi-github"></i>Sunting laman ini</a></li><li><a href="https://github.com/sennie17/STATISITKA-EBOOK.git/issues/new" class="toc-action"><i class="bi empty"></i>Laporkan isu</a></li></ul></div></div></div></footer><script src="../site_libs/quarto-html/zenscroll-min.js"></script>
+</body></html>

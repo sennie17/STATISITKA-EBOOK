@@ -1,0 +1,1157 @@
+# Bab 5: Ukuran Pemusatan dan Sebaran
+
+```{r}
+#| label: setup
+#| include: false
+# Untuk grafiknya agar keliatan lebih rapih dan enak di lihat
+knitr::opts_chunk$set(
+  fig.width  = 9,
+  fig.height = 5.5,
+  fig.align  = "center",
+  out.width  = "100%",
+  dpi        = 150
+)
+library(knitr)
+```
+
+<style>
+table thead tr th,
+table > thead > tr > th {
+  text-align: center !important;
+}
+</style>
+
+## Prasyarat dan Notasi
+
+### Skala Pengukuran Menentukan Ukuran yang Valid
+
+Ingat kembali skala pengukuran dari Pertemuan 2. Skala data menentukan ukuran mana yang bermakna untuk dihitung:
+
+| Skala | Modus | Median | Mean | Ukuran Penyebaran |
+|---|---|---|---|---|
+| Nominal | Ya | Tidak | Tidak | Tidak berlaku |
+| Ordinal | Ya | Ya | Kurang tepat | Kuartil / IQR |
+| Interval | Ya | Ya | Ya | Rentang, IQR, varians, simpangan baku |
+| Rasio | Ya | Ya | Ya | Semua ukuran, termasuk koefisien variasi |
+
+Contoh: "rata-rata golongan darah" tidak bermakna (nominal), sedangkan "rata-rata tinggi badan" bermakna (rasio).
+
+### Populasi vs Sampel: Notasi
+
+Karena statistik dari sampel dipakai untuk menduga parameter populasi, notasinya dibedakan:
+
+| Ukuran | Populasi (Parameter) | Sampel (Statistik) |
+|---|---|---|
+| Banyaknya data | $N$ | $n$ |
+| Rata-rata | $\mu$ | $\bar{x}$ |
+| Varians | $\sigma^2$ | $s^2$ |
+| Simpangan baku | $\sigma$ | $s$ |
+
+Simbol $\sum$ (sigma besar) berarti "jumlahkan": $\sum_{i=1}^{n} x_i = x_1 + x_2 + \cdots + x_n$.
+
+### Data Utama yang Dipakai
+
+Sepanjang praktikum, kita memakai nilai ujian Statistika 30 mahasiswa dari Pertemuan 4. Pengelompokan kelasnya (Aturan Sturges: 6 kelas, lebar 6, batas nyata dimulai dari 62,5) sudah kita peroleh dan dipakai ulang pada bagian data terkelompok.
+
+```{r}
+nilai_ujian <- c(78, 65, 82, 90, 74, 68, 95, 88, 72, 80,
+                 91, 77, 63, 85, 79, 92, 70, 84, 76, 89,
+                 81, 67, 93, 75, 86, 71, 94, 83, 69, 87)
+n <- length(nilai_ujian)
+
+# Batas nyata kelas hasil pengelompokan pada Pertemuan 4
+batas_nyata_u <- seq(62.5, by = 6, length.out = 7)
+f_ujian <- as.numeric(table(cut(nilai_ujian, breaks = batas_nyata_u)))
+
+n
+sort(nilai_ujian)
+```
+
+```{r}
+hist(nilai_ujian, breaks = batas_nyata_u, col = "#4C72B0", border = "white",
+     main = "Nilai Ujian Statistika (n = 30)", xlab = "Nilai Ujian", ylab = "Frekuensi")
+```
+
+Dari histogram, kita bisa memperkirakan "pusat" data ada di sekitar 80 dan sebarannya kira-kira dari 63 sampai 95. Praktikum ini mengubah **perkiraan visual** tersebut menjadi **angka yang tepat**.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Ukuran Pemusatan Data
+
+### Rata-rata Hitung (Mean)
+
+Mean adalah jumlah seluruh nilai dibagi banyaknya data:
+
+$$\mu = \frac{\sum_{i=1}^{N} x_i}{N} \qquad\qquad \bar{x} = \frac{\sum_{i=1}^{n} x_i}{n}$$
+
+```{r}
+# Manual: jumlahkan lalu bagi n
+sum(nilai_ujian) / n
+```
+
+```{r}
+# Fungsi bawaan R
+mean(nilai_ujian)
+```
+
+**Sifat penting mean:**
+
+1. Memakai **seluruh** nilai data.
+2. Jumlah selisih (deviasi) semua data terhadap mean selalu **nol**: $\sum (x_i - \bar{x}) = 0$. Karena itu mean disebut **titik keseimbangan** data.
+3. **Sensitif terhadap outlier** -- satu nilai ekstrem dapat menggeser mean secara drastis.
+
+```{r}
+round(sum(nilai_ujian - mean(nilai_ujian)), 10)   # selalu 0
+```
+
+```{r}
+stripchart(nilai_ujian, method = "jitter", pch = 16, col = "steelblue",
+           xlab = "Nilai Ujian", main = "Mean sebagai Titik Keseimbangan")
+abline(v = mean(nilai_ujian), col = "firebrick", lwd = 2)
+legend("topleft", legend = "Mean", col = "firebrick", lwd = 2, bty = "n")
+```
+
+#### Rata-rata Tertimbang (Weighted Mean)
+
+Jika setiap nilai memiliki bobot yang berbeda, gunakan rata-rata tertimbang:
+
+$$\bar{x}_w = \frac{\sum_{i=1}^{n} w_i x_i}{\sum_{i=1}^{n} w_i}$$
+
+Contoh: IPK semester dihitung dari nilai mutu yang dibobot dengan jumlah SKS.
+
+```{r}
+mata_kuliah <- c("Statistika", "Kalkulus", "Basis Data", "Algoritma")
+nilai_mutu  <- c(4.0, 3.0, 3.5, 2.0)
+sks         <- c(3, 4, 3, 2)
+
+kable(data.frame(Mata_Kuliah = mata_kuliah, Nilai_Mutu = nilai_mutu, SKS = sks),
+      caption = "Data IPK Semester")
+```
+
+```{r}
+mean(nilai_mutu)                    # rata-rata biasa (mengabaikan bobot SKS)
+weighted.mean(nilai_mutu, w = sks)  # IPK sebenarnya
+```
+
+Rata-rata biasa (3,125) mengabaikan fakta bahwa Kalkulus (4 SKS) lebih "berat" daripada Algoritma (2 SKS). IPK yang benar adalah rata-rata tertimbang, yaitu `r round(weighted.mean(nilai_mutu, w = sks), 3)`.
+
+### Median
+
+Median adalah nilai tengah setelah data diurutkan. Median membagi data menjadi dua bagian sama banyak: 50% data berada di bawahnya dan 50% di atasnya.
+
+- Jika $n$ ganjil: median = data ke-$\dfrac{n+1}{2}$.
+- Jika $n$ genap: median = rata-rata data ke-$\dfrac{n}{2}$ dan ke-$\left(\dfrac{n}{2}+1\right)$.
+
+```{r}
+# n = 30 (genap): rata-rata data ke-15 dan ke-16
+urut <- sort(nilai_ujian)
+urut[c(15, 16)]
+mean(urut[c(15, 16)])
+median(nilai_ujian)
+```
+
+Sekarang perhatikan data yang berbeda: gaji bulanan 7 karyawan sebuah perusahaan rintisan (juta rupiah), di mana salah satunya adalah pendiri perusahaan.
+
+```{r}
+gaji <- c(4.5, 4.8, 5.0, 5.2, 5.5, 5.8, 45)
+
+# n = 7 (ganjil): median = data ke-4
+sort(gaji)[4]
+median(gaji)
+mean(gaji)
+```
+
+Mean (10,83 juta) jauh lebih besar dari gaji enam dari tujuh karyawan, karena tertarik oleh satu nilai ekstrem (45 juta). Median (5,2 juta) tidak terpengaruh besarnya nilai ekstrem tersebut -- median hanya peduli pada **urutan**, bukan besar nilainya. Inilah sebabnya median disebut ukuran yang **tahan (robust)** terhadap outlier.
+
+#### Trimmed Mean: Jalan Tengah
+
+Trimmed mean membuang sebagian persentase data terkecil dan terbesar sebelum menghitung rata-rata, sehingga tetap memakai banyak data tetapi lebih tahan terhadap outlier.
+
+```{r}
+mean(gaji)                # mean biasa
+mean(gaji, trim = 0.2)    # buang 20% terkecil & 20% terbesar (1 data tiap ujung)
+median(gaji)              # trimmed mean ekstrem (trim = 0.5)
+```
+
+### Modus
+
+Modus adalah nilai yang paling sering muncul. Berbeda dengan mean dan median, modus juga valid untuk data **nominal**. R tidak menyediakan fungsi bawaan untuk modus statistik (fungsi `mode()` di R menunjukkan tipe data, bukan modus), sehingga kita membuatnya sendiri:
+
+```{r}
+hitung_modus <- function(x) {
+  tabel <- table(x)
+  maks  <- max(tabel)
+  if (maks == 1) return(NA)                  # semua nilai unik -> tidak ada modus
+  hasil <- names(tabel)[tabel == maks]       # bisa lebih dari satu modus
+  if (is.numeric(x)) as.numeric(hasil) else hasil
+}
+
+hitung_modus(c(2, 3, 3, 4, 4, 4, 5))   # satu modus (unimodal)
+hitung_modus(c(1, 2, 2, 3, 3, 4))      # dua modus (bimodal)
+hitung_modus(nilai_ujian)              # tidak ada modus (semua nilai unik)
+
+# Modus pada data nominal
+metode_bayar <- c("Tunai", "Debit", "Debit", "E-Wallet", "Debit", "Kredit", "Tunai")
+hitung_modus(metode_bayar)
+```
+
+**Catatan:** untuk data kontinu (seperti nilai ujian di atas) yang hampir tidak pernah berulang persis, modus dari data mentah tidak informatif. Solusinya adalah mencari **kelas modus** dari data yang sudah dikelompokkan (dibahas pada bagian Data Terkelompok).
+
+### Membandingkan dan Memilih Ukuran Pemusatan
+
+| Ukuran | Kelebihan | Kelemahan | Paling cocok untuk |
+|---|---|---|---|
+| **Mean** | Memakai semua data; dasar bagi banyak metode statistik lanjutan | Sensitif terhadap outlier dan data menceng | Data numerik simetris tanpa outlier |
+| **Median** | Tahan terhadap outlier; selalu ada | Tidak memakai besar nilai semua data | Data numerik menceng (misalnya pendapatan, harga rumah), atau data ordinal |
+| **Modus** | Bisa untuk data nominal; mudah dipahami | Bisa tidak ada atau lebih dari satu | Data nominal/kategorik; mencari nilai terpopuler |
+
+```{r}
+stripchart(gaji, method = "stack", pch = 16, cex = 1.6, col = "steelblue",
+           xlim = c(0, 50), xlab = "Gaji Bulanan (Juta Rupiah)",
+           main = "Mean Tertarik ke Arah Outlier, Median Tidak")
+abline(v = mean(gaji),              col = "firebrick",  lwd = 2)
+abline(v = median(gaji),            col = "darkgreen",  lwd = 2, lty = 2)
+abline(v = mean(gaji, trim = 0.2),  col = "darkorange", lwd = 2, lty = 3)
+legend("topright", bty = "n", lwd = 2, lty = c(1, 2, 3),
+       col = c("firebrick", "darkgreen", "darkorange"),
+       legend = c("Mean", "Median", "Trimmed mean (20%)"))
+```
+
+**Panduan memilih:**
+
+- Data nominal -> gunakan **modus**.
+- Data ordinal -> gunakan **median** (dan modus).
+- Data numerik simetris, tanpa outlier -> **mean**.
+- Data numerik menceng atau mengandung outlier -> **median** (laporkan mean sebagai pelengkap jika perlu).
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Catatan: Median sebagai Ukuran Letak
+
+Median membagi data terurut menjadi dua bagian sama banyak. Gagasan yang sama dapat diperluas menjadi **kuartil** (empat bagian), **desil** (sepuluh bagian), dan **persentil** (seratus bagian), beserta rentang antarkuartil (**IQR**) sebagai ukuran sebaran yang tahan nilai ekstrem. Semua ukuran letak tersebut dibahas lengkap pada Pertemuan 6. Untuk saat ini, cukup diingat bahwa **median adalah persentil ke-50**.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Ukuran Penyebaran Data
+
+### Mengapa Ukuran Pusat Saja Tidak Cukup?
+
+Dua loket pelayanan mencatat waktu tunggu (menit) enam pelanggan. Keduanya memiliki mean dan median yang persis sama:
+
+```{r}
+loket_1 <- c(9, 10, 10, 10, 10, 11)
+loket_2 <- c(1, 4, 10, 10, 16, 19)
+
+rbind(Loket_1 = c(Mean = mean(loket_1), Median = median(loket_1)),
+      Loket_2 = c(Mean = mean(loket_2), Median = median(loket_2)))
+```
+
+```{r}
+#| fig-height: 4.5
+par(mfrow = c(1, 2))
+stripchart(loket_1, method = "stack", pch = 16, cex = 1.6, col = "steelblue",
+           xlim = c(0, 20), xlab = "Waktu Tunggu (menit)", main = "Loket 1")
+abline(v = 10, col = "firebrick", lwd = 2)
+stripchart(loket_2, method = "stack", pch = 16, cex = 1.6, col = "darkorange",
+           xlim = c(0, 20), xlab = "Waktu Tunggu (menit)", main = "Loket 2")
+abline(v = 10, col = "firebrick", lwd = 2)
+par(mfrow = c(1, 1))
+```
+
+Kedua loket "rata-rata 10 menit", tetapi pengalaman pelanggannya sangat berbeda: Loket 1 **konsisten**, Loket 2 **tidak dapat diprediksi** (ada yang hanya menunggu 1 menit, ada yang 19 menit). Perbedaan inilah yang ditangkap oleh ukuran penyebaran.
+
+### Rentang (Range)
+
+$$\text{Rentang} = x_{\max} - x_{\min}$$
+
+```{r}
+range(nilai_ujian)          # R mengembalikan nilai min dan max, BUKAN selisihnya
+diff(range(nilai_ujian))    # rentang sebenarnya
+diff(range(loket_1))
+diff(range(loket_2))
+```
+
+Rentang mudah dihitung, tetapi hanya memakai **dua nilai** (terkecil dan terbesar) sehingga sangat dipengaruhi nilai ekstrem dan mengabaikan sebaran data di antaranya. Ukuran sebaran yang memakai **seluruh** data adalah varians dan simpangan baku.
+
+### Deviasi, Varians, dan Simpangan Baku
+
+Untuk mengukur "rata-rata jarak data dari meannya", langkah pertama yang terpikir adalah merata-ratakan deviasi $(x_i - \bar{x})$. Namun sudah kita lihat bahwa jumlah deviasi selalu nol (yang positif dan negatif saling meniadakan), sehingga tidak informatif. Ada dua jalan keluar: memakai nilai mutlak (menghasilkan *mean absolute deviation*) atau **mengkuadratkan** deviasi (menghasilkan **varians**). Cara kedua lebih umum karena sifat matematisnya yang baik.
+
+**Rumus varians:**
+
+$$\sigma^2 = \frac{\sum_{i=1}^{N} (x_i - \mu)^2}{N} \qquad\qquad s^2 = \frac{\sum_{i=1}^{n} (x_i - \bar{x})^2}{n - 1}$$
+
+**Simpangan baku** (standar deviasi): akar dari varians, sehingga satuannya kembali sama dengan data asli.
+
+$$\sigma = \sqrt{\sigma^2} \qquad\qquad s = \sqrt{s^2}$$
+
+#### Langkah Perhitungan Manual
+
+Contoh: skor kuis 8 mahasiswa (sampel).
+
+```{r}
+kuis <- c(6, 8, 7, 9, 5, 10, 7, 8)
+rata_kuis <- mean(kuis)
+
+tabel_deviasi <- data.frame(
+  x               = kuis,
+  Deviasi         = kuis - rata_kuis,
+  Deviasi_Kuadrat = (kuis - rata_kuis)^2
+)
+kable(tabel_deviasi, caption = paste0("Tabel Deviasi (mean = ", rata_kuis, ")"))
+```
+
+```{r}
+colSums(tabel_deviasi)   # jumlah deviasi = 0; jumlah kuadrat deviasi = 18
+```
+
+```{r}
+n_k <- length(kuis)
+JKD <- sum((kuis - mean(kuis))^2)            # jumlah kuadrat deviasi
+
+c(Varians_Sampel   = JKD / (n_k - 1),        # s^2 (dibagi n - 1)
+  Varians_Populasi = JKD / n_k,              # sigma^2 (dibagi N)
+  SD_Sampel        = sqrt(JKD / (n_k - 1)))
+
+var(kuis)   # fungsi bawaan R
+sd(kuis)    # fungsi bawaan R
+
+# Rumus komputasi (setara): [sum(x^2) - (sum(x))^2 / n] / (n - 1)
+(sum(kuis^2) - sum(kuis)^2 / n_k) / (n_k - 1)
+```
+
+Jadi $s^2 = \dfrac{18}{7} \approx 2{,}571$ dan $s = \sqrt{2{,}571} \approx 1{,}604$. Secara sederhana, skor kuis rata-rata menyimpang sekitar 1,6 poin dari meannya.
+
+<div style="width: 85%; margin: 0 auto;">
+
+**Awas:** fungsi `var()` dan `sd()` di R **selalu** membagi dengan $n-1$ (versi sampel). Jika data Anda adalah seluruh populasi, gunakan `mean((x - mean(x))^2)` untuk varians populasi.
+
+</div>
+
+#### Mengapa Dibagi $n - 1$?
+
+Deviasi dihitung terhadap $\bar{x}$ (bukan $\mu$ yang sebenarnya), dan $\bar{x}$ selalu "menyesuaikan diri" dengan sampel sehingga jumlah kuadrat deviasinya cenderung **terlalu kecil**. Pembagian dengan $n-1$ (disebut koreksi Bessel, terkait *derajat bebas*) mengoreksi bias tersebut. Simulasi berikut membuktikannya:
+
+```{r}
+set.seed(2026)
+populasi <- rnorm(10000, mean = 50, sd = 10)
+sigma2   <- mean((populasi - mean(populasi))^2)   # varians populasi sebenarnya
+
+# Ambil 5000 sampel berukuran n = 5, hitung varians dengan dua cara
+hasil <- replicate(5000, {
+  s <- sample(populasi, 5)
+  c(bagi_n = sum((s - mean(s))^2) / 5, bagi_n_min_1 = var(s))
+})
+
+kable(data.frame(
+  Metode = c("Varians populasi sebenarnya", "Rata-rata s^2 dibagi n", "Rata-rata s^2 dibagi n - 1"),
+  Nilai  = round(unname(c(sigma2, rowMeans(hasil))), 2)
+), caption = "Rata-rata dari 5000 varians sampel (n = 5)")
+```
+
+Pembagian dengan $n$ rata-rata menduga **terlalu rendah** (sekitar 80% dari nilai sebenarnya untuk $n = 5$), sedangkan pembagian dengan $n-1$ rata-rata tepat mendekati varians populasi sebenarnya. Inilah sebab $n-1$ dipakai untuk sampel.
+
+#### Menerapkan pada Data Nilai Ujian
+
+```{r}
+c(Varians = var(nilai_ujian), SD = sd(nilai_ujian))
+```
+
+Simpangan baku nilai ujian sekitar `r round(sd(nilai_ujian), 2)` poin: secara umum, nilai seorang mahasiswa menyimpang sekitar `r round(sd(nilai_ujian), 1)` poin dari rata-rata kelas (`r round(mean(nilai_ujian), 1)`).
+
+### Koefisien Variasi (CV)
+
+Simpangan baku bergantung pada satuan dan besar data, sehingga tidak adil untuk membandingkan variabilitas dua variabel yang skalanya berbeda. **Koefisien variasi** menyatakan simpangan baku relatif terhadap meannya:
+
+$$CV = \frac{s}{\bar{x}} \times 100\%$$
+
+Contoh: manakah yang lebih bervariasi, tinggi badan atau berat badan mahasiswa?
+
+```{r}
+tinggi <- c(mean = 165, sd = 8)   # cm
+berat  <- c(mean = 60,  sd = 9)   # kg
+
+cv <- function(rata, simpangan) simpangan / rata * 100
+
+c(CV_Tinggi_persen = cv(tinggi[["mean"]], tinggi[["sd"]]),
+  CV_Berat_persen  = cv(berat[["mean"]],  berat[["sd"]]))
+```
+
+Simpangan baku berat badan (9 kg) memang hanya sedikit lebih besar daripada tinggi badan (8 cm), tetapi dalam kaitannya dengan meannya, berat badan **jauh lebih bervariatif** (CV sekitar 15% vs 4,8%). Perbandingan SD langsung antara "cm" dan "kg" tidak bermakna; CV tidak memiliki satuan sehingga dapat dibandingkan.
+
+<div style="width: 85%; margin: 0 auto;">
+
+**Syarat CV:** hanya valid untuk data **skala rasio** (nol mutlak) dengan mean positif dan tidak mendekati nol. Jangan gunakan CV untuk suhu dalam °C (skala interval).
+
+</div>
+
+### Ringkasan Ukuran Penyebaran
+
+| Ukuran | Rumus | Satuan | Tahan Outlier? | Berpasangan dengan |
+|---|---|---|---|---|
+| Rentang | $x_{\max} - x_{\min}$ | Sama dengan data | Tidak | (Min, Maks) |
+| Varians | $\dfrac{\sum (x_i - \bar{x})^2}{n - 1}$ | Kuadrat satuan data | Tidak | Mean |
+| Simpangan baku | $\sqrt{s^2}$ | Sama dengan data | Tidak | Mean |
+| Koefisien variasi | $\dfrac{s}{\bar{x}} \times 100\%$ | Tanpa satuan (%) | Tidak | Membandingkan variabilitas relatif |
+
+**Kaidah pasangan:** mean dilaporkan bersama simpangan baku; median dilaporkan bersama rentang atau -- setelah Pertemuan 6 -- bersama IQR (kuartil).
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Interpretasi: Bentuk Distribusi dari Pusat dan Sebaran
+
+Posisi relatif mean, median, dan modus mengungkap **bentuk distribusi**:
+
+| Bentuk | Ciri | Hubungan Mean–Median–Modus |
+|---|---|---|
+| Simetris | Sisi kiri dan kanan saling mencerminkan | Mean $\approx$ Median $\approx$ Modus |
+| Menjulur kanan (*skewed right*) | Ekor panjang ke arah nilai besar | Mean $>$ Median $>$ Modus |
+| Menjulur kiri (*skewed left*) | Ekor panjang ke arah nilai kecil | Mean $<$ Median $<$ Modus |
+| Bimodal | Dua puncak berbeda (kemungkinan dua sub-populasi) | Satu ukuran pusat tidak cukup mewakili data |
+
+Mean paling "tertarik" ke arah ekor, sedangkan median lebih bertahan. Karena itu selisih mean dan median dapat dijadikan petunjuk kemencengan. Salah satu ukuran yang membakukannya adalah **koefisien kemencengan Pearson**:
+
+$$Sk = \frac{3(\bar{x} - \text{Median})}{s}$$
+
+Aturan praktis: $Sk > 0$ menjulur kanan, $Sk < 0$ menjulur kiri, dan $|Sk|$ yang kecil (kurang dari sekitar 0,5) dianggap hampir simetris.
+
+```{r}
+#| fig-height: 7
+set.seed(123)
+data_simetris     <- rnorm(1000, mean = 50, sd = 10)
+data_skewed_kanan <- rbeta(1000, 2, 8) * 100
+data_bimodal      <- c(rnorm(500, mean = 30, sd = 5), rnorm(500, mean = 70, sd = 5))
+data_skewed_kiri  <- 100 - rbeta(1000, 2, 8) * 100
+
+tampil_hist <- function(x, judul, warna, dengan_legenda = FALSE) {
+  hist(x, breaks = 20, col = warna, border = "white", main = judul,
+       xlab = "Nilai", ylab = "Frekuensi")
+  abline(v = mean(x),   col = "red",  lwd = 2)
+  abline(v = median(x), col = "blue", lwd = 2, lty = 2)
+  if (dengan_legenda) {
+    legend("topright", legend = c("Mean", "Median"), col = c("red", "blue"),
+           lwd = 2, lty = c(1, 2), bty = "n", cex = 0.8)
+  }
+}
+
+par(mfrow = c(2, 2))
+tampil_hist(data_simetris,     "Simetris",       "steelblue")
+tampil_hist(data_skewed_kanan, "Menjulur Kanan", "darkorange", dengan_legenda = TRUE)
+tampil_hist(data_skewed_kiri,  "Menjulur Kiri",  "purple3")
+tampil_hist(data_bimodal,      "Bimodal",        "seagreen")
+par(mfrow = c(1, 1))
+```
+
+```{r}
+ringkas_bentuk <- function(x) {
+  c(Mean = mean(x), Median = median(x), SD = sd(x),
+    Kemencengan_Pearson = 3 * (mean(x) - median(x)) / sd(x))
+}
+
+kable(round(t(sapply(list(Simetris = data_simetris, Menjulur_Kanan = data_skewed_kanan,
+                          Menjulur_Kiri = data_skewed_kiri, Bimodal = data_bimodal),
+                     ringkas_bentuk)), 2),
+      caption = "Ukuran Pusat dan Kemencengan pada Empat Bentuk Distribusi")
+```
+
+**Interpretasi:**
+
+- **Simetris:** mean dan median hampir sama; $Sk \approx 0$.
+- **Menjulur kanan:** mean lebih besar dari median (ekor panjang di sisi nilai besar menarik mean); $Sk > 0$.
+- **Menjulur kiri:** mean lebih kecil dari median; $Sk < 0$.
+- **Bimodal:** mean dan median jatuh **di antara dua puncak** -- di wilayah yang hampir tidak ada datanya. Pada kasus ini, melaporkan "rata-rata" saja menyesatkan; sebaiknya pisahkan data menjadi dua kelompok atau laporkan kedua puncaknya.
+
+**Latihan reflektif:** Bagaimana bentuk distribusi nilai ujian Statistika (`nilai_ujian`)? Jawab dengan membandingkan mean dan median-nya:
+
+```{r}
+c(Mean = mean(nilai_ujian), Median = median(nilai_ujian),
+  Kemencengan_Pearson = 3 * (mean(nilai_ujian) - median(nilai_ujian)) / sd(nilai_ujian))
+```
+
+**Jawaban:** mean (`r round(mean(nilai_ujian), 2)`) dan median (`r median(nilai_ujian)`) hampir sama dan $Sk$ mendekati nol, sehingga distribusinya **relatif simetris** -- konsisten dengan bentuk histogram pada awal praktikum.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Interpretasi: Pengaruh Nilai Ekstrem
+
+Kita sudah melihat pada data gaji bahwa satu nilai ekstrem dapat menarik mean jauh dari "kebanyakan" data. Bagaimana dengan ukuran penyebaran?
+
+### Ukuran Mana yang Tahan Nilai Ekstrem?
+
+Bandingkan seluruh ukuran pada data gaji dengan dan tanpa outlier:
+
+```{r}
+ukuran <- function(x) {
+  c(Mean = mean(x), Median = median(x), SD = sd(x),
+    Rentang = diff(range(x)), CV_persen = sd(x) / mean(x) * 100)
+}
+
+gaji_tanpa_outlier <- gaji[gaji != max(gaji)]
+
+kable(round(rbind("Dengan outlier" = ukuran(gaji),
+                  "Tanpa outlier"  = ukuran(gaji_tanpa_outlier)), 2),
+      caption = "Pengaruh Satu Nilai Ekstrem terhadap Ukuran Pusat dan Sebaran")
+```
+
+Satu data ekstrem mengubah mean, SD, rentang, dan CV secara dramatis, sedangkan median hampir tidak berubah. Ringkasnya:
+
+| | Tidak tahan outlier | Tahan outlier (robust) |
+|---|---|---|
+| **Ukuran pusat** | Mean | Median, trimmed mean |
+| **Ukuran sebaran** | Rentang, varians, simpangan baku, CV | IQR (Pertemuan 6) |
+
+<div style="width: 85%; margin: 0 auto;">
+
+**Cara mendeteksi outlier secara formal** (pagar IQR, boxplot, *modified z-score*) dibahas pada Pertemuan 6. Satu prinsip yang perlu dipegang sejak sekarang -- **jangan menghapus nilai ekstrem secara otomatis**. Selidiki dahulu penyebabnya: (1) kesalahan input/pengukuran -> perbaiki atau hapus; (2) nilai ekstrem yang sah (seperti gaji pendiri perusahaan) -> pertahankan, dan gunakan ukuran yang robust; (3) berasal dari populasi yang berbeda -> analisis terpisah. Selalu laporkan keputusan Anda.
+
+</div>
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Interpretasi: Menafsirkan Simpangan Baku
+
+### Z-Score
+
+Z-score menyatakan berapa simpangan baku sebuah nilai berada di atas (+) atau di bawah (-) mean:
+
+$$z = \frac{x - \bar{x}}{s}$$
+
+Karena tanpa satuan, z-score memungkinkan membandingkan nilai dari skala yang berbeda.
+
+```{r}
+z_ujian <- (nilai_ujian - mean(nilai_ujian)) / sd(nilai_ujian)   # setara scale(nilai_ujian)
+
+round(c(Nilai_63 = z_ujian[nilai_ujian == 63],
+        Nilai_80 = z_ujian[nilai_ujian == 80],
+        Nilai_95 = z_ujian[nilai_ujian == 95]), 2)
+
+round(c(Mean_z = mean(z_ujian), SD_z = sd(z_ujian)), 10)   # z-score selalu bermean 0 dan SD 1
+```
+
+**Contoh perbandingan:** Andi mendapat 85 pada Statistika (mean kelas 80, SD 5) dan 78 pada Kalkulus (mean kelas 65, SD 10). Di mata pelajaran mana prestasi relatifnya lebih baik?
+
+```{r}
+z_stat <- (85 - 80) / 5
+z_kalk <- (78 - 65) / 10
+c(z_Statistika = z_stat, z_Kalkulus = z_kalk)
+```
+
+Meskipun nilai mentah Statistika lebih tinggi, prestasi relatif Andi **lebih baik di Kalkulus** (1,3 SD di atas rata-rata kelas, dibanding 1,0 SD pada Statistika).
+
+Nilai dengan $|z|$ yang sangat besar berada jauh dari pusat data. Kapan nilai seperti itu layak disebut outlier -- dan mengapa aturan "$|z| > 3$" punya kelemahan -- dibahas pada Pertemuan 6.
+
+### Aturan Empiris (68-95-99.7)
+
+Untuk data yang berbentuk lonceng dan simetris (mendekati distribusi normal):
+
+| Rentang | Proporsi data |
+|---|---|
+| $\bar{x} \pm 1s$ | sekitar 68% |
+| $\bar{x} \pm 2s$ | sekitar 95% |
+| $\bar{x} \pm 3s$ | sekitar 99,7% |
+
+### Teorema Chebyshev
+
+Untuk **sembarang** bentuk distribusi (termasuk yang menceng atau bimodal), minimal proporsi data dalam $k$ simpangan baku dari mean ($k > 1$) adalah:
+
+$$\text{Proporsi} \geq 1 - \frac{1}{k^2}$$
+
+Chebyshev berlaku umum, tetapi batasnya lebih longgar dibanding aturan empiris.
+
+```{r}
+proporsi_dalam <- function(x, k) mean(abs(x - mean(x)) <= k * sd(x))
+
+k <- c(1, 2, 3)
+kable(data.frame(
+  k                     = k,
+  Data_Nilai_Ujian_pct  = round(sapply(k, function(kk) proporsi_dalam(nilai_ujian, kk)) * 100, 1),
+  Aturan_Empiris_pct    = c(68, 95, 99.7),
+  Chebyshev_Minimal_pct = round((1 - 1 / k^2) * 100, 1)
+), caption = "Persentase Data dalam k Simpangan Baku dari Mean")
+```
+
+Data nilai ujian (bentuk relatif simetris, tetapi $n$ hanya 30) cukup mendekati aturan empiris dan selalu memenuhi batas minimal Chebyshev. Untuk $k = 1$, Chebyshev tidak memberikan informasi ($1 - 1/1^2 = 0\%$). Aturan empiris **tidak boleh** dipakai pada data yang sangat menceng atau bimodal; gunakan Chebyshev.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Statistik dari Data Terkelompok
+
+Pada laporan atau publikasi, data sering hanya tersedia dalam bentuk tabel distribusi frekuensi, sehingga nilai aslinya tidak diketahui. Ukuran pemusatan dan penyebaran tetap dapat **diaproksimasi** dengan menganggap setiap data dalam suatu kelas bernilai sama dengan **titik tengah kelas** ($m$).
+
+### Rumus Data Terkelompok
+
+Dengan $f$ = frekuensi kelas, $m$ = titik tengah, $n = \sum f$, $w$ = lebar kelas:
+
+| Ukuran | Rumus |
+|---|---|
+| Mean | $\bar{x} = \dfrac{\sum f \cdot m}{n}$ |
+| Median | $\text{Median} = L + \left(\dfrac{\frac{n}{2} - F}{f_{med}}\right) w$ |
+| Modus | $\text{Modus} = L + \left(\dfrac{d_1}{d_1 + d_2}\right) w$ |
+| Varians | $s^2 = \dfrac{\sum f \cdot (m - \bar{x})^2}{n - 1}$ |
+| Simpangan baku | $s = \sqrt{s^2}$ |
+
+**Keterangan:**
+
+- **Median:** $L$ = batas nyata bawah kelas median (kelas pertama yang frekuensi kumulatifnya mencapai $\frac{n}{2}$); $F$ = frekuensi kumulatif **sebelum** kelas median; $f_{med}$ = frekuensi kelas median.
+- **Modus:** $L$ = batas nyata bawah kelas modus (kelas dengan frekuensi terbesar); $d_1$ = selisih frekuensi kelas modus dengan kelas sebelumnya; $d_2$ = selisih dengan kelas sesudahnya.
+
+### Studi Kasus: Pendapatan Mingguan 100 Karyawan
+
+Data: pendapatan mingguan (USD) dari 100 karyawan, dikelompokkan ke dalam 6 kelas (data yang sama dengan Pertemuan 4).
+
+```{r}
+kelas_p <- c("801-1000", "1001-1200", "1201-1400", "1401-1600", "1601-1800", "1801-2000")
+batas_nyata_p <- seq(800.5, by = 200, length.out = 7)   # 800.5, 1000.5, ..., 2000.5
+f_p <- c(9, 22, 39, 15, 9, 6)
+
+L_p <- head(batas_nyata_p, -1)   # batas nyata bawah
+U_p <- tail(batas_nyata_p, -1)   # batas nyata atas
+m_p <- (L_p + U_p) / 2           # titik tengah
+n_p <- sum(f_p)
+```
+
+#### Langkah 1: Mean
+
+```{r}
+tabel_p <- data.frame(
+  Kelas       = kelas_p,
+  f           = f_p,
+  m           = m_p,
+  f_kali_m    = f_p * m_p,
+  Kumulatif_F = cumsum(f_p)
+)
+kable(tabel_p, caption = "Tabel Bantu: Mean dan Median")
+```
+
+```{r}
+mean_p <- sum(f_p * m_p) / n_p
+mean_p
+```
+
+Jadi $\bar{x} = \dfrac{132250}{100} = 1322{,}5$ USD.
+
+#### Langkah 2: Median
+
+```{r}
+n_p / 2                                      # posisi median = 50
+i_med <- which(cumsum(f_p) >= n_p / 2)[1]    # indeks kelas median
+kelas_p[i_med]                               # kelas median
+
+F_sblm <- if (i_med == 1) 0 else cumsum(f_p)[i_med - 1]
+median_p <- L_p[i_med] + ((n_p / 2 - F_sblm) / f_p[i_med]) * 200
+median_p
+```
+
+Kelas median adalah **1201–1400** karena frekuensi kumulatifnya (70) pertama kali melampaui 50. Dengan $L = 1200{,}5$, $F = 31$, $f_{med} = 39$, dan $w = 200$:
+
+$$\text{Median} = 1200{,}5 + \left(\frac{50 - 31}{39}\right) 200 \approx 1297{,}94$$
+
+#### Langkah 3: Modus
+
+```{r}
+i_mod <- which.max(f_p)    # kelas modus
+d1 <- f_p[i_mod] - (if (i_mod == 1) 0 else f_p[i_mod - 1])
+d2 <- f_p[i_mod] - (if (i_mod == length(f_p)) 0 else f_p[i_mod + 1])
+c(d1 = d1, d2 = d2)
+
+modus_p <- L_p[i_mod] + (d1 / (d1 + d2)) * 200
+modus_p
+```
+
+$$\text{Modus} = 1200{,}5 + \left(\frac{17}{17 + 24}\right) 200 \approx 1283{,}43$$
+
+#### Langkah 4: Varians dan Simpangan Baku
+
+```{r}
+tabel_var <- data.frame(
+  m                 = m_p,
+  f                 = f_p,
+  Deviasi           = m_p - mean_p,
+  f_Deviasi_Kuadrat = f_p * (m_p - mean_p)^2
+)
+kable(round(tabel_var, 1), caption = "Tabel Bantu: Varians")
+```
+
+```{r}
+var_p <- sum(f_p * (m_p - mean_p)^2) / (n_p - 1)
+c(Varians = var_p, SD = sqrt(var_p), CV_persen = sqrt(var_p) / mean_p * 100)
+```
+
+Data ini diperlakukan sebagai sampel sehingga pembaginya $n - 1 = 99$.
+
+#### Fungsi Bantu Gabungan
+
+Karena langkah-langkah di atas akan dipakai berulang, kita bungkus dalam satu fungsi yang menerima batas nyata dan frekuensi:
+
+```{r}
+statistik_terkelompok <- function(batas_nyata, f) {
+  k <- length(f); n <- sum(f)
+  L <- head(batas_nyata, -1); U <- tail(batas_nyata, -1)
+  w <- U - L; m <- (L + U) / 2
+
+  rata  <- sum(f * m) / n
+
+  Fk    <- cumsum(f)
+  i_med <- which(Fk >= n / 2)[1]
+  F_sb  <- if (i_med == 1) 0 else Fk[i_med - 1]
+  med   <- L[i_med] + ((n / 2 - F_sb) / f[i_med]) * w[i_med]
+
+  i_mod <- which.max(f)
+  d1    <- f[i_mod] - (if (i_mod == 1) 0 else f[i_mod - 1])
+  d2    <- f[i_mod] - (if (i_mod == k) 0 else f[i_mod + 1])
+  mod   <- L[i_mod] + (d1 / (d1 + d2)) * w[i_mod]
+
+  v <- sum(f * (m - rata)^2) / (n - 1)
+  c(n = n, Mean = rata, Median = med, Modus = mod,
+    Varians = v, SD = sqrt(v), CV_persen = sqrt(v) / rata * 100)
+}
+
+round(statistik_terkelompok(batas_nyata_p, f_p), 2)
+```
+
+#### Visualisasi dan Interpretasi
+
+```{r}
+hasil_p <- statistik_terkelompok(batas_nyata_p, f_p)
+
+plot(NULL, xlim = range(batas_nyata_p), ylim = c(0, 45),
+     xlab = "Pendapatan Mingguan (USD)", ylab = "Frekuensi",
+     main = "Histogram Pendapatan Mingguan dengan Ukuran Pusat")
+rect(L_p, 0, U_p, f_p, col = "#9ecae1", border = "white")
+abline(v = hasil_p["Mean"],   col = "firebrick",  lwd = 2)
+abline(v = hasil_p["Median"], col = "darkgreen",  lwd = 2, lty = 2)
+abline(v = hasil_p["Modus"],  col = "darkorange", lwd = 2, lty = 3)
+legend("topright", bty = "n", lwd = 2, lty = 1:3,
+       col = c("firebrick", "darkgreen", "darkorange"),
+       legend = c("Mean", "Median", "Modus"))
+```
+
+**Interpretasi:** Mean (`r round(hasil_p[["Mean"]], 1)`) > Median (`r round(hasil_p[["Median"]], 1)`) > Modus (`r round(hasil_p[["Modus"]], 1)`), pola khas distribusi yang **menjulur ke kanan** (sedikit karyawan berpendapatan tinggi menarik mean ke atas). Koefisien kemencengan Pearson-nya `r round(3 * (hasil_p[["Mean"]] - hasil_p[["Median"]]) / hasil_p[["SD"]], 2)` (positif, agak menceng kanan). Simpangan baku sekitar `r round(hasil_p[["SD"]])` USD dengan CV `r round(hasil_p[["CV_persen"]], 1)`%. Pendapatan "tipikal" sebaiknya dilaporkan dengan median (sekitar `r round(hasil_p[["Median"]])` USD).
+
+### Seberapa Akurat Aproksimasi Data Terkelompok?
+
+Kita punya data mentah nilai ujian sekaligus tabel kelompoknya, sehingga dapat membandingkan hasil **eksak** dan **aproksimasi**:
+
+```{r}
+eksak <- c(Mean = mean(nilai_ujian), Median = median(nilai_ujian), SD = sd(nilai_ujian))
+aprox <- statistik_terkelompok(batas_nyata_u, f_ujian)[c("Mean", "Median", "SD")]
+
+kable(round(rbind("Data mentah (eksak)"             = eksak,
+                  "Data terkelompok (aproksimasi)"  = aprox), 2),
+      caption = "Perbandingan Statistik Eksak vs Aproksimasi Data Terkelompok")
+```
+
+Selisihnya kecil, tetapi tidak nol, karena pengelompokan membuang informasi nilai asli tiap data. **Selalu gunakan data mentah jika tersedia**; gunakan rumus data terkelompok hanya jika data mentah tidak ada.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Etika Pelaporan: Ketika Rata-rata Menyesatkan
+
+Sama seperti grafik, ukuran statistik dapat menyesatkan -- disengaja atau tidak -- bila dipilih atau dilaporkan secara keliru.
+
+### Contoh 1: Rata-rata pada Data Menceng
+
+*"Rata-rata gaji di perusahaan kami mencapai 10,8 juta rupiah per bulan!"* Kalimat ini benar secara perhitungan untuk data gaji, tetapi menyesatkan: enam dari tujuh karyawan bergaji di bawah 6 juta. Untuk data menceng atau beroutlier, laporkan **median**.
+
+```{r}
+c(Mean = mean(gaji), Median = median(gaji))
+sum(gaji < mean(gaji))   # banyaknya karyawan bergaji di bawah "rata-rata"
+```
+
+### Contoh 2: Rata-rata dari Rata-rata
+
+Kelas A (30 mahasiswa) memiliki rata-rata 80, dan Kelas B (10 mahasiswa) memiliki rata-rata 70. Berapa rata-rata gabungan?
+
+```{r}
+rata <- c(A = 80, B = 70)
+ukuran_kelas <- c(A = 30, B = 10)
+
+mean(rata)                              # SALAH: mengabaikan ukuran kelas
+weighted.mean(rata, w = ukuran_kelas)   # BENAR: rata-rata tertimbang
+```
+
+Rata-rata sederhana (75) salah karena memperlakukan kedua kelas sama penting; rata-rata gabungan yang benar adalah **77,5** karena Kelas A memiliki lebih banyak mahasiswa.
+
+### Contoh 3: Rata-rata pada Data Bimodal
+
+Pada data `data_bimodal` (bagian Bentuk Distribusi), mean sekitar 50, padahal hampir tidak ada data di sekitar nilai tersebut. Mean di sini "merata-ratakan" dua kelompok berbeda dan tidak mewakili siapa pun.
+
+### Contoh 4: Pusat Tanpa Sebaran
+
+| Pelaporan sederhana | Pelaporan lebih baik |
+|---|---|
+| "Rata-rata nilai ujian adalah 80." | "Rata-rata nilai ujian `r round(mean(nilai_ujian), 1)` (SD `r round(sd(nilai_ujian), 1)`; median `r median(nilai_ujian)`; rentang `r min(nilai_ujian)`–`r max(nilai_ujian)`; n = `r length(nilai_ujian)`)." |
+
+Pelaporan yang lebih baik memungkinkan pembaca menilai apakah "rata-rata 80" mewakili kelas secara wajar atau tidak.
+
+### Daftar Periksa (Checklist) Pelaporan Statistik yang Jujur
+
+- [ ] Ukuran pusat selalu disertai ukuran sebaran (mean dengan SD; median dengan rentang atau IQR)
+- [ ] Ukuran sesuai dengan skala pengukuran (tidak ada "rata-rata" untuk data nominal)
+- [ ] Data menceng atau beroutlier dilaporkan dengan median
+- [ ] Ukuran sampel ($n$) dicantumkan
+- [ ] Rata-rata gabungan memakai bobot yang tepat
+- [ ] Keputusan menghapus/mempertahankan outlier dijelaskan
+- [ ] Perbandingan variabilitas antarvariabel berbeda skala memakai koefisien variasi
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Studi Kasus Komprehensif: Membandingkan Dua Kelas
+
+**Konteks:** Dosen Statistika membandingkan nilai ujian dua kelas paralel, masing-masing 30 mahasiswa. Kelas A adalah data `nilai_ujian` yang sudah kita pakai. Kelas B dicatat berikut ini.
+
+```{r}
+kelas_A <- nilai_ujian
+kelas_B <- c(72, 96, 56, 85, 100, 64, 91, 54, 78, 93,
+             61, 87, 99, 68, 81, 56, 94, 70, 89, 62,
+             97, 74, 83, 65, 92, 76, 98, 80, 84, 95)
+```
+
+### Langkah 1: Ringkasan Statistik Lengkap
+
+```{r}
+ringkasan <- function(x) {
+  c(n = length(x), Mean = mean(x), Median = median(x),
+    Modus = hitung_modus(x)[1],
+    Min = min(x), Maks = max(x), Rentang = diff(range(x)),
+    Varians = var(x), SD = sd(x), CV_persen = sd(x) / mean(x) * 100)
+}
+
+kable(round(sapply(list(Kelas_A = kelas_A, Kelas_B = kelas_B), ringkasan), 2),
+      caption = "Ringkasan Statistik Deskriptif Kelas A dan Kelas B")
+```
+
+### Langkah 2: Visualisasi Berdampingan
+
+```{r}
+#| fig-height: 8
+layout(matrix(c(1, 2, 3, 3), nrow = 2, byrow = TRUE), heights = c(3, 2.6))
+
+hist(kelas_A, breaks = seq(50, 100, by = 10), col = "steelblue", border = "white",
+     ylim = c(0, 12), main = "Kelas A", xlab = "Nilai", ylab = "Frekuensi")
+abline(v = mean(kelas_A),   col = "red",  lwd = 2)
+abline(v = median(kelas_A), col = "blue", lwd = 2, lty = 2)
+
+hist(kelas_B, breaks = seq(50, 100, by = 10), col = "darkorange", border = "white",
+     ylim = c(0, 12), main = "Kelas B", xlab = "Nilai", ylab = "Frekuensi")
+abline(v = mean(kelas_B),   col = "red",  lwd = 2)
+abline(v = median(kelas_B), col = "blue", lwd = 2, lty = 2)
+legend("topleft", legend = c("Mean", "Median"), col = c("red", "blue"),
+       lwd = 2, lty = c(1, 2), bty = "n", cex = 0.8)
+
+stripchart(list("Kelas A" = kelas_A, "Kelas B" = kelas_B), method = "jitter", pch = 16,
+           col = c("steelblue", "darkorange"), las = 1, xlim = c(50, 100), ylim = c(0.6, 2.6),
+           xlab = "Nilai", main = "Diagram Titik Perbandingan (garis = mean +- 1 SD)")
+for (i in 1:2) {
+  kls <- list(kelas_A, kelas_B)[[i]]
+  segments(mean(kls) - sd(kls), i + 0.3, mean(kls) + sd(kls), i + 0.3, lwd = 3)
+  points(mean(kls), i + 0.3, pch = 18, cex = 2, col = "firebrick")
+}
+layout(1)
+```
+
+### Langkah 3: Posisi Relatif Seorang Mahasiswa
+
+Seorang mahasiswa mendapat nilai **90**. Seberapa baik posisinya jika ia berada di Kelas A dibandingkan Kelas B?
+
+```{r}
+z_A <- (90 - mean(kelas_A)) / sd(kelas_A)
+z_B <- (90 - mean(kelas_B)) / sd(kelas_B)
+
+kable(data.frame(Kelas   = c("A", "B"),
+                 Mean    = round(c(mean(kelas_A), mean(kelas_B)), 2),
+                 SD      = round(c(sd(kelas_A), sd(kelas_B)), 2),
+                 z_score = round(c(z_A, z_B), 2)),
+      caption = "Posisi Relatif Nilai 90")
+```
+
+### Pertanyaan Diskusi dan Jawaban
+
+**1. Kelas mana yang berprestasi lebih baik berdasarkan ukuran pusat?**
+
+Mean kedua kelas hampir identik (`r round(mean(kelas_A), 1)` vs `r round(mean(kelas_B), 1)`), sehingga berdasarkan mean saja keduanya "sama". Namun median Kelas B (`r median(kelas_B)`) lebih tinggi daripada mean-nya (`r round(mean(kelas_B), 1)`), yang mengindikasikan distribusi **menjulur kiri**: mayoritas mahasiswa Kelas B bernilai relatif tinggi, tetapi ditarik turun oleh segelintir nilai rendah (54–61). Kelas A hampir simetris (mean $\approx$ median).
+
+**2. Kelas mana yang lebih homogen?**
+
+**Kelas A.** Rentangnya lebih sempit (`r diff(range(kelas_A))` vs `r diff(range(kelas_B))`), simpangan bakunya lebih kecil (`r round(sd(kelas_A), 1)` vs `r round(sd(kelas_B), 1)`), dan CV-nya lebih rendah (`r round(sd(kelas_A) / mean(kelas_A) * 100, 1)`% vs `r round(sd(kelas_B) / mean(kelas_B) * 100, 1)`%). Kelas B jauh lebih beragam: ada mahasiswa yang sangat unggul sekaligus yang tertinggal.
+
+**3. Mengapa nilai 90 tampak "lebih istimewa" di Kelas A?**
+
+Karena sebaran Kelas A lebih kecil, nilai 90 berada `r round(z_A, 2)` SD di atas mean Kelas A, tetapi hanya `r round(z_B, 2)` SD di atas mean Kelas B. Nilai yang sama menempati posisi relatif berbeda tergantung sebaran kelasnya.
+
+**4. Apa rekomendasi bagi dosen?**
+
+Kelas A cukup ditangani dengan pengajaran standar. Kelas B membutuhkan pendekatan berlapis: pendampingan tambahan bagi kelompok bernilai rendah, dan materi pengayaan bagi kelompok bernilai tinggi. Kesimpulan ini tidak akan terlihat bila hanya membandingkan mean.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Latihan Mandiri
+
+### Latihan Utama (Exercise 2.14 Lanjutan): Kepemilikan Kartu Kredit
+
+**Konteks:** Sebuah sampel acak dari 80 orang dewasa ditanya mengenai jumlah kartu kredit yang mereka miliki. Data sudah disajikan dalam kelas (data terkelompok):
+
+```{r}
+kelas_kk     <- c("0 to 3", "4 to 7", "8 to 11", "12 or more")
+frekuensi_kk <- c(18, 26, 22, 14)
+
+# Kelas terbuka "12 or more" diasumsikan mengikuti lebar kelas yang sama
+# dengan kelas sebelumnya (w = 4), sehingga batas atasnya = 15.
+batas_bawah_kk <- c(0, 4, 8, 12)
+batas_atas_kk  <- c(3, 7, 11, 15)
+batas_nyata_kk <- c(-0.5, 3.5, 7.5, 11.5, 15.5)
+```
+
+#### Tugas 1: Klasifikasi variabel dan pemilihan ukuran
+
+Variabel yang diamati adalah **jumlah kartu kredit** yang dimiliki. Karena berupa hasil hitungan (bilangan bulat non-negatif) dengan nol mutlak, variabelnya **kuantitatif diskrit berskala rasio**. Dengan skala rasio, semua ukuran pemusatan dan penyebaran (termasuk koefisien variasi) valid untuk dihitung.
+
+#### Tugas 2: Hitung titik tengah kelas ($m$) untuk interval "4 to 7"
+
+```{r}
+m_4_7 <- (4 + 7) / 2
+m_4_7
+```
+
+Titik tengah kelas "4 to 7" adalah **5.5**, diperoleh dari $\dfrac{4 + 7}{2}$ (sama dengan menggunakan batas nyata: $\dfrac{3{,}5 + 7{,}5}{2}$).
+
+#### Tugas 3: Hitung mean, median, dan modus
+
+```{r}
+hasil_kk <- statistik_terkelompok(batas_nyata_kk, frekuensi_kk)
+round(hasil_kk[c("n", "Mean", "Median", "Modus")], 2)
+```
+
+Kelas median dan kelas modus keduanya adalah **"4 to 7"** (frekuensi terbesar = 26; frekuensi kumulatif melampaui 40 di kelas ini).
+
+#### Tugas 4: Hitung varians, simpangan baku, dan koefisien variasi
+
+```{r}
+round(hasil_kk[c("Varians", "SD", "CV_persen")], 2)
+```
+
+#### Tugas 5: Interpretasikan bentuk distribusi dan variabilitasnya
+
+```{r}
+sk_kk <- 3 * (hasil_kk["Mean"] - hasil_kk["Median"]) / hasil_kk["SD"]
+round(sk_kk, 2)
+```
+
+```{r}
+plot(NULL, xlim = c(-0.5, 15.5), ylim = c(0, 30),
+     xlab = "Jumlah Kartu Kredit", ylab = "Frekuensi (f)",
+     main = "Distribusi Kepemilikan Kartu Kredit (n = 80)")
+rect(head(batas_nyata_kk, -1), 0, tail(batas_nyata_kk, -1), frekuensi_kk,
+     col = "#6C5B7B", border = "white")
+abline(v = hasil_kk["Mean"],   col = "firebrick", lwd = 2)
+abline(v = hasil_kk["Median"], col = "darkgreen", lwd = 2, lty = 2)
+legend("topright", legend = c("Mean", "Median"), col = c("firebrick", "darkgreen"),
+       lwd = 2, lty = c(1, 2), bty = "n")
+```
+
+**Jawaban:** Mean (`r round(hasil_kk[["Mean"]], 1)`) sedikit di atas median (`r round(hasil_kk[["Median"]], 2)`) dan modus (`r round(hasil_kk[["Modus"]], 2)`), dengan $Sk =$ `r round(sk_kk[[1]], 2)`, sehingga distribusinya **hampir simetris dengan sedikit kemencengan ke kanan**. Rata-rata orang dalam sampel memiliki sekitar 7 kartu kredit. CV sebesar `r round(hasil_kk[["CV_persen"]], 1)`% menunjukkan variabilitas yang **tinggi** (simpangan baku mencapai lebih dari separuh mean-nya) -- kepemilikan kartu kredit sangat beragam antarindividu.
+
+#### Tugas 6 (Tantangan): Sensitivitas terhadap Kelas Terbuka
+
+Bagaimana jika kelas "12 or more" ternyata mencakup orang dengan hingga 19 kartu (batas atas 19, bukan 15)?
+
+```{r}
+batas_nyata_kk_alt <- c(-0.5, 3.5, 7.5, 11.5, 19.5)   # batas atas kelas terakhir diperlebar
+
+sensitivitas <- rbind(
+  "Asumsi batas atas 15" = statistik_terkelompok(batas_nyata_kk, frekuensi_kk),
+  "Asumsi batas atas 19" = statistik_terkelompok(batas_nyata_kk_alt, frekuensi_kk)
+)
+kable(round(sensitivitas[, c("Mean", "Median", "Modus", "SD")], 2),
+      caption = "Dampak Asumsi Kelas Terbuka")
+```
+
+**Jawaban:** Median dan modus **tidak berubah** (keduanya berada di kelas "4 to 7"), tetapi mean dan simpangan baku **meningkat** karena titik tengah kelas terakhir bergeser. Ini contoh nyata bahwa median dan modus lebih tahan terhadap ketidakjelasan kelas terbuka dibanding mean. Karena itu, asumsi batas kelas terbuka harus selalu dinyatakan secara eksplisit.
+
+### Latihan Tambahan (Self-Check)
+
+Kerjakan soal-soal berikut secara mandiri sebelum melihat kunci jawaban pada komentar kode.
+
+**Soal A.** Data waktu tempuh (menit) 12 karyawan menuju kantor: 15, 22, 18, 30, 25, 20, 35, 28, 19, 24, 27, 33. Hitung mean, median, modus, rentang, varians, simpangan baku, dan koefisien variasi. Waktu tempuh berapa yang memiliki z-score terbesar?
+
+```{r}
+# Kerjakan di sini:
+waktu <- c(15, 22, 18, 30, 25, 20, 35, 28, 19, 24, 27, 33)
+# ...
+
+# Kunci jawaban (jalankan setelah mencoba sendiri):
+# Mean = 24.67; Median = 24.5; Modus = tidak ada (semua nilai unik)
+# Rentang = 35 - 15 = 20
+# Varians = 38.24; SD = 6.18; CV = 6.18 / 24.67 x 100% = 25.07%
+# z-score terbesar (mutlak): 35 menit -> (35 - 24.67) / 6.18 = 1.67
+# (15 menit: z = -1.56). Semua data berada dalam 2 SD dari mean.
+```
+
+**Soal B.** Dua reksa dana memiliki statistik imbal hasil tahunan berikut: Reksa Dana X (mean 12%, SD 3%) dan Reksa Dana Y (mean 25%, SD 5%). Manakah yang risikonya (variabilitas) relatif lebih kecil?
+
+```{r}
+# Kerjakan di sini:
+# cv_x <- ...
+# cv_y <- ...
+
+# Kunci jawaban:
+# CV_X = 3 / 12 x 100% = 25%
+# CV_Y = 5 / 25 x 100% = 20%
+# Reksa Dana Y lebih stabil secara relatif (CV lebih kecil), meskipun SD-nya (5%) lebih besar.
+```
+
+**Soal C.** Harga (miliar rupiah) 8 rumah di suatu perumahan: 0,85; 0,90; 0,95; 0,90; 1,05; 1,10; 0,98; 9,5. (a) Hitung mean, median, dan simpangan baku. (b) Hitung ulang ketiganya tanpa rumah termahal. (c) Ukuran pusat mana yang sebaiknya dilaporkan? Mengapa?
+
+```{r}
+# Kerjakan di sini:
+harga <- c(0.85, 0.90, 0.95, 0.90, 1.05, 1.10, 0.98, 9.5)
+# ...
+
+# Kunci jawaban:
+# (a) Mean = 2.03; Median = 0.965; SD = 3.02
+# (b) Tanpa 9.5: Mean = 0.961; Median = 0.95; SD = 0.089
+#     -> mean turun lebih dari separuh dan SD menyusut drastis; median nyaris tidak berubah.
+# (c) Laporkan MEDIAN (0.965 miliar), karena satu rumah mewah (9.5 miliar)
+#     menggeser mean ke 2.03 miliar -- dua kali lipat harga hampir semua rumah lainnya.
+#     Modus = 0.90 (muncul dua kali).
+```
+
+**Soal D.** Rina mendapat nilai 72 pada ujian yang mean-nya 65 dengan SD 5. Dewi mendapat nilai 80 pada ujian lain yang mean-nya 70 dengan SD 10. Siapa yang prestasi relatifnya lebih baik?
+
+```{r}
+# Kerjakan di sini:
+# z_rina <- ...
+# z_dewi <- ...
+
+# Kunci jawaban:
+# z_Rina = (72 - 65) / 5  = 1.4
+# z_Dewi = (80 - 70) / 10 = 1.0
+# Rina lebih unggul secara relatif (1.4 SD di atas mean vs 1.0 SD), walaupun nilai mentah Dewi lebih tinggi.
+```
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Kesalahan Umum dalam Ukuran Pemusatan dan Penyebaran
+
+Ringkasan kesalahan yang paling sering dijumpai, berdasarkan contoh-contoh pada praktikum ini:
+
+1. **Memakai mean untuk data menceng atau beroutlier** tanpa memeriksa median -- hasilnya tidak mewakili "kebanyakan" data (contoh: gaji, harga rumah).
+2. **Menghitung mean untuk data nominal atau ordinal** -- misalnya "rata-rata jenis kelamin" atau merata-ratakan peringkat kepuasan seolah jaraknya sama.
+3. **Lupa bahwa `var()` dan `sd()` di R memakai pembagi $n-1$** -- untuk data populasi, hasilnya sedikit berbeda dari $\sigma^2$ dan $\sigma$.
+4. **Menyangka `range()` di R mengembalikan selisih** -- fungsi itu mengembalikan nilai minimum dan maksimum; gunakan `diff(range(x))`.
+5. **Membandingkan simpangan baku antarvariabel berbeda skala** (cm vs kg) tanpa koefisien variasi.
+6. **Menggunakan koefisien variasi pada skala interval** (misalnya suhu °C) atau pada data dengan mean mendekati nol.
+7. **Merata-ratakan rata-rata tanpa bobot** -- rata-rata gabungan harus tertimbang menurut ukuran kelompok.
+8. **Melaporkan ukuran pusat tanpa ukuran sebaran** (dan tanpa $n$) -- pembaca tidak bisa menilai keterwakilan pusat data.
+9. **Menghapus outlier otomatis** tanpa menyelidiki penyebabnya.
+10. **Menerapkan aturan empiris pada distribusi yang tidak berbentuk lonceng** -- gunakan Chebyshev untuk bentuk sembarang.
+11. **Menganggap hasil data terkelompok sebagai nilai eksak** -- itu hanya aproksimasi, dan hasilnya (terutama mean dan SD) sensitif terhadap asumsi kelas terbuka.
+12. **Mencari modus pada data kontinu mentah** -- nilai hampir tidak pernah berulang; kelompokkan dahulu dan gunakan kelas modus.
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Cheat Sheet: Fungsi R yang Digunakan
+
+| Fungsi | Kegunaan |
+|---|---|
+| `mean(x)` | Rata-rata hitung; `mean(x, trim = 0.1)` untuk trimmed mean |
+| `weighted.mean(x, w)` | Rata-rata tertimbang dengan bobot `w` |
+| `median(x)` | Median |
+| `table(x)` | Menghitung frekuensi tiap nilai (dasar mencari modus) |
+| `which.max(f)` | Indeks nilai terbesar (mencari kelas modus) |
+| `summary(x)` | Min, Q1, median, mean, Q3, maks |
+| `range(x)` | Nilai minimum dan maksimum (**bukan** selisih) |
+| `diff(range(x))` | Rentang |
+| `var(x)` | Varians sampel (pembagi $n-1$) |
+| `sd(x)` | Simpangan baku sampel |
+| `scale(x)` | Menghitung z-score |
+| `hist(x, breaks = ...)` | Histogram |
+| `stripchart(x, method = ...)` | Diagram titik untuk data kecil |
+| `abline(v = ...)` | Menambahkan garis vertikal (mean, median, dst.) pada grafik |
+| `cumsum(x)` | Frekuensi kumulatif (mencari kelas median) |
+| `cut(x, breaks = ...)` | Mengelompokkan data numerik ke dalam kelas |
+| `sapply(list, fungsi)` | Menerapkan fungsi ke beberapa dataset sekaligus |
+| `layout()` / `par(mfrow = ...)` | Mengatur beberapa grafik dalam satu tampilan |
+| `kable(df)` | Menampilkan `data.frame` sebagai tabel rapi (paket `knitr`) |
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Glosarium Istilah
+
+| Istilah | Definisi Singkat |
+|:--------|:-----------------|
+| **Ukuran Pemusatan** | Nilai tunggal yang menggambarkan "pusat" atau nilai tipikal data |
+| **Mean** | Jumlah semua nilai dibagi banyaknya data |
+| **Rata-rata Tertimbang** | Mean dengan bobot berbeda untuk tiap nilai |
+| **Trimmed Mean** | Mean setelah membuang persentase tertentu data terkecil dan terbesar |
+| **Median** | Nilai tengah data terurut; membagi data menjadi dua bagian sama banyak |
+| **Modus** | Nilai yang paling sering muncul |
+| **Ukuran Penyebaran** | Ukuran seberapa jauh data menyebar dari pusatnya |
+| **Rentang (Range)** | Selisih nilai terbesar dan terkecil |
+| **Deviasi** | Selisih sebuah nilai dengan mean: $x_i - \bar{x}$ |
+| **Varians** | Rata-rata kuadrat deviasi (pembagi $n-1$ untuk sampel) |
+| **Simpangan Baku** | Akar varians; ukuran sebaran dengan satuan sama seperti data |
+| **Koefisien Variasi (CV)** | Simpangan baku relatif terhadap mean, dalam persen |
+| **Derajat Bebas** | Banyaknya nilai yang bebas bervariasi; pada varians sampel sebesar $n-1$ |
+| **Skewness (Kemencengan)** | Ukuran ketidaksimetrisan suatu distribusi |
+| **Bimodal** | Distribusi dengan dua puncak (modus) berbeda |
+| **Outlier** | Data yang nilainya jauh menyimpang dari mayoritas data |
+| **Robust (Tahan)** | Ukuran yang tidak banyak berubah oleh keberadaan outlier |
+| **Z-Score** | Jarak sebuah nilai dari mean dalam satuan simpangan baku |
+| **Aturan Empiris** | Aturan 68-95-99,7 untuk data berbentuk lonceng |
+| **Teorema Chebyshev** | Batas minimal proporsi data dalam $k$ simpangan baku, berlaku untuk sembarang distribusi |
+| **Titik Tengah Kelas ($m$)** | Nilai representatif kelas pada perhitungan data terkelompok |
+| **Kelas Median / Kelas Modus** | Kelas yang memuat median / kelas dengan frekuensi terbesar |
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Rangkuman dan Kesimpulan
+
+<div style="width: 85%; margin: 0 auto;">
+
+<p>
+1. <strong>Pusat dan sebaran berpasangan.</strong> Ukuran pemusatan menjawab "di mana pusat data?", ukuran penyebaran menjawab "seberapa menyebar?". Melaporkan salah satunya saja tidak lengkap.
+</p>
+<p>
+2. <strong>Skala data menentukan ukuran yang valid.</strong> Modus untuk nominal; median untuk ordinal; mean untuk interval/rasio; koefisien variasi khusus rasio.
+</p>
+<p>
+3. <strong>Mean vs median.</strong> Mean memakai seluruh data tetapi sensitif terhadap outlier; median tahan outlier. Selisih keduanya menandakan kemencengan: mean &gt; median (menjulur kanan), mean &lt; median (menjulur kiri).
+</p>
+<p>
+4. <strong>Varians dan simpangan baku</strong> mengukur rata-rata jarak data dari mean. Untuk sampel, pembaginya $n-1$. Simpangan baku berpasangan dengan mean.
+</p>
+<p>
+5. <strong>Koefisien variasi dan z-score</strong> memungkinkan perbandingan yang adil lintas skala: CV untuk variabilitas, z-score untuk posisi relatif individu.
+</p>
+<p>
+6. <strong>Nilai ekstrem</strong> menarik mean, SD, rentang, dan CV, tetapi hampir tidak memengaruhi median. Nilai ekstrem harus diselidiki, bukan dibuang otomatis.
+</p>
+<p>
+7. <strong>Data terkelompok memberi aproksimasi.</strong> Rumus titik tengah, kelas median, dan kelas modus berguna ketika data mentah tidak tersedia, tetapi hasilnya tidak eksak.
+</p>
+<p>
+8. <strong>Pelaporan yang jujur</strong> mencantumkan ukuran pusat, sebaran, dan ukuran sampel, serta memilih ukuran yang sesuai dengan bentuk data.
+</p>
+</div>
+<p>
+<strong>Jembatan ke sesi berikutnya:</strong> ukuran pusat dan sebaran meringkas data dengan dua angka, tetapi menyembunyikan detail seperti "di mana 25% data terbawah?" atau "nilai mana yang terlalu jauh?". Pertemuan 6 membahas <strong>ukuran posisi</strong> (kuartil, desil, persentil), <strong>IQR dan boxplot</strong>, bentuk distribusi, serta deteksi dan penanganan outlier secara formal.
+</p>
+
+<hr style="width: 85%; margin: 20px auto; border: 0; border-top: 1px solid #999;">
+
+## Referensi Pendukung
+
+<div style="width: 85%; margin: 0 auto;">
+
+<p>
+Materi ini merangkum topik ukuran pemusatan dan penyebaran data (<em>measures of central tendency and dispersion</em>) yang umum dibahas pada bab statistika deskriptif buku teks pengantar statistika bisnis/data science. Mahasiswa disarankan melengkapi pemahaman dengan merujuk pada:
+</p>
+
+<ul>
+  <li>Modul/slide perkuliahan "Introduction to Statistics (SDT-1102)" – Pertemuan 5: Statistika Deskriptif (<em>Measures of Central Tendency and Dispersion</em>).</li>
+  <li>Dokumentasi resmi R: <code>?mean</code>, <code>?median</code>, <code>?var</code>, <code>?sd</code>, <code>?weighted.mean</code>, <code>?scale</code> (dapat diakses langsung di R/RStudio).</li>
+  <li>Buku teks pengantar statistika deskriptif pada bab Ukuran Pemusatan dan Ukuran Penyebaran.</li>
+</ul>
+
+</div>

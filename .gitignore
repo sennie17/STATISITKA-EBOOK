@@ -18,3 +18,5 @@ _book/
 *.log
 *.tex
 !assets/preamble.tex
+docs/**/figure-pdf/
+docs/**/figure-epub/

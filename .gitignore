@@ -14,3 +14,7 @@ _book/
 /.quarto/
 
 **/*.quarto_ipynb
+*.aux
+*.log
+*.tex
+!assets/preamble.tex
